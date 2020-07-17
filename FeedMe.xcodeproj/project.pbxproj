@@ -7,23 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9144BCC224BCC9FF00B4AC69 /* Constants.swift */; };
 		9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2D24B4398900B3FD1F /* AppDelegate.swift */; };
 		9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */; };
-		9167BD3224B4398900B3FD1F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD3124B4398900B3FD1F /* ViewController.swift */; };
+		9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD3124B4398900B3FD1F /* DayViewController.swift */; };
 		9167BD3524B4398900B3FD1F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3324B4398900B3FD1F /* Main.storyboard */; };
 		9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3624B4398B00B3FD1F /* Assets.xcassets */; };
 		9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3824B4398B00B3FD1F /* LaunchScreen.storyboard */; };
+		91D4599524BC776900469B05 /* DayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4599324BC776900469B05 /* DayCell.swift */; };
+		91D4599624BC776900469B05 /* DayCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D4599424BC776900469B05 /* DayCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9144BCC224BCC9FF00B4AC69 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9167BD2A24B4398900B3FD1F /* FeedMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9167BD2D24B4398900B3FD1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9167BD3124B4398900B3FD1F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		9167BD3124B4398900B3FD1F /* DayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewController.swift; sourceTree = "<group>"; };
 		9167BD3424B4398900B3FD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9167BD3624B4398B00B3FD1F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9167BD3924B4398B00B3FD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9167BD3B24B4398B00B3FD1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		91D4599324BC776900469B05 /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
+		91D4599424BC776900469B05 /* DayCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DayCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +43,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9144BCC024BCC64C00B4AC69 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9167BD3124B4398900B3FD1F /* DayViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		9144BCC124BCC68000B4AC69 /* Support_files */ = {
+			isa = PBXGroup;
+			children = (
+				9167BD3624B4398B00B3FD1F /* Assets.xcassets */,
+				9167BD3824B4398B00B3FD1F /* LaunchScreen.storyboard */,
+			);
+			path = Support_files;
+			sourceTree = "<group>";
+		};
 		9167BD2124B4398900B3FD1F = {
 			isa = PBXGroup;
 			children = (
@@ -58,13 +81,23 @@
 			children = (
 				9167BD2D24B4398900B3FD1F /* AppDelegate.swift */,
 				9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */,
-				9167BD3124B4398900B3FD1F /* ViewController.swift */,
-				9167BD3324B4398900B3FD1F /* Main.storyboard */,
-				9167BD3624B4398B00B3FD1F /* Assets.xcassets */,
-				9167BD3824B4398B00B3FD1F /* LaunchScreen.storyboard */,
+				91D4599224BC773D00469B05 /* Views */,
+				9144BCC024BCC64C00B4AC69 /* Controllers */,
+				9144BCC124BCC68000B4AC69 /* Support_files */,
 				9167BD3B24B4398B00B3FD1F /* Info.plist */,
+				9144BCC224BCC9FF00B4AC69 /* Constants.swift */,
 			);
 			path = FeedMe;
+			sourceTree = "<group>";
+		};
+		91D4599224BC773D00469B05 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9167BD3324B4398900B3FD1F /* Main.storyboard */,
+				91D4599324BC776900469B05 /* DayCell.swift */,
+				91D4599424BC776900469B05 /* DayCell.xib */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -127,6 +160,7 @@
 			files = (
 				9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */,
 				9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */,
+				91D4599624BC776900469B05 /* DayCell.xib in Resources */,
 				9167BD3524B4398900B3FD1F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,8 +172,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9167BD3224B4398900B3FD1F /* ViewController.swift in Sources */,
+				9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */,
+				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
+				91D4599524BC776900469B05 /* DayCell.swift in Sources */,
 				9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
