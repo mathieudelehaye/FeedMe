@@ -15,6 +15,7 @@ class DayCell: UITableViewCell {
     @IBOutlet weak var dayImage: UIImageView!
     @IBOutlet weak var imageSuperView: UIView!
     @IBOutlet weak var colouredView: UIView!
+    @IBOutlet weak var dayNameLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -31,14 +32,14 @@ class DayCell: UITableViewCell {
         // Apply brightness filter
         guard let brightnessFilter = CIFilter(name: "CIColorControls") else { fatalError("Cannot create color filter") }
         brightnessFilter.setValue(aCIImage, forKey: kCIInputImageKey)
-        brightnessFilter.setValue(NSNumber(value: -0.25), forKey: kCIInputBrightnessKey);
+        brightnessFilter.setValue(NSNumber(value: -0.26), forKey: kCIInputBrightnessKey);
         guard let colouredImage = brightnessFilter.outputImage else { fatalError("Cannot apply color filter") }
         aCIImage = colouredImage
         
         // Apply blur filter
         guard let gaussianFilter = CIFilter(name: "CIGaussianBlur") else { fatalError("Cannot create blur filter") }
         gaussianFilter.setValue(aCIImage, forKey: kCIInputImageKey)
-        gaussianFilter.setValue(3.3, forKey: kCIInputRadiusKey)
+        gaussianFilter.setValue(3.1, forKey: kCIInputRadiusKey)
         guard let blurredImage = gaussianFilter.outputImage else { fatalError("Cannot convert back image from filter")  }
         aCIImage = blurredImage
         
