@@ -14,6 +14,7 @@ class DayCell: UITableViewCell {
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var dayImage: UIImageView!
     @IBOutlet weak var imageSuperView: UIView!
+    @IBOutlet weak var colouredView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -46,15 +47,22 @@ class DayCell: UITableViewCell {
         dayImage.image = UIImage(cgImage: imageRef)
                         
         // Round image corners
-        dayImage.layer.cornerRadius = dayImage.frame.size.height / 15
-        
+        let radius = dayImage.frame.size.height / 15
+        dayImage.layer.cornerRadius = radius
+        // Round coloured transparent view corners
+        let colourViewBounds = colouredView.bounds
+        let path = UIBezierPath(roundedRect: colourViewBounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        colouredView.layer.mask = mask
+
         // Add shadow to image super view
-        imageSuperView.layer.cornerRadius =     imageSuperView.frame.size.height / 15
+        imageSuperView.layer.cornerRadius = imageSuperView.frame.size.height / 15
         imageSuperView.layer.shadowColor = UIColor.black.cgColor
         imageSuperView.layer.shadowOffset = CGSize(width: 0, height: 1)
         imageSuperView.layer.shadowOpacity = 0.25
         imageSuperView.layer.shadowRadius = 4.0
-        imageSuperView.clipsToBounds = false               
+        imageSuperView.clipsToBounds = false        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -62,5 +70,5 @@ class DayCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    
 }
+

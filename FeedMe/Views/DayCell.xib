@@ -37,6 +37,21 @@
                                 <color key="shadowColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <size key="shadowOffset" width="0.0" height="1.5"/>
                             </label>
+                            <view alpha="0.20000000000000001" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sef-YU-NIz">
+                                <rect key="frame" x="0.0" y="111" width="355" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Monday" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gDb-lK-scv">
+                                        <rect key="frame" x="137" y="17" width="82" height="27"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="23"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.92306619879999996" green="0.32529532909999997" blue="0.49804323909999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <accessibility key="accessibilityConfiguration" label="Hello"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     </view>
@@ -45,11 +60,12 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
+                <outlet property="colouredView" destination="Sef-YU-NIz" id="Xd8-1c-nfe"/>
                 <outlet property="dayImage" destination="7cQ-hS-Mr2" id="ne7-mR-tdZ"/>
                 <outlet property="imageSuperView" destination="wiz-bF-tzS" id="taZ-Ov-baL"/>
                 <outlet property="label" destination="7bR-9h-o1W" id="Tle-hB-aOn"/>
             </connections>
-            <point key="canvasLocation" x="4.3478260869565224" y="31.473214285714285"/>
+            <point key="canvasLocation" x="3.6231884057971016" y="31.473214285714285"/>
         </tableViewCell>
     </objects>
     <resources>

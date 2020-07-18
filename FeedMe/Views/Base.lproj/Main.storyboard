@@ -21,10 +21,9 @@
                             <outlet property="delegate" destination="1Cy-4D-9rG" id="ThG-UT-ggV"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Home" image="house" catalog="system" id="QG0-Xu-VAa">
+                    <tabBarItem key="tabBarItem" title="Home" image="house.fill" catalog="system" id="QG0-Xu-VAa">
                         <color key="badgeColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </tabBarItem>
-                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="Home" id="AtB-s9-nyy">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="arrow.left" catalog="system" id="FXh-4V-Ijk">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -46,8 +45,7 @@
         <scene sceneID="4tW-Ps-w0Y">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cV3-ir-vgs" userLabel="Home Navigation" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="WRZ-z8-Ytz"/>
-                    <toolbarItems/>
+                    <tabBarItem key="tabBarItem" title="Home" landscapeImage="house.fill" catalog="system" id="WRZ-z8-Ytz"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="6po-4x-ZJi">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -59,11 +57,6 @@
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
-                    <toolbar key="toolbar" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="Inf-Bf-lkh">
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" red="1" green="0.50198543070000001" blue="0.17651039360000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <color key="barTintColor" red="1" green="0.50198543070000001" blue="0.17651039360000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </toolbar>
                     <connections>
                         <segue destination="1Cy-4D-9rG" kind="relationship" relationship="rootViewController" id="x0H-Bg-nNh"/>
                     </connections>
@@ -71,29 +64,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jx2-ga-IaI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="436" y="-363"/>
-        </scene>
-        <!--Tab Bar Controller-->
-        <scene sceneID="Fgb-Q3-1rd">
-            <objects>
-                <tabBarController id="cqA-Bd-ECu" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="KGp-dM-nyc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <color key="tintColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <color key="barTintColor" red="0.93417608740000002" green="0.52584701779999998" blue="0.2548120022" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <color key="selectedImageTintColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                    </tabBar>
-                    <connections>
-                        <segue destination="cV3-ir-vgs" kind="relationship" relationship="viewControllers" id="S5V-Ak-KlN"/>
-                        <segue destination="Y5N-y3-uHj" kind="relationship" relationship="viewControllers" id="xHi-YP-PlN"/>
-                        <segue destination="Y21-Hh-Nub" kind="relationship" relationship="viewControllers" id="ZbX-OM-jpJ"/>
-                    </connections>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Cvf-wb-nhO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1397" y="179"/>
-        </scene>
+        </scene>        
         <!--Aliment-->
         <scene sceneID="e2m-5f-Ltp">
             <objects>
@@ -109,13 +80,7 @@
                             <outlet property="delegate" destination="g00-kD-aQg" id="DIJ-8F-kT9"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Aliment" image="cart" catalog="system" id="c15-D1-1Mv"/>
-                    <toolbarItems>
-                        <barButtonItem tag="1" title="Item" image="square.and.arrow.up.on.square" catalog="system" id="MGV-1d-UVn">
-                            <color key="tintColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        </barButtonItem>
-                        <barButtonItem title="Item" image="square.and.arrow.up.on.square.fill" catalog="system" style="plain" id="HJv-pB-FFE"/>
-                    </toolbarItems>
+                    <tabBarItem key="tabBarItem" title="Aliment" image="cart.fill" catalog="system" id="c15-D1-1Mv"/>
                     <navigationItem key="navigationItem" title="Home" id="Sy2-jy-237">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="arrow.left" catalog="system" id="5Wr-DP-3CK">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -137,8 +102,7 @@
         <scene sceneID="gdQ-kV-UsZ">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Y5N-y3-uHj" userLabel="Aliment Navigation" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="FZX-K4-wfd"/>
-                    <toolbarItems/>
+                    <tabBarItem key="tabBarItem" title="Aliment" image="cart.fill" catalog="system" id="FZX-K4-wfd"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="JSW-Sj-VwE">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -168,13 +132,7 @@
                             <outlet property="delegate" destination="XDy-qW-SSk" id="sjF-wU-Zca"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Profile" image="person" catalog="system" id="TaO-eS-6Sw"/>
-                    <toolbarItems>
-                        <barButtonItem tag="1" title="Item" image="square.and.arrow.up.on.square" catalog="system" id="JKc-Kg-R45">
-                            <color key="tintColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        </barButtonItem>
-                        <barButtonItem title="Item" image="square.and.arrow.up.on.square.fill" catalog="system" style="plain" id="Bii-ZO-Mm6"/>
-                    </toolbarItems>
+                    <tabBarItem key="tabBarItem" title="Profile" image="person.fill" catalog="system" id="TaO-eS-6Sw"/>
                     <navigationItem key="navigationItem" title="Home" id="B5s-pJ-Wec">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="arrow.left" catalog="system" id="91f-lj-PUZ">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -196,8 +154,7 @@
         <scene sceneID="aal-M9-ag9">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Y21-Hh-Nub" userLabel="Profile Navigation" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="pXa-hp-1kN"/>
-                    <toolbarItems/>
+                    <tabBarItem key="tabBarItem" title="Profile" image="person.fill" catalog="system" id="pXa-hp-1kN"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Y1z-97-Vac">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -212,13 +169,33 @@
             </objects>
             <point key="canvasLocation" x="436" y="1575"/>
         </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="Fgb-Q3-1rd">
+            <objects>
+                <tabBarController id="cqA-Bd-ECu" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="KGp-dM-nyc">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="barTintColor" red="0.93417608740000002" green="0.52584701779999998" blue="0.2548120022" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="selectedImageTintColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="cV3-ir-vgs" kind="relationship" relationship="viewControllers" id="S5V-Ak-KlN"/>
+                        <segue destination="Y5N-y3-uHj" kind="relationship" relationship="viewControllers" id="xHi-YP-PlN"/>
+                        <segue destination="Y21-Hh-Nub" kind="relationship" relationship="viewControllers" id="ZbX-OM-jpJ"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cvf-wb-nhO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1397" y="179"/>
+        </scene>
     </scenes>
     <resources>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
-        <image name="cart" catalog="system" width="128" height="102"/>
-        <image name="house" catalog="system" width="128" height="110"/>
-        <image name="person" catalog="system" width="128" height="117"/>
-        <image name="square.and.arrow.up.on.square" catalog="system" width="117" height="128"/>
-        <image name="square.and.arrow.up.on.square.fill" catalog="system" width="117" height="128"/>
+        <image name="cart.fill" catalog="system" width="128" height="102"/>
+        <image name="house.fill" catalog="system" width="128" height="106"/>
+        <image name="person.fill" catalog="system" width="128" height="120"/>
     </resources>
 </document>
