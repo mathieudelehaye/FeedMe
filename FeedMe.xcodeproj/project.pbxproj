@@ -17,9 +17,12 @@
 		9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3824B4398B00B3FD1F /* LaunchScreen.storyboard */; };
 		91D4599524BC776900469B05 /* DayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4599324BC776900469B05 /* DayCell.swift */; };
 		91D4599624BC776900469B05 /* DayCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D4599424BC776900469B05 /* DayCell.xib */; };
+		B2180350FFAC47EE981F12D3 /* Pods_FeedMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FeedMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		20E598F76B8DBC66ECAD8470 /* Pods-FeedMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.release.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.release.xcconfig"; sourceTree = "<group>"; };
 		9144BCC224BCC9FF00B4AC69 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		914DCF4C24C43A74006BA902 /* MealViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealViewController.swift; sourceTree = "<group>"; };
 		9167BD2A24B4398900B3FD1F /* FeedMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -32,6 +35,7 @@
 		9167BD3B24B4398B00B3FD1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91D4599324BC776900469B05 /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
 		91D4599424BC776900469B05 /* DayCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DayCell.xib; sourceTree = "<group>"; };
+		D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.debug.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,12 +43,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2180350FFAC47EE981F12D3 /* Pods_FeedMe.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43B4350001AC6FAC6D957B70 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		9144BCC024BCC64C00B4AC69 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -68,6 +81,8 @@
 			children = (
 				9167BD2C24B4398900B3FD1F /* FeedMe */,
 				9167BD2B24B4398900B3FD1F /* Products */,
+				E137EA3944176BDA30A7BCA0 /* Pods */,
+				43B4350001AC6FAC6D957B70 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -103,6 +118,16 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		E137EA3944176BDA30A7BCA0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */,
+				20E598F76B8DBC66ECAD8470 /* Pods-FeedMe.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -110,9 +135,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9167BD3E24B4398B00B3FD1F /* Build configuration list for PBXNativeTarget "FeedMe" */;
 			buildPhases = (
+				BF7BCCC4F66E0139A2173A12 /* [CP] Check Pods Manifest.lock */,
 				9167BD2624B4398900B3FD1F /* Sources */,
 				9167BD2724B4398900B3FD1F /* Frameworks */,
 				9167BD2824B4398900B3FD1F /* Resources */,
+				9BA8EF51D908209D4E7FDD17 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -169,6 +196,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9BA8EF51D908209D4E7FDD17 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FeedMe/Pods-FeedMe-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FeedMe/Pods-FeedMe-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FeedMe/Pods-FeedMe-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BF7BCCC4F66E0139A2173A12 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FeedMe-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9167BD2624B4398900B3FD1F /* Sources */ = {
@@ -322,6 +391,7 @@
 		};
 		9167BD3F24B4398B00B3FD1F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -340,6 +410,7 @@
 		};
 		9167BD4024B4398B00B3FD1F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 20E598F76B8DBC66ECAD8470 /* Pods-FeedMe.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
