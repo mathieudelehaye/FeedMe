@@ -66,10 +66,12 @@ class DayCell: UITableViewCell {
         imageSuperView.clipsToBounds = false        
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
+//    override func setSelected(_ selected: Bool, animated: Bool) {
+//        super.setSelected(selected, animated: animated)
+//
+//        print("DayCell.setSelected: selected status = \(selected)")
+//        
+//        // Configure the view for the selected state
+//    }
 }
 
