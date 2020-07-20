@@ -29,6 +29,9 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Va0-ky-A8I">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="addDayPressed:" destination="1Cy-4D-9rG" id="oMh-wy-nnY"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
@@ -44,16 +47,16 @@
         <!--Day Meals View Controller-->
         <scene sceneID="Jjo-mX-LWm">
             <objects>
-                <tableViewController id="JIU-bN-pou" userLabel="Day Meals View Controller" sceneMemberID="viewController">
+                <tableViewController id="JIU-bN-pou" userLabel="Day Meals View Controller" customClass="MealViewController" customModule="FeedMe" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="rze-4w-S86">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="AN3-cu-LMa">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="XVJ-8T-cCP">
                                 <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AN3-cu-LMa" id="Vdk-C2-V6D">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XVJ-8T-cCP" id="c3r-p3-cZ2">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
@@ -64,7 +67,7 @@
                             <outlet property="delegate" destination="JIU-bN-pou" id="QZt-ha-2x6"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="zwh-dO-s00"/>
+                    <navigationItem key="navigationItem" title="Title" id="zwh-dO-s00"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qPn-Se-Mln" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

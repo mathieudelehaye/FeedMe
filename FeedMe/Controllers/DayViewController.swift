@@ -13,6 +13,10 @@ class DayViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
+    let realm = try! Realm()
+    
+    var dayArray : Results<Day>?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
                 
@@ -21,6 +25,54 @@ class DayViewController: UIViewController {
         tableView.delegate = self
         
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        
+        loadDays()
+    }
+    
+    //MARK: - Data Manipulation Methods
+    func save(day: Day) {
+                    
+        do {
+            try realm.write {
+                realm.add(day)
+            }
+        } catch {
+            print("Error saving context \(error)")
+        }
+        
+        tableView.reloadData()
+    }
+        
+    func loadDays() {
+
+        dayArray = realm.objects(Day.self)
+           
+        tableView.reloadData()
+        
+    }
+        
+    @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
+        
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Day", message:"", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+                        
+            let newDay = Day()
+            newDay.name = textField.text!
+            
+            self.save(day: newDay)
+        }
+        
+        alert.addTextField { (alertTextField) in
+            textField.placeholder = "Create new day"
+            textField = alertTextField
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
         
     }
 }
@@ -31,12 +83,17 @@ class DayViewController: UIViewController {
 extension DayViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+//        return 2
+        return dayArray?.count ?? 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! DayCell
+        
+        if let day = dayArray?[indexPath.row] {
+            cell.dayNameLabel.text = day.name
+        }
   
         return cell
     }
@@ -47,21 +104,20 @@ extension DayViewController: UITableViewDataSource {
 extension DayViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-                
-        tableView.deselectRow(at: indexPath, animated: true)
         
         performSegue(withIdentifier: "goToDayMeals", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-//        let destinationVC = segue.destination as! MealViewController
-        
-//        if let indexPath = tableView.indexPathForSelectedRow {
-//            destinationVC.selectedCategory = categoryArray?[indexPath.row]
-//        }
+        let destinationVC = segue.destination as! MealViewController
+                
+        if let indexPath = tableView.indexPathForSelectedRow {
+            
+            tableView.deselectRow(at: indexPath, animated: true)
+            
+            destinationVC.selectedDay = dayArray?[indexPath.row]
+        }
     }
-    
+        
 }
-
-

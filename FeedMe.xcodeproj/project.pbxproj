@@ -3,11 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9144BCC224BCC9FF00B4AC69 /* Constants.swift */; };
+		914D2E1424C59387006C4B61 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1324C59387006C4B61 /* Day.swift */; };
+		914D2E1724C593D6006C4B61 /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1624C593D6006C4B61 /* Meal.swift */; };
 		914DCF4D24C43A74006BA902 /* MealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914DCF4C24C43A74006BA902 /* MealViewController.swift */; };
 		9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2D24B4398900B3FD1F /* AppDelegate.swift */; };
 		9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */; };
@@ -24,6 +26,8 @@
 		0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FeedMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E598F76B8DBC66ECAD8470 /* Pods-FeedMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.release.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.release.xcconfig"; sourceTree = "<group>"; };
 		9144BCC224BCC9FF00B4AC69 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		914D2E1324C59387006C4B61 /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
+		914D2E1624C593D6006C4B61 /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
 		914DCF4C24C43A74006BA902 /* MealViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealViewController.swift; sourceTree = "<group>"; };
 		9167BD2A24B4398900B3FD1F /* FeedMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9167BD2D24B4398900B3FD1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -76,6 +80,15 @@
 			path = Support_files;
 			sourceTree = "<group>";
 		};
+		914D2E1524C5938F006C4B61 /* Data Model */ = {
+			isa = PBXGroup;
+			children = (
+				914D2E1324C59387006C4B61 /* Day.swift */,
+				914D2E1624C593D6006C4B61 /* Meal.swift */,
+			);
+			path = "Data Model";
+			sourceTree = "<group>";
+		};
 		9167BD2124B4398900B3FD1F = {
 			isa = PBXGroup;
 			children = (
@@ -99,8 +112,9 @@
 			children = (
 				9167BD2D24B4398900B3FD1F /* AppDelegate.swift */,
 				9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */,
-				91D4599224BC773D00469B05 /* Views */,
 				9144BCC024BCC64C00B4AC69 /* Controllers */,
+				914D2E1524C5938F006C4B61 /* Data Model */,
+				91D4599224BC773D00469B05 /* Views */,
 				9144BCC124BCC68000B4AC69 /* Support_files */,
 				9167BD3B24B4398B00B3FD1F /* Info.plist */,
 				9144BCC224BCC9FF00B4AC69 /* Constants.swift */,
@@ -124,7 +138,6 @@
 				D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */,
 				20E598F76B8DBC66ECAD8470 /* Pods-FeedMe.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -244,9 +257,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				914D2E1424C59387006C4B61 /* Day.swift in Sources */,
 				9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */,
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
+				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,
 				91D4599524BC776900469B05 /* DayCell.swift in Sources */,
 				9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */,
 				914DCF4D24C43A74006BA902 /* MealViewController.swift in Sources */,
