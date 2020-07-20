@@ -14,8 +14,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.97455686330000002" green="0.85429698229999995" blue="0.67447847130000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <color key="separatorColor" red="0.97455686330000002" green="0.85429698229999995" blue="0.67447847130000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <color key="sectionIndexBackgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="separatorColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <connections>
                             <outlet property="dataSource" destination="1Cy-4D-9rG" id="0Lf-xa-YUg"/>
                             <outlet property="delegate" destination="1Cy-4D-9rG" id="ThG-UT-ggV"/>
@@ -35,41 +34,41 @@
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="tableView" destination="9Ij-ey-Bb8" id="QwK-P1-5w0"/>
-                        <segue destination="YMh-yt-azz" kind="show" identifier="goToDayMeals" id="Jpr-nB-iz0"/>
+                        <segue destination="JIU-bN-pou" kind="show" identifier="goToDayMeals" id="Ol2-DN-uNt"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8hE-r0-rc9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1974" y="-364"/>
         </scene>
-        <!--Table View Controller-->
-        <scene sceneID="6im-2Y-Sbp">
+        <!--Day Meals View Controller-->
+        <scene sceneID="Jjo-mX-LWm">
             <objects>
-                <tableViewController id="YMh-yt-azz" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="uEn-I1-82K">
+                <tableViewController id="JIU-bN-pou" userLabel="Day Meals View Controller" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="rze-4w-S86">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="hqK-DS-GxV">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="AN3-cu-LMa">
                                 <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hqK-DS-GxV" id="eIE-TM-QN5">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AN3-cu-LMa" id="Vdk-C2-V6D">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
                         <connections>
-                            <outlet property="dataSource" destination="YMh-yt-azz" id="1qX-Nw-qvu"/>
-                            <outlet property="delegate" destination="YMh-yt-azz" id="Wqr-ea-tSB"/>
+                            <outlet property="dataSource" destination="JIU-bN-pou" id="tYE-J4-KFK"/>
+                            <outlet property="delegate" destination="JIU-bN-pou" id="QZt-ha-2x6"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="hci-ww-JcM"/>
+                    <navigationItem key="navigationItem" id="zwh-dO-s00"/>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yhQ-Gl-Ryl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qPn-Se-Mln" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3514" y="-365"/>
+            <point key="canvasLocation" x="3417" y="-364"/>
         </scene>
         <!--Home Navigation-->
         <scene sceneID="4tW-Ps-w0Y">

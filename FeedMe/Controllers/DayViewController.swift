@@ -15,12 +15,13 @@ class DayViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         tableView.dataSource = self
         
         tableView.delegate = self
         
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        
     }
 }
 
@@ -36,11 +37,7 @@ extension DayViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! DayCell
-        
-//        cell.label.text = "Hello 3"
-        
-        print("DayViewController.tableView cellForRowAt: cell at row \(indexPath.row) has status: selected = \(cell.isSelected), highlighted = \(cell.isHighlighted), selection style = \(cell.selectionStyle.rawValue)")
-                
+  
         return cell
     }
     
@@ -50,8 +47,8 @@ extension DayViewController: UITableViewDataSource {
 extension DayViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        print("DayViewController.tableView didSelectRowAt: row selected at index = \(indexPath.row)")
+                
+        tableView.deselectRow(at: indexPath, animated: true)
         
         performSegue(withIdentifier: "goToDayMeals", sender: self)
     }
