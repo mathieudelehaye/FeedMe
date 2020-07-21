@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  DayViewController.swift
 //  FeedMe
 //
 //  Created by Mathieu Delehaye on 7/7/20.
@@ -28,6 +28,44 @@ class DayViewController: UIViewController {
         
         loadDays()
     }
+        
+    @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
+        
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Day", message:"", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+            
+            let newDay = Day()
+            newDay.name = textField.text!
+            
+            self.save(day: newDay)
+        }
+        
+        alert.addTextField { (alertTextField) in
+            textField.placeholder = "Create new day"
+            textField = alertTextField
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
+    @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+        let pvc = storyboard.instantiateViewController(withIdentifier: "MenuViewController")
+
+        pvc.modalPresentationStyle = .custom
+        pvc.transitioningDelegate = self
+
+        self.present(pvc, animated: true, completion: nil)
+        
+    }
     
     //MARK: - Data Manipulation Methods
     func save(day: Day) {
@@ -50,33 +88,7 @@ class DayViewController: UIViewController {
         tableView.reloadData()
         
     }
-        
-    @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
-        
-        var textField = UITextField()
-        
-        let alert = UIAlertController(title: "Add New Day", message:"", preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "Add", style: .default) { (action) in
-                        
-            let newDay = Day()
-            newDay.name = textField.text!
-            
-            self.save(day: newDay)
-        }
-        
-        alert.addTextField { (alertTextField) in
-            textField.placeholder = "Create new day"
-            textField = alertTextField
-        }
-        
-        alert.addAction(action)
-        
-        present(alert, animated: true, completion: nil)
-        
-    }
 }
-
 
 //MARK: - TableView Data Source Methods
 
@@ -120,4 +132,15 @@ extension DayViewController: UITableViewDelegate {
         }
     }
         
+}
+
+//MARK: - ViewController Transitioning Delegate Methods
+extension DayViewController: UIViewControllerTransitioningDelegate {
+        
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+                
+        return HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
+        
+    }
+    
 }
