@@ -25,11 +25,11 @@ class EditViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.addSubview(backdropView)
-
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(EditViewController.handleTap(sender:)))
-        
-        backdropView.addGestureRecognizer(tapGesture)
+//        view.addSubview(backdropView)
+//
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(EditViewController.handleTap(sender:)))
+//
+//        backdropView.addGestureRecognizer(tapGesture)
         
     }
     
@@ -50,15 +50,15 @@ class EditViewController: UITableViewController {
       
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
           
-        let cell = tableView.dequeueReusableCell(withIdentifier: "EditMenuCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
           
         switch indexPath.row {
             case 0:
-                cell.textLabel?.text = "Cell 1"
+                cell.textLabel?.text = "Rename"
             case 1:
-                cell.textLabel?.text = "Cell 2"
+                cell.textLabel?.text = "Delete"
             case 2:
-                cell.textLabel?.text = "Cell 3"
+                cell.textLabel?.text = "Cancel"
             default:
                 cell.textLabel?.text = ""
         }
@@ -69,8 +69,18 @@ class EditViewController: UITableViewController {
     //MARK: - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        print("Row \(indexPath.row) selected")
-        
-        tableView.deselectRow(at: indexPath, animated: true)
+        switch indexPath.row {
+            case 0:
+                print("Rename selected")
+                tableView.deselectRow(at: indexPath, animated: true)
+            case 1:
+                print("Delete selected")
+                tableView.deselectRow(at: indexPath, animated: true)
+            case 2:
+                print("Cancel selected")
+                dismiss(animated: true, completion: nil)
+            default:
+                print("Default selected")
+        }
     }
 }

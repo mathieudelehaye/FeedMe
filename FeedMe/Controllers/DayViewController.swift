@@ -55,10 +55,15 @@ class DayViewController: UIViewController {
     }
     
     @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
+                
+//        let vc = EditViewController()
+//        vc.modalPresentationStyle = .custom
+//        present(vc, animated: true, completion: nil)
+        
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
-        let pvc = storyboard.instantiateViewController(withIdentifier: "MenuViewController")
+        let pvc = storyboard.instantiateViewController(withIdentifier: "EditViewController")
 
         pvc.modalPresentationStyle = .custom
         pvc.transitioningDelegate = self
