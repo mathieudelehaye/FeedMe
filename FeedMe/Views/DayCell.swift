@@ -65,7 +65,13 @@ class DayCell: UITableViewCell {
         imageSuperView.layer.shadowRadius = 4.0
         imageSuperView.clipsToBounds = false        
     }
-
+        
+    @IBAction func editButtonPressed(_ sender: UIButton) {
+    
+        print("Edit button pressed")
+    
+    }
+    
 //    override func setSelected(_ selected: Bool, animated: Bool) {
 //        super.setSelected(selected, animated: animated)
 //
