@@ -9,6 +9,10 @@
 import UIKit
 import CoreImage
 
+protocol CellEdition {
+    func showEditionView(forCellAtRow cellRow: Int)
+}
+
 class DayCell: UITableViewCell {
     
     @IBOutlet weak var label: UILabel!
@@ -16,6 +20,9 @@ class DayCell: UITableViewCell {
     @IBOutlet weak var imageSuperView: UIView!
     @IBOutlet weak var colouredView: UIView!
     @IBOutlet weak var dayNameLabel: UILabel!
+    
+    var editor: CellEdition?
+    var row: Int?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -69,7 +76,9 @@ class DayCell: UITableViewCell {
     @IBAction func editButtonPressed(_ sender: UIButton) {
     
         print("Edit button pressed")
-    
+        
+        editor?.showEditionView(forCellAtRow: row!)
+        
     }
     
 //    override func setSelected(_ selected: Bool, animated: Bool) {

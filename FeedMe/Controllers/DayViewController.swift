@@ -55,20 +55,7 @@ class DayViewController: UIViewController {
     }
     
     @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
-                
-//        let vc = EditViewController()
-//        vc.modalPresentationStyle = .custom
-//        present(vc, animated: true, completion: nil)
         
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-
-        let pvc = storyboard.instantiateViewController(withIdentifier: "EditViewController")
-
-        pvc.modalPresentationStyle = .custom
-        pvc.transitioningDelegate = self
-
-        self.present(pvc, animated: true, completion: nil)
         
     }
     
@@ -100,7 +87,6 @@ class DayViewController: UIViewController {
 extension DayViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return 2
         return dayArray?.count ?? 1
     }
     
@@ -110,6 +96,8 @@ extension DayViewController: UITableViewDataSource {
         
         if let day = dayArray?[indexPath.row] {
             cell.dayNameLabel.text = day.name
+            cell.editor = self
+            cell.row = indexPath.row
         }
   
         return cell
@@ -145,6 +133,52 @@ extension DayViewController: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
                 
         return HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
+        
+    }
+    
+}
+
+//MARK: - ViewController Cell Edition Delegate Methods
+extension DayViewController: CellEdition {    
+        
+    func showEditionView(forCellAtRow cellRow: Int) {
+        
+        //        let vc = EditViewController()
+        //        vc.modalPresentationStyle = .custom
+        //        present(vc, animated: true, completion: nil)
+                
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+        let pvc = storyboard.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
+
+        pvc.modalPresentationStyle = .custom
+        pvc.transitioningDelegate = self
+
+        if let day = dayArray?[cellRow] {
+            
+            pvc.selectedItem = day
+            pvc.callbackViewDelegate = self 
+            
+            self.present(pvc, animated: true) {
+                
+                print("returning")
+                
+                self.tableView.reloadData()
+                
+            }
+            
+        }
+        
+    }
+    
+}
+
+//MARK: - ViewController Cell Edition Delegate Methods
+extension DayViewController: CallbackViewManagement {
+    
+    func updateCBView() {
+        
+        loadDays()
         
     }
     

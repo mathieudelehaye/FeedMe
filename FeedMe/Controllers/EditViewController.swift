@@ -7,9 +7,19 @@
 //
 
 import UIKit
+import RealmSwift
+
+protocol CallbackViewManagement {
+    func updateCBView()
+}
 
 class EditViewController: UITableViewController {
-
+    
+    let realm = try! Realm()
+    
+    var selectedItem : AppItem?
+    var callbackViewDelegate: CallbackViewManagement?
+    
     lazy var backdropView: UIView = {
 
         let viewBounds = self.view.bounds
@@ -75,7 +85,21 @@ class EditViewController: UITableViewController {
                 tableView.deselectRow(at: indexPath, animated: true)
             case 1:
                 print("Delete selected")
+                
                 tableView.deselectRow(at: indexPath, animated: true)
+            
+                do {
+                    try self.realm.write {
+                        self.realm.delete(selectedItem!)
+                    }
+                } catch {
+                    print("error while deleting item, \(error)")
+                }
+            
+                callbackViewDelegate!.updateCBView()
+                
+                dismiss(animated: true, completion: nil)
+                
             case 2:
                 print("Cancel selected")
                 dismiss(animated: true, completion: nil)

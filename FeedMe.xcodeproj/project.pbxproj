@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9144BCC224BCC9FF00B4AC69 /* Constants.swift */; };
+		914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914C9FD524CA0D7E0088D162 /* AppItem.swift */; };
 		914D2E1424C59387006C4B61 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1324C59387006C4B61 /* Day.swift */; };
 		914D2E1724C593D6006C4B61 /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1624C593D6006C4B61 /* Meal.swift */; };
 		914DCF4D24C43A74006BA902 /* MealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914DCF4C24C43A74006BA902 /* MealViewController.swift */; };
@@ -28,6 +29,7 @@
 		0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FeedMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E598F76B8DBC66ECAD8470 /* Pods-FeedMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.release.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.release.xcconfig"; sourceTree = "<group>"; };
 		9144BCC224BCC9FF00B4AC69 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		914C9FD524CA0D7E0088D162 /* AppItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppItem.swift; sourceTree = "<group>"; };
 		914D2E1324C59387006C4B61 /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
 		914D2E1624C593D6006C4B61 /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
 		914DCF4C24C43A74006BA902 /* MealViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealViewController.swift; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 			children = (
 				914D2E1324C59387006C4B61 /* Day.swift */,
 				914D2E1624C593D6006C4B61 /* Meal.swift */,
+				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -266,6 +269,7 @@
 				915F1FE324C706EA005C88C2 /* EditViewController.swift in Sources */,
 				914D2E1424C59387006C4B61 /* Day.swift in Sources */,
 				9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */,
+				914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */,
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
 				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,
