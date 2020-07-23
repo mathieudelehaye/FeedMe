@@ -82,7 +82,42 @@ class EditViewController: UITableViewController {
         switch indexPath.row {
             case 0:
                 print("Rename selected")
+                
                 tableView.deselectRow(at: indexPath, animated: true)
+            
+                var textField = UITextField()
+                
+                let alert = UIAlertController(title: "Enter New Name", message:"", preferredStyle: .alert)
+                
+                let action = UIAlertAction(title: "Rename", style: .default) { (action) in
+                    
+                    let newName = textField.text!
+                    
+                    do {
+                        try self.realm.write {
+                            
+                            self.selectedItem?.setValue(newName, forKey: "name")
+                            
+                        }
+                    } catch {
+                        print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
+                    }
+                    
+                    self.callbackViewDelegate!.updateCBView()
+                    
+                    self.dismiss(animated: true, completion: nil)
+                    
+                }
+                
+                alert.addTextField { (alertTextField) in
+                    textField.placeholder = "Rename item"
+                    textField = alertTextField
+                }
+                
+                alert.addAction(action)
+                
+                present(alert, animated: true, completion: nil)
+            
             case 1:
                 print("Delete selected")
                 
