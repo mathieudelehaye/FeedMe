@@ -18,4 +18,27 @@ class HalfSizePresentationController: UIPresentationController {
         
     }
     
+    override func presentationTransitionWillBegin() {
+        
+        let bdView = UIView(frame: containerView!.bounds)
+        
+        bdView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        containerView?.addSubview(bdView)
+        
+        bdView.addSubview(presentedView!)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(HalfSizePresentationController.handleTap(_:)))
+        
+        bdView.addGestureRecognizer(tapGesture)
+        
+    }
+
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        let itemEditVC = presentedViewController as! EditViewController
+        
+        print("tap handled from HalfSizePresentationController for item \(itemEditVC.selectedItem!.name)")
+        
+        presentedViewController.dismiss(animated: true, completion: nil)
+    }
 }

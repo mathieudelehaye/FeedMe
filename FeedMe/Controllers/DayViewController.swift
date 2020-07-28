@@ -142,31 +142,23 @@ extension DayViewController: UIViewControllerTransitioningDelegate {
 extension DayViewController: CellEdition {    
         
     func showEditionView(forCellAtRow cellRow: Int) {
-        
-        //        let vc = EditViewController()
-        //        vc.modalPresentationStyle = .custom
-        //        present(vc, animated: true, completion: nil)
-                
+                        
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
-        let pvc = storyboard.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
+        let evc = storyboard.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
 
-        pvc.modalPresentationStyle = .custom
-        pvc.transitioningDelegate = self
+        evc.modalPresentationStyle = .custom
+        
+        evc.transitioningDelegate = self
 
         if let day = dayArray?[cellRow] {
-            
-            pvc.selectedItem = day
-            pvc.callbackViewDelegate = self 
-            
-            self.present(pvc, animated: true) {
-                
-                print("returning")
-                
-                self.tableView.reloadData()
-                
-            }
-            
+
+            evc.selectedItem = day
+//
+//            evc.callbackViewDelegate = self
+
+            self.present(evc, animated: true)
+
         }
         
     }
