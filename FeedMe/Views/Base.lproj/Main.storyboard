@@ -86,14 +86,36 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Odl-vs-xae">
-                                <rect key="frame" x="16" y="20" width="150" height="44"/>
+                                <rect key="frame" x="16" y="20" width="100" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="18"/>
+                                <state key="normal" title="Rename">
+                                    <color key="titleColor" red="0.20392156859999999" green="0.46274509800000002" blue="0.56078431370000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </state>
+                                <connections>
+                                    <action selector="renamePressed:" destination="nEX-Ax-2DT" eventType="touchUpInside" id="aoR-6f-jXf"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ryv-4i-17m">
+                                <rect key="frame" x="16" y="72" width="100" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="18"/>
+                                <state key="normal" title="Delete">
+                                    <color key="titleColor" red="0.20392156859999999" green="0.46274509800000002" blue="0.56078431370000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </state>
+                                <connections>
+                                    <action selector="deletePressed:" destination="nEX-Ax-2DT" eventType="touchUpInside" id="KR7-Sg-7sF"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qmz-bK-ihj">
+                                <rect key="frame" x="16" y="124" width="100" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="18"/>
                                 <state key="normal" title="Cancel">
                                     <color key="titleColor" red="0.20392156859999999" green="0.46274509800000002" blue="0.56078431370000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
                                 <connections>
-                                    <action selector="cancelPressed:" destination="nEX-Ax-2DT" eventType="touchUpInside" id="DaO-Y2-ndn"/>
+                                    <action selector="cancelPressed:" destination="nEX-Ax-2DT" eventType="touchUpInside" id="fQL-gd-Moc"/>
                                 </connections>
                             </button>
                         </subviews>

@@ -154,8 +154,8 @@ extension DayViewController: CellEdition {
         if let day = dayArray?[cellRow] {
 
             evc.selectedItem = day
-//
-//            evc.callbackViewDelegate = self
+
+            evc.callbackViewDelegate = self
 
             self.present(evc, animated: true)
 
