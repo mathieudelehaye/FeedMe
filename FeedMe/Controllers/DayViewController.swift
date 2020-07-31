@@ -31,26 +31,27 @@ class DayViewController: UIViewController {
         
     @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
         
-        var textField = UITextField()
+//        var textField =h UITextField()
+        var textField = UIPickerView()
         
-        let alert = UIAlertController(title: "Add New Day", message:"", preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "Add", style: .default) { (action) in
-            
-            let newDay = Day()
-            newDay.name = textField.text!
-            
-            self.save(day: newDay)
-        }
-        
-        alert.addTextField { (alertTextField) in
-            textField.placeholder = "Create new day"
-            textField = alertTextField
-        }
-        
-        alert.addAction(action)
-        
-        present(alert, animated: true, completion: nil)
+//        let alert = UIAlertController(title: "Add New Day", message:"", preferredStyle: .alert)
+//        
+//        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+//            
+//            let newDay = Day()
+//            newDay.name = textField.text!
+//            
+//            self.save(day: newDay)
+//        }
+//        
+//        alert.addTextField { (alertTextField) in
+//            textField.placeholder = "Create new day"
+//            textField = alertTextField
+//        }
+//        
+//        alert.addAction(action)
+//        
+//        present(alert, animated: true, completion: nil)
         
     }
     
@@ -132,7 +133,7 @@ extension DayViewController: UIViewControllerTransitioningDelegate {
         
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
                 
-        return HalfSizePresentationController(presentedViewController: presented, presenting: presenting)
+        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: 0.4)
         
     }
     

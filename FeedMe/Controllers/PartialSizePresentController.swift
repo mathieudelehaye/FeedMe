@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PartialSizePresentationController: UIPresentationController {
+class PartialSizePresentController: UIPresentationController {
     
     let heightRatio : CGFloat
     
@@ -38,7 +38,7 @@ class PartialSizePresentationController: UIPresentationController {
         
         bdView.addSubview(presentedView!)
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(PartialSizePresentationController.handleTap(_:)))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(PartialSizePresentController.handleTap(_:)))
         
         bdView.addGestureRecognizer(tapGesture)
         

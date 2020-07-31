@@ -13,7 +13,7 @@
 		914D2E1724C593D6006C4B61 /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1624C593D6006C4B61 /* Meal.swift */; };
 		914DCF4D24C43A74006BA902 /* MealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914DCF4C24C43A74006BA902 /* MealViewController.swift */; };
 		915F1FE324C706EA005C88C2 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE224C706EA005C88C2 /* EditViewController.swift */; };
-		915F1FE524C70D54005C88C2 /* HalfSizePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE424C70D54005C88C2 /* HalfSizePresentationController.swift */; };
+		915F1FE524C70D54005C88C2 /* PartialSizePresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */; };
 		9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2D24B4398900B3FD1F /* AppDelegate.swift */; };
 		9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */; };
 		9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD3124B4398900B3FD1F /* DayViewController.swift */; };
@@ -34,7 +34,7 @@
 		914D2E1624C593D6006C4B61 /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
 		914DCF4C24C43A74006BA902 /* MealViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealViewController.swift; sourceTree = "<group>"; };
 		915F1FE224C706EA005C88C2 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
-		915F1FE424C70D54005C88C2 /* HalfSizePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfSizePresentationController.swift; sourceTree = "<group>"; };
+		915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSizePresentController.swift; sourceTree = "<group>"; };
 		9167BD2A24B4398900B3FD1F /* FeedMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9167BD2D24B4398900B3FD1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -73,7 +73,7 @@
 			children = (
 				9167BD3124B4398900B3FD1F /* DayViewController.swift */,
 				915F1FE224C706EA005C88C2 /* EditViewController.swift */,
-				915F1FE424C70D54005C88C2 /* HalfSizePresentationController.swift */,
+				915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */,
 				914DCF4C24C43A74006BA902 /* MealViewController.swift */,
 			);
 			path = Controllers;
@@ -274,7 +274,7 @@
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
 				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,
 				91D4599524BC776900469B05 /* DayCell.swift in Sources */,
-				915F1FE524C70D54005C88C2 /* HalfSizePresentationController.swift in Sources */,
+				915F1FE524C70D54005C88C2 /* PartialSizePresentController.swift in Sources */,
 				9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */,
 				914DCF4D24C43A74006BA902 /* MealViewController.swift in Sources */,
 			);
