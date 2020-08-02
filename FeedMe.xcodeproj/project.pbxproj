@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		913D69A124D47BCB00CEAC16 /* ItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913D69A024D47BCB00CEAC16 /* ItemViewController.swift */; };
+		913DFD9224D46E2F00DAB556 /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913DFD9124D46E2F00DAB556 /* PickerViewController.swift */; };
 		9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9144BCC224BCC9FF00B4AC69 /* Constants.swift */; };
 		914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914C9FD524CA0D7E0088D162 /* AppItem.swift */; };
 		914D2E1424C59387006C4B61 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1324C59387006C4B61 /* Day.swift */; };
@@ -28,6 +30,8 @@
 /* Begin PBXFileReference section */
 		0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FeedMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E598F76B8DBC66ECAD8470 /* Pods-FeedMe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.release.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.release.xcconfig"; sourceTree = "<group>"; };
+		913D69A024D47BCB00CEAC16 /* ItemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewController.swift; sourceTree = "<group>"; };
+		913DFD9124D46E2F00DAB556 /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
 		9144BCC224BCC9FF00B4AC69 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		914C9FD524CA0D7E0088D162 /* AppItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppItem.swift; sourceTree = "<group>"; };
 		914D2E1324C59387006C4B61 /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
@@ -68,13 +72,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		913D69A224D47C2700CEAC16 /* Item */ = {
+			isa = PBXGroup;
+			children = (
+				915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */,
+				913D69A024D47BCB00CEAC16 /* ItemViewController.swift */,
+				915F1FE224C706EA005C88C2 /* EditViewController.swift */,
+				913DFD9124D46E2F00DAB556 /* PickerViewController.swift */,
+			);
+			path = Item;
+			sourceTree = "<group>";
+		};
 		9144BCC024BCC64C00B4AC69 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				9167BD3124B4398900B3FD1F /* DayViewController.swift */,
-				915F1FE224C706EA005C88C2 /* EditViewController.swift */,
-				915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */,
 				914DCF4C24C43A74006BA902 /* MealViewController.swift */,
+				913D69A224D47C2700CEAC16 /* Item */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -269,7 +283,9 @@
 				915F1FE324C706EA005C88C2 /* EditViewController.swift in Sources */,
 				914D2E1424C59387006C4B61 /* Day.swift in Sources */,
 				9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */,
+				913D69A124D47BCB00CEAC16 /* ItemViewController.swift in Sources */,
 				914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */,
+				913DFD9224D46E2F00DAB556 /* PickerViewController.swift in Sources */,
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
 				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,

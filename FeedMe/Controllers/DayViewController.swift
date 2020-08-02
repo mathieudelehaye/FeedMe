@@ -15,43 +15,72 @@ class DayViewController: UIViewController {
     
     let realm = try! Realm()
     
-    var dayArray : Results<Day>?
+    var dayArray : Results<Day>?    // already created days
+    
+    var remainingDays: [String] = []    //  day list for picker view
+    
+    var modalRatio: Float?  // ratio to display modal views from days view
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
                 
-        tableView.dataSource = self
+        tableView.dataSource = self // delegate for table view data source
         
-        tableView.delegate = self
+        tableView.delegate = self   // delegate for table view events
         
-        tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)    // register custom cell to table view 
         
-        loadDays()
+        loadDays()  // read days from realm DB and load table view
     }
+    
+    // update day list for picker view by removing already created days without the selected one
+    func updateRemainingDays(keepingDay selectedDay: String = "") {
         
+        remainingDays = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ]
+        
+        if var dayIterator = dayArray?.makeIterator() {
+            
+            while let existingDay = dayIterator.next() {
+                
+                if selectedDay != "" && existingDay.name == selectedDay {
+                    
+                    continue    // if selected name not empty, do not remove it from day list
+                    
+                }
+                
+                if let index = remainingDays.firstIndex(of: existingDay.name) {
+                    
+                    remainingDays.remove(at: index)
+                    
+                }
+                
+            }
+        }
+        
+        print("remaining days: \(remainingDays)")
+        
+    }
+       
     @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
         
-//        var textField =h UITextField()
-        var textField = UIPickerView()
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                
+        let pvc = storyboard.instantiateViewController(withIdentifier: "PickerViewController") as! PickerViewController
         
-//        let alert = UIAlertController(title: "Add New Day", message:"", preferredStyle: .alert)
-//        
-//        let action = UIAlertAction(title: "Add", style: .default) { (action) in
-//            
-//            let newDay = Day()
-//            newDay.name = textField.text!
-//            
-//            self.save(day: newDay)
-//        }
-//        
-//        alert.addTextField { (alertTextField) in
-//            textField.placeholder = "Create new day"
-//            textField = alertTextField
-//        }
-//        
-//        alert.addAction(action)
-//        
-//        present(alert, animated: true, completion: nil)
+        pvc.modalPresentationStyle = .custom
+        
+        pvc.transitioningDelegate = self
+        
+        updateRemainingDays()
+        
+        pvc.itemNames = remainingDays
+         
+        pvc.callbackViewDelegate = self
+        
+        modalRatio = Float(0.36)   // change modal ratio for picker view
+
+        self.present(pvc, animated: true)
         
     }
     
@@ -81,6 +110,7 @@ class DayViewController: UIViewController {
         tableView.reloadData()
         
     }
+    
 }
 
 //MARK: - TableView Data Source Methods
@@ -133,7 +163,7 @@ extension DayViewController: UIViewControllerTransitioningDelegate {
         
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
                 
-        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: 0.4)
+        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: modalRatio ?? 0.5)
         
     }
     
@@ -143,20 +173,26 @@ extension DayViewController: UIViewControllerTransitioningDelegate {
 extension DayViewController: CellEdition {    
         
     func showEditionView(forCellAtRow cellRow: Int) {
-                        
+           
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-
+        
         let evc = storyboard.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
 
         evc.modalPresentationStyle = .custom
-        
+
         evc.transitioningDelegate = self
 
         if let day = dayArray?[cellRow] {
 
+            updateRemainingDays(keepingDay: day.name)
+
+            evc.itemNames = remainingDays
+            
             evc.selectedItem = day
 
             evc.callbackViewDelegate = self
+            
+            modalRatio = Float(0.65)   // change modal ratio for picker view
 
             self.present(evc, animated: true)
 
@@ -175,4 +211,15 @@ extension DayViewController: CallbackViewManagement {
         
     }
     
+    func manageCBView(withObjectName objectName: String) {
+        
+        let newDay = Day()
+        
+        newDay.name = objectName
+        
+        save(day: newDay)
+        
+        loadDays()
+        
+    }
 }
