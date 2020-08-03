@@ -29,7 +29,7 @@ class DayViewController: UIViewController {
         
         tableView.delegate = self   // delegate for table view events
         
-        tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)    // register custom cell to table view 
+        tableView.register(UINib(nibName: K.dayCellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)    // register custom cell to table view 
         
         loadDays()  // read days from realm DB and load table view
     }
@@ -123,10 +123,10 @@ extension DayViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! DayCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! CustomCell
         
         if let day = dayArray?[indexPath.row] {
-            cell.dayNameLabel.text = day.name
+            cell.nameLabel.text = day.name
             cell.editor = self
             cell.row = indexPath.row
         }

@@ -8,5 +8,5 @@
 
 struct K {
     static let cellIdentifier = "CustomCell"
-    static let cellNibName = "DayCell"
+    static let dayCellNibName = "DayCell"
 }

@@ -13,13 +13,13 @@ protocol CellEdition {
     func showEditionView(forCellAtRow cellRow: Int)
 }
 
-class DayCell: UITableViewCell {
+class CustomCell: UITableViewCell {
     
-    @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var dayImage: UIImageView!
+//    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var cellImage: UIImageView!
     @IBOutlet weak var imageSuperView: UIView!
     @IBOutlet weak var colouredView: UIView!
-    @IBOutlet weak var dayNameLabel: UILabel!
+    @IBOutlet weak var nameLabel: UILabel!
     
     var editor: CellEdition?
     var row: Int?
@@ -28,7 +28,7 @@ class DayCell: UITableViewCell {
         super.awakeFromNib()
                   
         // Calculate radius
-        let radius = dayImage.frame.size.height / 15
+        let radius = cellImage.frame.size.height / 15
         
         // Round coloured transparent view corners
         let colourViewBounds = colouredView.bounds
@@ -53,12 +53,5 @@ class DayCell: UITableViewCell {
         
     }
     
-//    override func setSelected(_ selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//
-//        print("DayCell.setSelected: selected status = \(selected)")
-//        
-//        // Configure the view for the selected state
-//    }
 }
 

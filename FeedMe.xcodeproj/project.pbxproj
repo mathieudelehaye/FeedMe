@@ -22,7 +22,7 @@
 		9167BD3524B4398900B3FD1F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3324B4398900B3FD1F /* Main.storyboard */; };
 		9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3624B4398B00B3FD1F /* Assets.xcassets */; };
 		9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3824B4398B00B3FD1F /* LaunchScreen.storyboard */; };
-		91D4599524BC776900469B05 /* DayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4599324BC776900469B05 /* DayCell.swift */; };
+		91D4599524BC776900469B05 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4599324BC776900469B05 /* CustomCell.swift */; };
 		91D4599624BC776900469B05 /* DayCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D4599424BC776900469B05 /* DayCell.xib */; };
 		B2180350FFAC47EE981F12D3 /* Pods_FeedMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */; };
 /* End PBXBuildFile section */
@@ -47,7 +47,7 @@
 		9167BD3624B4398B00B3FD1F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9167BD3924B4398B00B3FD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9167BD3B24B4398B00B3FD1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		91D4599324BC776900469B05 /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
+		91D4599324BC776900469B05 /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		91D4599424BC776900469B05 /* DayCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DayCell.xib; sourceTree = "<group>"; };
 		D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.debug.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -149,7 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				9167BD3324B4398900B3FD1F /* Main.storyboard */,
-				91D4599324BC776900469B05 /* DayCell.swift */,
+				91D4599324BC776900469B05 /* CustomCell.swift */,
 				91D4599424BC776900469B05 /* DayCell.xib */,
 			);
 			path = Views;
@@ -289,7 +289,7 @@
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
 				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,
-				91D4599524BC776900469B05 /* DayCell.swift in Sources */,
+				91D4599524BC776900469B05 /* CustomCell.swift in Sources */,
 				915F1FE524C70D54005C88C2 /* PartialSizePresentController.swift in Sources */,
 				9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */,
 				914DCF4D24C43A74006BA902 /* MealViewController.swift in Sources */,
