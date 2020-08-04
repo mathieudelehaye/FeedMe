@@ -9,4 +9,5 @@
 struct K {
     static let cellIdentifier = "CustomCell"
     static let dayCellNibName = "DayCell"
+    static let mealCellNibName = "MealCell"
 }

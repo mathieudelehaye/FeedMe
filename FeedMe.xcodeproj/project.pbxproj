@@ -10,6 +10,8 @@
 		913D69A124D47BCB00CEAC16 /* ItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913D69A024D47BCB00CEAC16 /* ItemViewController.swift */; };
 		913DFD9224D46E2F00DAB556 /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913DFD9124D46E2F00DAB556 /* PickerViewController.swift */; };
 		9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9144BCC224BCC9FF00B4AC69 /* Constants.swift */; };
+		9145505524D828A3006541BF /* MealCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9145505324D828A3006541BF /* MealCell.xib */; };
+		914C902524D91FFC00BB33AC /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914C902424D91FFC00BB33AC /* ListViewController.swift */; };
 		914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914C9FD524CA0D7E0088D162 /* AppItem.swift */; };
 		914D2E1424C59387006C4B61 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1324C59387006C4B61 /* Day.swift */; };
 		914D2E1724C593D6006C4B61 /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1624C593D6006C4B61 /* Meal.swift */; };
@@ -33,6 +35,8 @@
 		913D69A024D47BCB00CEAC16 /* ItemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewController.swift; sourceTree = "<group>"; };
 		913DFD9124D46E2F00DAB556 /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
 		9144BCC224BCC9FF00B4AC69 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		9145505324D828A3006541BF /* MealCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MealCell.xib; sourceTree = "<group>"; };
+		914C902424D91FFC00BB33AC /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		914C9FD524CA0D7E0088D162 /* AppItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppItem.swift; sourceTree = "<group>"; };
 		914D2E1324C59387006C4B61 /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
 		914D2E1624C593D6006C4B61 /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
@@ -86,6 +90,7 @@
 		9144BCC024BCC64C00B4AC69 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				914C902424D91FFC00BB33AC /* ListViewController.swift */,
 				9167BD3124B4398900B3FD1F /* DayViewController.swift */,
 				914DCF4C24C43A74006BA902 /* MealViewController.swift */,
 				913D69A224D47C2700CEAC16 /* Item */,
@@ -102,12 +107,22 @@
 			path = Support_files;
 			sourceTree = "<group>";
 		};
+		914C902324D91B9000BB33AC /* NIB */ = {
+			isa = PBXGroup;
+			children = (
+				91D4599324BC776900469B05 /* CustomCell.swift */,
+				91D4599424BC776900469B05 /* DayCell.xib */,
+				9145505324D828A3006541BF /* MealCell.xib */,
+			);
+			path = NIB;
+			sourceTree = "<group>";
+		};
 		914D2E1524C5938F006C4B61 /* Data Model */ = {
 			isa = PBXGroup;
 			children = (
+				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
 				914D2E1324C59387006C4B61 /* Day.swift */,
 				914D2E1624C593D6006C4B61 /* Meal.swift */,
-				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -149,8 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				9167BD3324B4398900B3FD1F /* Main.storyboard */,
-				91D4599324BC776900469B05 /* CustomCell.swift */,
-				91D4599424BC776900469B05 /* DayCell.xib */,
+				914C902324D91B9000BB33AC /* NIB */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -226,6 +240,7 @@
 			files = (
 				9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */,
 				9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */,
+				9145505524D828A3006541BF /* MealCell.xib in Resources */,
 				91D4599624BC776900469B05 /* DayCell.xib in Resources */,
 				9167BD3524B4398900B3FD1F /* Main.storyboard in Resources */,
 			);
@@ -286,6 +301,7 @@
 				913D69A124D47BCB00CEAC16 /* ItemViewController.swift in Sources */,
 				914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */,
 				913DFD9224D46E2F00DAB556 /* PickerViewController.swift in Sources */,
+				914C902524D91FFC00BB33AC /* ListViewController.swift in Sources */,
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
 				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,
