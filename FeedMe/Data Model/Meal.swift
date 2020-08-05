@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-class Meal: Object {
+class Meal: AppItem {
 //    @objc dynamic var dateCreated: Date?
     var parentCategory = LinkingObjects(fromType: Day.self, property: "meals")
 }

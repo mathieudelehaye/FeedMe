@@ -9,17 +9,9 @@
 import UIKit
 import RealmSwift 
 
-class DayViewController: UIViewController {
-
+class DayViewController: ListViewController {
+        
     @IBOutlet weak var tableView: UITableView!
-    
-    let realm = try! Realm()
-    
-    var dayArray : Results<Day>?    // already created days
-    
-    var remainingDays: [String] = []    //  day list for picker view
-    
-    var modalRatio: Float?  // ratio to display modal views from days view
     
     override func viewDidLoad() {
         
@@ -33,79 +25,37 @@ class DayViewController: UIViewController {
         
         loadDays()  // read days from realm DB and load table view
     }
-    
-    // update day list for picker view by removing already created days without the selected one
-    func updateRemainingDays(keepingDay selectedDay: String = "") {
-        
-        remainingDays = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ]
-        
-        if var dayIterator = dayArray?.makeIterator() {
-            
-            while let existingDay = dayIterator.next() {
+           
+    @IBAction func addPressed(_ sender: UIBarButtonItem) {
                 
-                if selectedDay != "" && existingDay.name == selectedDay {
-                    
-                    continue    // if selected name not empty, do not remove it from day list
-                    
-                }
-                
-                if let index = remainingDays.firstIndex(of: existingDay.name) {
-                    
-                    remainingDays.remove(at: index)
-                    
-                }
-                
-            }
-        }
-        
-        print("remaining days: \(remainingDays)")
-        
-    }
-       
-    @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
-        
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                
+        
         let pvc = storyboard.instantiateViewController(withIdentifier: "PickerViewController") as! PickerViewController
         
-        pvc.modalPresentationStyle = .custom
+        updateRemainingItems(keepingItem: "", fromStartList: [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ])
         
-        pvc.transitioningDelegate = self
-        
-        updateRemainingDays()
-        
-        pvc.itemNames = remainingDays
-         
-        pvc.callbackViewDelegate = self
-        
-        modalRatio = Float(0.36)   // change modal ratio for picker view
-
-        self.present(pvc, animated: true)
-        
+        presentModal(itemNames: remainingItems, forViewController: pvc)
     }
     
     @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
-        
-        
+                
     }
     
     //MARK: - Data Manipulation Methods
-    func save(day: Day) {
-                    
-        do {
-            try realm.write {
-                realm.add(day)
-            }
-        } catch {
-            print("Error saving context \(error)")
-        }
-        
-        tableView.reloadData()
-    }
+//    override func save(item: AppItem) {
+//                    
+//        super.save(item: item)
+//        
+//        tableView.reloadData()
+//    }
         
     func loadDays() {
 
-        dayArray = realm.objects(Day.self)
+        let dayArray = realm.objects(Day.self)
+        
+        for day in dayArray {
+            itemArray.append(day)
+        }
            
         tableView.reloadData()
         
@@ -115,22 +65,18 @@ class DayViewController: UIViewController {
 
 //MARK: - TableView Data Source Methods
 
-extension DayViewController: UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dayArray?.count ?? 1
-    }
+extension DayViewController {
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! CustomCell
+    
+        let item = itemArray[indexPath.row]
         
-        if let day = dayArray?[indexPath.row] {
-            cell.nameLabel.text = day.name
-            cell.editor = self
-            cell.row = indexPath.row
-        }
-  
+        cell.nameLabel.text = item.name
+        cell.editor = self
+        cell.row = indexPath.row
+
         return cell
     }
     
@@ -141,83 +87,61 @@ extension DayViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        performSegue(withIdentifier: "goToDayMeals", sender: self)
+        performSegue(withIdentifier: K.DayToMealSegueIdentifier, sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         let destinationVC = segue.destination as! MealViewController
-                
-        if let indexPath = tableView.indexPathForSelectedRow {
+        
+        if let indexPath =  tableView.indexPathForSelectedRow {
             
             tableView.deselectRow(at: indexPath, animated: true)
+
+            guard let selectedDay = itemArray[indexPath.row] as? Day else { fatalError("Error while retrieving selected day") }
+                
+            destinationVC.selectedDay = selectedDay
             
-            destinationVC.selectedDay = dayArray?[indexPath.row]
         }
     }
         
 }
 
-//MARK: - ViewController Transitioning Delegate Methods
-extension DayViewController: UIViewControllerTransitioningDelegate {
-        
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-                
-        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: modalRatio ?? 0.5)
-        
-    }
-    
-}
-
 //MARK: - ViewController Cell Edition Delegate Methods
-extension DayViewController: CellEdition {    
+extension DayViewController {
         
-    func showEditionView(forCellAtRow cellRow: Int) {
+    override func showEditionView(forCellAtRow cellRow: Int) {
            
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
         let evc = storyboard.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
-
-        evc.modalPresentationStyle = .custom
-
-        evc.transitioningDelegate = self
-
-        if let day = dayArray?[cellRow] {
-
-            updateRemainingDays(keepingDay: day.name)
-
-            evc.itemNames = remainingDays
-            
-            evc.selectedItem = day
-
-            evc.callbackViewDelegate = self
-            
-            modalRatio = Float(0.65)   // change modal ratio for picker view
-
-            self.present(evc, animated: true)
-
-        }
+        
+        let selectedCellItem = itemArray[cellRow]
+        
+        updateRemainingItems(keepingItem: selectedCellItem.name, fromStartList: [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ])
+        
+        presentModal(itemNames: remainingItems, forViewController: evc)
         
     }
     
 }
 
 //MARK: - ViewController Cell Edition Delegate Methods
-extension DayViewController: CallbackViewManagement {
+extension DayViewController {
     
-    func updateCBView() {
+    override func updateCBView() {
         
         loadDays()
         
     }
     
-    func manageCBView(withObjectName objectName: String) {
+    override func manageCBView(withObjectName objectName: String) {
         
         let newDay = Day()
         
         newDay.name = objectName
         
-        save(day: newDay)
+        save(item: newDay)
         
         loadDays()
         
