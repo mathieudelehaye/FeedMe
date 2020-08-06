@@ -34,7 +34,7 @@
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Va0-ky-A8I">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
-                                <action selector="addDayPressed:" destination="1Cy-4D-9rG" id="oMh-wy-nnY"/>
+                                <action selector="addDayPressed:" destination="1Cy-4D-9rG" id="YMS-cW-iID"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

@@ -20,13 +20,13 @@ class ListViewController: UIViewController {
     var modalRatio: Float?  // ratio to display modal views from list view
             
     // update item list for picker view by removing already created items without the selected one
-    func updateRemainingItems(keepingItem selectedItem: String = "", fromStartList startList: [String] = []) {
+    func updateRemainingItems(keepingItem itemName: String = "", fromStartList startList: [String] = []) {
              
         remainingItems = startList
         
         for existingItem in itemArray {
                         
-            if selectedItem != "" && existingItem.name == selectedItem {
+            if itemName != "" && existingItem.name == itemName {
 
                 continue    // if selected name not empty, do not remove it from item list
 

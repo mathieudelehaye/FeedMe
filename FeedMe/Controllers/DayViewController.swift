@@ -26,7 +26,7 @@ class DayViewController: ListViewController {
         loadDays()  // read days from realm DB and load table view
     }
            
-    @IBAction func addPressed(_ sender: UIBarButtonItem) {
+    @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
                 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
@@ -42,21 +42,16 @@ class DayViewController: ListViewController {
     }
     
     //MARK: - Data Manipulation Methods
-//    override func save(item: AppItem) {
-//                    
-//        super.save(item: item)
-//        
-//        tableView.reloadData()
-//    }
-        
+       
     func loadDays() {
 
         let dayArray = realm.objects(Day.self)
         
+        itemArray = []
         for day in dayArray {
             itemArray.append(day)
         }
-           
+        
         tableView.reloadData()
         
     }
@@ -117,6 +112,8 @@ extension DayViewController {
         let evc = storyboard.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
         
         let selectedCellItem = itemArray[cellRow]
+        
+        evc.selectedItem = selectedCellItem
         
         updateRemainingItems(keepingItem: selectedCellItem.name, fromStartList: [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ])
         
