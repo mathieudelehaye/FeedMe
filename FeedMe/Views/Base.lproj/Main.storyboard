@@ -24,13 +24,7 @@
                     <tabBarItem key="tabBarItem" title="Home" image="house.fill" catalog="system" id="QG0-Xu-VAa">
                         <color key="badgeColor" red="0.202296108" green="0.46428042650000001" blue="0.56079936029999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </tabBarItem>
-                    <navigationItem key="navigationItem" title="Home" id="AtB-s9-nyy">
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="back_bar_button" id="FXh-4V-Ijk">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <connections>
-                                <action selector="backButtonPressed:" destination="1Cy-4D-9rG" id="lkh-cq-i1m"/>
-                            </connections>
-                        </barButtonItem>
+                    <navigationItem key="navigationItem" title="Home" id="AtB-s9-nyy" userLabel="Home">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Va0-ky-A8I">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
@@ -63,7 +57,11 @@
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Item" id="6pZ-ll-tKK"/>
                     <navigationItem key="navigationItem" title="Title" id="zwh-dO-s00">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="iAX-B4-56H"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="iAX-B4-56H">
+                            <connections>
+                                <action selector="addMealPressed:" destination="JIU-bN-pou" id="Mqt-jy-t14"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -302,7 +300,6 @@
     </scenes>
     <resources>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
-        <image name="back_bar_button" width="9" height="19"/>
         <image name="cart.fill" catalog="system" width="128" height="102"/>
         <image name="house.fill" catalog="system" width="128" height="106"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>

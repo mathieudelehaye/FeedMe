@@ -37,10 +37,6 @@ class DayViewController: ListViewController {
         presentModal(itemNames: remainingItems, forViewController: pvc)
     }
     
-    @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
-                
-    }
-    
     //MARK: - Data Manipulation Methods
        
     func loadDays() {

@@ -35,6 +35,20 @@ class MealViewController: ListViewController, UITableViewDelegate {
         loadMeals()  // read meals from realm DB and load table view
     }
     
+    @IBAction func addMealPressed(_ sender: UIBarButtonItem) {
+     
+        print("Add meal button pressed")
+        
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//
+//        let pvc = storyboard.instantiateViewController(withIdentifier: "PickerViewController") as! PickerViewController
+//
+//        updateRemainingItems(keepingItem: "", fromStartList: [ "Breakfast", "Lunch", "Dinner", "Snack 1", "Snack 2", "Snack 3" ])
+        
+//        presentModal(itemNames: remainingItems, forViewController: pvc)
+        
+    }
+    
     //MARK: - Data Manipulation Methods
        
     func loadMeals() {
@@ -47,14 +61,6 @@ class MealViewController: ListViewController, UITableViewDelegate {
         }
         
         tableView.reloadData()
-        
-    }
-
-    @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
-        
-        print("back button pressed in Meals view")
-        
-        dismiss(animated: true, completion: nil)
         
     }
 }
