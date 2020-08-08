@@ -23,6 +23,15 @@ class MealViewController: ListViewController, UITableViewDelegate {
         
         tableView.register(UINib(nibName: K.mealCellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)    // register custom cell to table view
         
+        // Change navigation bar back button image to custom one 
+        let backButtonBackgroundImage = UIImage(named: "back_bar_button")
+        navigationController?.navigationBar.backIndicatorImage = backButtonBackgroundImage
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = backButtonBackgroundImage
+        
+        // Remove navigation bar back button title:
+        let backBarButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
+        
         loadMeals()  // read meals from realm DB and load table view
     }
     
@@ -41,6 +50,13 @@ class MealViewController: ListViewController, UITableViewDelegate {
         
     }
 
+    @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
+        
+        print("back button pressed in Meals view")
+        
+        dismiss(animated: true, completion: nil)
+        
+    }
 }
 
 //MARK: - TableView Data Source Methods

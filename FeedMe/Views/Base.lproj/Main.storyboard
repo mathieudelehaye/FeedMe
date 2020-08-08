@@ -61,14 +61,18 @@
                             <outlet property="delegate" destination="JIU-bN-pou" id="QZt-ha-2x6"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Title" id="zwh-dO-s00"/>
+                    <tabBarItem key="tabBarItem" title="Item" id="6pZ-ll-tKK"/>
+                    <navigationItem key="navigationItem" title="Title" id="zwh-dO-s00">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="iAX-B4-56H"/>
+                    </navigationItem>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="tableView" destination="rze-4w-S86" id="yG1-i0-c9k"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qPn-Se-Mln" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3417" y="-364"/>
+            <point key="canvasLocation" x="3416.8000000000002" y="-364.7676161919041"/>
         </scene>
         <!--Edit View Controller-->
         <scene sceneID="iR1-hG-0k8">
@@ -130,6 +134,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" red="1" green="0.5024509265424546" blue="0.17477997994043271" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" red="1" green="0.5024509265424546" blue="0.17477997994043271" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
