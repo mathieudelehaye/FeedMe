@@ -82,7 +82,7 @@ class MealViewController: ListViewController, UITableViewDelegate {
     
     override func loadItems() {
 
-        if let mealArray = selectedDay?.meals {
+        if let mealArray = selectedDay?.meals.sorted(byKeyPath: "order", ascending: true) {
             
             itemArray = []
             for meal in mealArray {
@@ -148,6 +148,23 @@ extension MealViewController {
         let newMeal = Meal()
         
         newMeal.name = objectName
+        
+        switch objectName {
+        case "Breakfast":
+            newMeal.order = 1
+        case "Lunch":
+            newMeal.order = 2
+        case "Dinner":
+            newMeal.order = 3
+        case "Snack 1":
+            newMeal.order = 4
+        case "Snack 2":
+            newMeal.order = 5
+        case "Snack 3":
+            newMeal.order = 6
+        default:
+            newMeal.order = 0
+        }
         
         save(item: newMeal)
         

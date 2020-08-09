@@ -60,7 +60,7 @@ class DayViewController: ListViewController {
     
     override func loadItems() {
 
-        let dayArray = realm.objects(Day.self)
+        let dayArray = realm.objects(Day.self).sorted(byKeyPath: "order", ascending: true)
         
         itemArray = []
         for day in dayArray {
@@ -152,6 +152,27 @@ extension DayViewController {
         let newDay = Day()
         
         newDay.name = objectName
+        
+        switch objectName {
+        case "Monday":
+            newDay.order = 1
+        case "Tuesday":
+            newDay.order = 2
+        case "Wednesday":
+            newDay.order = 3
+        case "Thursday":
+            newDay.order = 4
+        case "Friday":
+            newDay.order = 5
+        case "Saturday":
+            newDay.order = 6
+        case "Sunday":
+            newDay.order = 7
+        case "Everyday":
+            newDay.order = 8
+        default:
+            newDay.order = 0
+        }
         
         save(item: newDay)
         
