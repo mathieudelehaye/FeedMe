@@ -10,7 +10,9 @@ import UIKit
 import RealmSwift 
 
 class DayViewController: ListViewController {
-        
+                
+    let fullDayList = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ]
+    
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
@@ -23,7 +25,7 @@ class DayViewController: ListViewController {
         
         tableView.register(UINib(nibName: K.dayCellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)    // register custom cell to table view 
         
-        loadDays()  // read days from realm DB and load table view
+        loadItems()  // read days from realm DB and load table view
     }
            
     @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
@@ -32,14 +34,31 @@ class DayViewController: ListViewController {
         
         let pvc = storyboard.instantiateViewController(withIdentifier: "PickerViewController") as! PickerViewController
         
-        updateRemainingItems(keepingItem: "", fromStartList: [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ])
+        updateRemainingItems(keepingItem: "", fromStartList: fullDayList)
         
         presentModal(itemNames: remainingItems, forViewController: pvc)
     }
     
     //MARK: - Data Manipulation Methods
        
-    func loadDays() {
+    override func save(item: AppItem) {
+        
+        do {
+            try realm.write {
+                
+                if let dayToSave = item as? Day {
+                    
+                    realm.add(dayToSave)
+                    
+                }
+            }
+        } catch {
+            print("Error saving context \(error)")
+        }
+        
+    }
+    
+    override func loadItems() {
 
         let dayArray = realm.objects(Day.self)
         
@@ -111,7 +130,7 @@ extension DayViewController {
         
         evc.selectedItem = selectedCellItem
         
-        updateRemainingItems(keepingItem: selectedCellItem.name, fromStartList: [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ])
+        updateRemainingItems(keepingItem: selectedCellItem.name, fromStartList: fullDayList)
         
         presentModal(itemNames: remainingItems, forViewController: evc)
         
@@ -124,7 +143,7 @@ extension DayViewController {
     
     override func updateCBView() {
         
-        loadDays()
+        loadItems()
         
     }
     
@@ -136,7 +155,7 @@ extension DayViewController {
         
         save(item: newDay)
         
-        loadDays()
+        loadItems()
         
     }
 }

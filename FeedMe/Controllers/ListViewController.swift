@@ -75,22 +75,14 @@ class ListViewController: UIViewController {
     
     //MARK: - Data Manipulation Methods
     func save(item: AppItem) {
-                    
-        do {
-            try realm.write {
                 
-                switch item {
-                case is Day:
-                    realm.add(item as! Day)
-                case is Meal:
-                    realm.add(item as! Meal)
-                default:
-                    print("item to save is not of type inheriting from AppItem")
-                }
-            }
-        } catch {
-            print("Error saving context \(error)")
-        }
+        fatalError("This method must be overridden")
+    }
+    
+    func loadItems() {
+        
+        fatalError("This method must be overridden")
+        
     }
     
 }

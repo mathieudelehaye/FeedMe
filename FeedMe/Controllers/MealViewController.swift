@@ -11,6 +11,8 @@ import UIKit
 class MealViewController: ListViewController, UITableViewDelegate {
 
     var selectedDay : Day?
+        
+    let fullMealList = [ "Breakfast", "Lunch", "Dinner", "Snack 1", "Snack 2", "Snack 3" ]
     
     @IBOutlet var tableView: UITableView!
     
@@ -32,36 +34,64 @@ class MealViewController: ListViewController, UITableViewDelegate {
         let backBarButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
         
-        loadMeals()  // read meals from realm DB and load table view
+        loadItems()  // read meals from realm DB and load table view
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        title = selectedDay!.name
+        
     }
     
     @IBAction func addMealPressed(_ sender: UIBarButtonItem) {
      
         print("Add meal button pressed")
         
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//
-//        let pvc = storyboard.instantiateViewController(withIdentifier: "PickerViewController") as! PickerViewController
-//
-//        updateRemainingItems(keepingItem: "", fromStartList: [ "Breakfast", "Lunch", "Dinner", "Snack 1", "Snack 2", "Snack 3" ])
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+        let pvc = storyboard.instantiateViewController(withIdentifier: "PickerViewController") as! PickerViewController
+
+        updateRemainingItems(keepingItem: "", fromStartList: fullMealList)
         
-//        presentModal(itemNames: remainingItems, forViewController: pvc)
+        presentModal(itemNames: remainingItems, forViewController: pvc)
         
     }
     
     //MARK: - Data Manipulation Methods
        
-    func loadMeals() {
-
-        let mealArray = realm.objects(Meal.self)
+    override func save(item: AppItem) {
         
-        itemArray = []
-        for meal in mealArray {
-            itemArray.append(meal)
+        do {
+            try realm.write {
+                
+                if let mealToSave = item as? Meal {
+                                        
+                    guard let currentDay = selectedDay else { fatalError("Selected day not available") }
+                    
+                    currentDay.meals.append(mealToSave)
+                    
+                    realm.add(mealToSave)
+                    
+                }
+            }
+        } catch {
+            print("Error saving context \(error)")
+        }
+        
+    }
+    
+    override func loadItems() {
+
+        if let mealArray = selectedDay?.meals {
+            
+            itemArray = []
+            for meal in mealArray {
+                itemArray.append(meal)
+            }
+            
         }
         
         tableView.reloadData()
-        
     }
 }
 
@@ -97,7 +127,7 @@ extension MealViewController {
         
         evc.selectedItem = selectedCellItem
         
-        updateRemainingItems(keepingItem: selectedCellItem.name, fromStartList: [ "Breakfast", "Dinner", "Supper" ])
+        updateRemainingItems(keepingItem: selectedCellItem.name, fromStartList: fullMealList)
         
         presentModal(itemNames: remainingItems, forViewController: evc)
         
@@ -110,18 +140,18 @@ extension MealViewController {
     
     override func updateCBView() {
         
-        loadMeals()
+        loadItems()
     }
     
     override func manageCBView(withObjectName objectName: String) {
         
-        let newDay = Day()
+        let newMeal = Meal()
         
-        newDay.name = objectName
+        newMeal.name = objectName
         
-        save(item: newDay)
+        save(item: newMeal)
         
-        loadMeals()
+        loadItems()
         
     }
 }
