@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import RealmSwift
 
-class MealViewController: ListViewController, UITableViewDelegate {
+class MealViewController: ListViewController {
     
     @IBOutlet var tableView: UITableView!
 
@@ -112,6 +113,31 @@ extension MealViewController {
         return cell
     }
     
+}
+
+//MARK: - TableView Delegate Methods
+extension MealViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        performSegue(withIdentifier: K.MealToAlimentSegueIdentifier, sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        let destinationVC = segue.destination as! AlimentViewController
+        
+        if let indexPath =  tableView.indexPathForSelectedRow {
+            
+            tableView.deselectRow(at: indexPath, animated: true)
+
+            guard let selectedMeal = itemArray[indexPath.row] as? Meal else { fatalError("Error while retrieving selected item") }
+                
+            destinationVC.selectedMeal = selectedMeal
+            
+        }
+    }
+        
 }
 
 //MARK: - ViewController Cell Edition Delegate Methods

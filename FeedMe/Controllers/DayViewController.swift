@@ -108,7 +108,7 @@ extension DayViewController: UITableViewDelegate {
             
             tableView.deselectRow(at: indexPath, animated: true)
 
-            guard let selectedDay = itemArray[indexPath.row] as? Day else { fatalError("Error while retrieving selected day") }
+            guard let selectedDay = itemArray[indexPath.row] as? Day else { fatalError("Error while retrieving selected item") }
                 
             destinationVC.selectedDay = selectedDay
             
