@@ -9,12 +9,12 @@
 import UIKit
 
 class MealViewController: ListViewController, UITableViewDelegate {
+    
+    @IBOutlet var tableView: UITableView!
 
     var selectedDay : Day?
         
     let fullMealList = [ "Breakfast", "Lunch", "Dinner", "Snack 1", "Snack 2", "Snack 3" ]
-    
-    @IBOutlet var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -149,22 +149,7 @@ extension MealViewController {
         
         newMeal.name = objectName
         
-        switch objectName {
-        case "Breakfast":
-            newMeal.order = 1
-        case "Lunch":
-            newMeal.order = 2
-        case "Dinner":
-            newMeal.order = 3
-        case "Snack 1":
-            newMeal.order = 4
-        case "Snack 2":
-            newMeal.order = 5
-        case "Snack 3":
-            newMeal.order = 6
-        default:
-            newMeal.order = 0
-        }
+        newMeal.order = newMeal.getOrder()
         
         save(item: newMeal)
         

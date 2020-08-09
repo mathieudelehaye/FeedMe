@@ -12,4 +12,10 @@ import RealmSwift
 class AppItem: Object {
     @objc dynamic var name: String = ""
     @objc dynamic var order: Int = 0
+        
+    func getOrder() -> Int {
+        
+        fatalError("This method must be overridden")
+        
+    }
 }

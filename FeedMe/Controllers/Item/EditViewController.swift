@@ -98,6 +98,8 @@ extension EditViewController: CallbackViewManagement {
             try self.realm.write {
 
                 self.selectedItem?.setValue(objectName, forKey: "name")
+                
+                self.selectedItem?.setValue(self.selectedItem?.getOrder(), forKey: "order")
 
             }
         } catch {

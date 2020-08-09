@@ -10,10 +10,10 @@ import UIKit
 import RealmSwift 
 
 class DayViewController: ListViewController {
-                
-    let fullDayList = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ]
-    
+                    
     @IBOutlet weak var tableView: UITableView!
+    
+    let fullDayList = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ]
     
     override func viewDidLoad() {
         
@@ -27,7 +27,7 @@ class DayViewController: ListViewController {
         
         loadItems()  // read days from realm DB and load table view
     }
-           
+                   
     @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
                 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -153,26 +153,7 @@ extension DayViewController {
         
         newDay.name = objectName
         
-        switch objectName {
-        case "Monday":
-            newDay.order = 1
-        case "Tuesday":
-            newDay.order = 2
-        case "Wednesday":
-            newDay.order = 3
-        case "Thursday":
-            newDay.order = 4
-        case "Friday":
-            newDay.order = 5
-        case "Saturday":
-            newDay.order = 6
-        case "Sunday":
-            newDay.order = 7
-        case "Everyday":
-            newDay.order = 8
-        default:
-            newDay.order = 0
-        }
+        newDay.order = newDay.getOrder()
         
         save(item: newDay)
         
