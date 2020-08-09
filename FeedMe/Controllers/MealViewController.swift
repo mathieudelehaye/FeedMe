@@ -10,8 +10,6 @@ import UIKit
 import RealmSwift
 
 class MealViewController: ListViewController {
-    
-    @IBOutlet var tableView: UITableView!
 
     var selectedDay : Day?
         
@@ -116,9 +114,9 @@ extension MealViewController {
 }
 
 //MARK: - TableView Delegate Methods
-extension MealViewController: UITableViewDelegate {
+extension MealViewController {
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         performSegue(withIdentifier: K.MealToAlimentSegueIdentifier, sender: self)
     }

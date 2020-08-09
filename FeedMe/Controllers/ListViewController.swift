@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class ListViewController: UIViewController {
+class ListViewController: UITableViewController {
         
     let realm = try! Realm()
     
@@ -89,13 +89,13 @@ class ListViewController: UIViewController {
 
 //MARK: - TableView Data Source Methods
 
-extension ListViewController: UITableViewDataSource {
+extension ListViewController {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         fatalError("This method must be overridden")
         

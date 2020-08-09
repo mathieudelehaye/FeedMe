@@ -10,8 +10,6 @@ import UIKit
 import RealmSwift 
 
 class DayViewController: ListViewController {
-                    
-    @IBOutlet weak var tableView: UITableView!
     
     let fullDayList = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ]
     
@@ -93,9 +91,9 @@ extension DayViewController {
 }
 
 //MARK: - TableView Delegate Methods
-extension DayViewController: UITableViewDelegate {
+extension DayViewController {
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         performSegue(withIdentifier: K.DayToMealSegueIdentifier, sender: self)
     }
