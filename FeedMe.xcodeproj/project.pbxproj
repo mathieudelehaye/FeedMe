@@ -19,6 +19,8 @@
 		914F50E924E03E2500F994AD /* AlimentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914F50E824E03E2500F994AD /* AlimentViewController.swift */; };
 		915F1FE324C706EA005C88C2 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE224C706EA005C88C2 /* EditViewController.swift */; };
 		915F1FE524C70D54005C88C2 /* PartialSizePresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */; };
+		9164BFFD24E1010C00D2D80A /* AlimentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9164BFFB24E1010C00D2D80A /* AlimentCell.xib */; };
+		9164BFFF24E109F500D2D80A /* Aliment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9164BFFE24E109F500D2D80A /* Aliment.swift */; };
 		9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2D24B4398900B3FD1F /* AppDelegate.swift */; };
 		9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */; };
 		9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD3124B4398900B3FD1F /* DayViewController.swift */; };
@@ -45,6 +47,8 @@
 		914F50E824E03E2500F994AD /* AlimentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlimentViewController.swift; sourceTree = "<group>"; };
 		915F1FE224C706EA005C88C2 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSizePresentController.swift; sourceTree = "<group>"; };
+		9164BFFB24E1010C00D2D80A /* AlimentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlimentCell.xib; sourceTree = "<group>"; };
+		9164BFFE24E109F500D2D80A /* Aliment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aliment.swift; sourceTree = "<group>"; };
 		9167BD2A24B4398900B3FD1F /* FeedMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9167BD2D24B4398900B3FD1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -116,6 +120,7 @@
 				91D4599324BC776900469B05 /* CustomCell.swift */,
 				91D4599424BC776900469B05 /* DayCell.xib */,
 				9145505324D828A3006541BF /* MealCell.xib */,
+				9164BFFB24E1010C00D2D80A /* AlimentCell.xib */,
 			);
 			path = NIB;
 			sourceTree = "<group>";
@@ -126,6 +131,7 @@
 				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
 				914D2E1324C59387006C4B61 /* Day.swift */,
 				914D2E1624C593D6006C4B61 /* Meal.swift */,
+				9164BFFE24E109F500D2D80A /* Aliment.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -242,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */,
+				9164BFFD24E1010C00D2D80A /* AlimentCell.xib in Resources */,
 				9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */,
 				9145505524D828A3006541BF /* MealCell.xib in Resources */,
 				91D4599624BC776900469B05 /* DayCell.xib in Resources */,
@@ -300,6 +307,7 @@
 			files = (
 				915F1FE324C706EA005C88C2 /* EditViewController.swift in Sources */,
 				914D2E1424C59387006C4B61 /* Day.swift in Sources */,
+				9164BFFF24E109F500D2D80A /* Aliment.swift in Sources */,
 				9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */,
 				913D69A124D47BCB00CEAC16 /* ItemViewController.swift in Sources */,
 				914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */,

@@ -10,8 +10,10 @@ import Foundation
 import RealmSwift
 
 class Meal: AppItem {
-//    @objc dynamic var dateCreated: Date?
+    
     var parentCategory = LinkingObjects(fromType: Day.self, property: "meals")
+    
+    let aliments = List<Aliment>()
         
     override func getOrder() -> Int {
         

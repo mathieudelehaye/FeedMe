@@ -109,29 +109,17 @@
                             <outlet property="delegate" destination="00a-oA-Bh3" id="aUn-6J-Fx5"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="XXr-dU-iaI"/>
+                    <navigationItem key="navigationItem" id="XXr-dU-iaI">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="8zL-x9-0aP">
+                            <connections>
+                                <action selector="addAlimentPressed:" destination="00a-oA-Bh3" id="oG1-m9-ZJO"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rMF-yp-ecR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4857" y="-365"/>
-        </scene>
-        <!--Table View Controller-->
-        <scene sceneID="NRk-QH-qYZ">
-            <objects>
-                <tableViewController id="siK-ci-PIc" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="mpV-3c-a3b">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <connections>
-                            <outlet property="dataSource" destination="siK-ci-PIc" id="1SD-Oc-saS"/>
-                            <outlet property="delegate" destination="siK-ci-PIc" id="A5K-Yu-fPi"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="oll-pU-8ni" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4886" y="361"/>
         </scene>
         <!--Edit View Controller-->
         <scene sceneID="iR1-hG-0k8">
@@ -345,6 +333,7 @@
                             <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PT4-p1-sIF">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="222"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.20392156859999999" green="0.46274509800000002" blue="0.56078431370000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </pickerView>
                         </subviews>
                         <color key="backgroundColor" red="0.97455686330000002" green="0.85429698229999995" blue="0.67447847130000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>

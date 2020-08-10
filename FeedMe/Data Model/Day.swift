@@ -10,6 +10,7 @@ import Foundation
 import RealmSwift
 
 class Day: AppItem {
+    
     let meals = List<Meal>()
        
     override func getOrder() -> Int {
