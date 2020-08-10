@@ -8,9 +8,11 @@
 
 struct K {
     static let cellIdentifier = "CustomCell"
+    static let alimentsCellIdentifier = "AlimentsCell"
     static let dayCellNibName = "DayCell"
     static let mealCellNibName = "MealCell"
     static let alimentCellNibName = "AlimentCell"
+    static let alimentCategoryCellNibName = "AlimentsCell"
     static let DayToMealSegueIdentifier = "goToDayMeals"
     static let MealToAlimentSegueIdentifier = "goToMealAliments"
 }

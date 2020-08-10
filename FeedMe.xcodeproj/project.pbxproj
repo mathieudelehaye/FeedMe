@@ -21,6 +21,9 @@
 		915F1FE524C70D54005C88C2 /* PartialSizePresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */; };
 		9164BFFD24E1010C00D2D80A /* AlimentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9164BFFB24E1010C00D2D80A /* AlimentCell.xib */; };
 		9164BFFF24E109F500D2D80A /* Aliment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9164BFFE24E109F500D2D80A /* Aliment.swift */; };
+		9164C00824E1D99F00D2D80A /* AlimentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9164C00624E1D99F00D2D80A /* AlimentsCell.swift */; };
+		9164C00924E1D99F00D2D80A /* AlimentsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9164C00724E1D99F00D2D80A /* AlimentsCell.xib */; };
+		9164C00C24E1DF0200D2D80A /* AlimentTypesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9164C00B24E1DF0200D2D80A /* AlimentTypesViewController.swift */; };
 		9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2D24B4398900B3FD1F /* AppDelegate.swift */; };
 		9167BD3024B4398900B3FD1F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */; };
 		9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9167BD3124B4398900B3FD1F /* DayViewController.swift */; };
@@ -49,6 +52,9 @@
 		915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSizePresentController.swift; sourceTree = "<group>"; };
 		9164BFFB24E1010C00D2D80A /* AlimentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlimentCell.xib; sourceTree = "<group>"; };
 		9164BFFE24E109F500D2D80A /* Aliment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aliment.swift; sourceTree = "<group>"; };
+		9164C00624E1D99F00D2D80A /* AlimentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlimentsCell.swift; sourceTree = "<group>"; };
+		9164C00724E1D99F00D2D80A /* AlimentsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlimentsCell.xib; sourceTree = "<group>"; };
+		9164C00B24E1DF0200D2D80A /* AlimentTypesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlimentTypesViewController.swift; sourceTree = "<group>"; };
 		9167BD2A24B4398900B3FD1F /* FeedMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9167BD2D24B4398900B3FD1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9167BD2F24B4398900B3FD1F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -96,11 +102,9 @@
 		9144BCC024BCC64C00B4AC69 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				914C902424D91FFC00BB33AC /* ListViewController.swift */,
-				9167BD3124B4398900B3FD1F /* DayViewController.swift */,
-				914DCF4C24C43A74006BA902 /* MealViewController.swift */,
-				914F50E824E03E2500F994AD /* AlimentViewController.swift */,
+				9164C00A24E1DED700D2D80A /* Home */,
 				913D69A224D47C2700CEAC16 /* Item */,
+				9164C00D24E1DF0700D2D80A /* Aliment Types */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -117,10 +121,8 @@
 		914C902324D91B9000BB33AC /* NIB */ = {
 			isa = PBXGroup;
 			children = (
-				91D4599324BC776900469B05 /* CustomCell.swift */,
-				91D4599424BC776900469B05 /* DayCell.xib */,
-				9145505324D828A3006541BF /* MealCell.xib */,
-				9164BFFB24E1010C00D2D80A /* AlimentCell.xib */,
+				9164C00024E1D60700D2D80A /* Home */,
+				9164C00524E1D63A00D2D80A /* Aliment Types */,
 			);
 			path = NIB;
 			sourceTree = "<group>";
@@ -134,6 +136,45 @@
 				9164BFFE24E109F500D2D80A /* Aliment.swift */,
 			);
 			path = "Data Model";
+			sourceTree = "<group>";
+		};
+		9164C00024E1D60700D2D80A /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				91D4599324BC776900469B05 /* CustomCell.swift */,
+				91D4599424BC776900469B05 /* DayCell.xib */,
+				9145505324D828A3006541BF /* MealCell.xib */,
+				9164BFFB24E1010C00D2D80A /* AlimentCell.xib */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		9164C00524E1D63A00D2D80A /* Aliment Types */ = {
+			isa = PBXGroup;
+			children = (
+				9164C00624E1D99F00D2D80A /* AlimentsCell.swift */,
+				9164C00724E1D99F00D2D80A /* AlimentsCell.xib */,
+			);
+			path = "Aliment Types";
+			sourceTree = "<group>";
+		};
+		9164C00A24E1DED700D2D80A /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				914C902424D91FFC00BB33AC /* ListViewController.swift */,
+				9167BD3124B4398900B3FD1F /* DayViewController.swift */,
+				914DCF4C24C43A74006BA902 /* MealViewController.swift */,
+				914F50E824E03E2500F994AD /* AlimentViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		9164C00D24E1DF0700D2D80A /* Aliment Types */ = {
+			isa = PBXGroup;
+			children = (
+				9164C00B24E1DF0200D2D80A /* AlimentTypesViewController.swift */,
+			);
+			path = "Aliment Types";
 			sourceTree = "<group>";
 		};
 		9167BD2124B4398900B3FD1F = {
@@ -247,6 +288,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9164C00924E1D99F00D2D80A /* AlimentsCell.xib in Resources */,
 				9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */,
 				9164BFFD24E1010C00D2D80A /* AlimentCell.xib in Resources */,
 				9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */,
@@ -313,7 +355,9 @@
 				914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */,
 				913DFD9224D46E2F00DAB556 /* PickerViewController.swift in Sources */,
 				914F50E924E03E2500F994AD /* AlimentViewController.swift in Sources */,
+				9164C00C24E1DF0200D2D80A /* AlimentTypesViewController.swift in Sources */,
 				914C902524D91FFC00BB33AC /* ListViewController.swift in Sources */,
+				9164C00824E1D99F00D2D80A /* AlimentsCell.swift in Sources */,
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
 				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,
