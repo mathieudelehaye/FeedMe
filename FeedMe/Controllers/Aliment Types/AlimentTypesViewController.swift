@@ -10,12 +10,23 @@ import UIKit
 
 class AlimentTypesViewController: UITableViewController {
 
-    let fullAlimentTypeList = [ "Chicken", "Oat", "Eggs", "Almond milk" ]
+    var alimentTypeArray: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.register(UINib(nibName: K.alimentCategoryCellNibName, bundle: nil), forCellReuseIdentifier: K.alimentsCellIdentifier)    // register custom cell to table view
+        
+        loadItems()
+    }
+    
+    func loadItems() {
+        
+        let fullAlimentTypeList = [ "Chicken", "Oat", "Eggs", "Almond milk" ]
+
+        alimentTypeArray = fullAlimentTypeList.sorted()
+                
+        tableView.reloadData()
         
     }
 
@@ -23,7 +34,7 @@ class AlimentTypesViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return fullAlimentTypeList.count
+        return alimentTypeArray.count
                
     }
     
@@ -31,7 +42,7 @@ class AlimentTypesViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.alimentsCellIdentifier, for: indexPath) as! AlimentsCell
         
-        let alimentCategory = fullAlimentTypeList[indexPath.row]
+        let alimentCategory = alimentTypeArray[indexPath.row]
         
         cell.titleLabel.text = alimentCategory
         

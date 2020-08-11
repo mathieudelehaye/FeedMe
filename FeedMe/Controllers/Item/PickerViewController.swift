@@ -78,9 +78,12 @@ extension PickerViewController: UIPickerViewDataSource {
 //MARK: - PickerView Delegate Methods
 extension PickerViewController: UIPickerViewDelegate {
     
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
         
-        return itemNames[row]
+        let attributedString = NSAttributedString(string: itemNames[row], attributes: [NSAttributedString.Key.foregroundColor : UIColor(rgb: 0x007892)])
+        
+        return attributedString
+        
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {

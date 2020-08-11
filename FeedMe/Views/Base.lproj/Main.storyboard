@@ -176,7 +176,7 @@
         <scene sceneID="3mt-KX-09D">
             <objects>
                 <tableViewController id="uk8-qd-jUV" userLabel="AlimentTypes" customClass="AlimentTypesViewController" customModule="FeedMe" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="eAG-Ei-lrL">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="eAG-Ei-lrL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.97455686330000002" green="0.85429698229999995" blue="0.67447847130000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
@@ -188,7 +188,11 @@
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Aliment" image="cart.fill" catalog="system" id="Amy-gx-WL5"/>
-                    <navigationItem key="navigationItem" title="Aliment Categories" id="8P5-T3-44l"/>
+                    <navigationItem key="navigationItem" title="Aliment Categories" id="8P5-T3-44l">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="5vE-nw-EZE">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VKM-QE-fCd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

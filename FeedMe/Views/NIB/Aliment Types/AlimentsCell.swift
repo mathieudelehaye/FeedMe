@@ -19,12 +19,30 @@ class AlimentsCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        let radiusQuotient = CGFloat(2.7)
+        // Round view corners  
+        let radiusQuotient = CGFloat(4.5)
         
         titleView.layer.cornerRadius = titleView.frame.size.height /
         radiusQuotient
         
         iconView.layer.cornerRadius = iconView.frame.size.height / radiusQuotient
+        
+        // Add shadow to views
+        let shadowColour = UIColor(rgb: 0xFC8210).cgColor
+        let shadowOffset = CGSize(width: 1, height: 1)
+        let shadowOpacity = Float(1)
+        let shadowRadius = CGFloat(10)
+               
+        titleView.layer.shadowColor = shadowColour
+        titleView.layer.shadowOffset = shadowOffset
+        titleView.layer.shadowOpacity = shadowOpacity
+        titleView.layer.shadowRadius = shadowRadius
+        
+        iconView.layer.shadowColor = shadowColour
+        iconView.layer.shadowOffset = shadowOffset
+        iconView.layer.shadowOpacity = shadowOpacity
+        iconView.layer.shadowRadius = shadowRadius
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
