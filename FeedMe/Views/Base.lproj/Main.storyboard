@@ -191,6 +191,9 @@
                     <navigationItem key="navigationItem" title="Aliment Categories" id="8P5-T3-44l">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="5vE-nw-EZE">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="addButtonPressed:" destination="uk8-qd-jUV" id="Wk9-ny-EpV"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
@@ -233,7 +236,7 @@
                         <color key="selectedImageTintColor" red="0.20392156859999999" green="0.46274509800000002" blue="0.56078431370000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </tabBar>
                     <connections>
-                        <segue destination="Lt4-oo-HWw" kind="relationship" relationship="viewControllers" id="HmA-mg-XOm"/>
+                        <segue destination="Lt4-oo-HWw" kind="relationship" relationship="viewControllers" id="FvC-op-ygQ"/>
                         <segue destination="Qxj-3J-er9" kind="relationship" relationship="viewControllers" id="ErY-RS-Qh8"/>
                     </connections>
                 </tabBarController>
