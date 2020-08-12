@@ -9,18 +9,16 @@
 import UIKit
 import RealmSwift
 
-class AlimentTypesViewController: UITableViewController {
-    
-    let realm = try! Realm()
-    
-    var alimentTypeArray : Results<AlimentType>?
+class AlimentTypesViewController: ListViewController {
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         tableView.register(UINib(nibName: K.alimentCategoryCellNibName, bundle: nil), forCellReuseIdentifier: K.alimentsCellIdentifier)    // register custom cell to table view
         
         loadItems()
+        
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -49,8 +47,8 @@ class AlimentTypesViewController: UITableViewController {
     }
     
     //MARK: - Data Manipulation Methods
-           
-    func save(item: AlimentType) {
+       
+    override func save(item: AppItem) {
         
         do {
             try realm.write {
@@ -65,33 +63,35 @@ class AlimentTypesViewController: UITableViewController {
         loadItems()
     }
             
-    func loadItems() {
+    override func loadItems() {
         
-        alimentTypeArray = realm.objects(AlimentType.self).sorted(byKeyPath: "name", ascending: true)
-                
+        let alimentTypeArray = realm.objects(AlimentType.self).sorted(byKeyPath: "name", ascending: true)
+        
+        itemArray = []
+        for alimentType in alimentTypeArray {
+            itemArray.append(alimentType)
+        }
+            
         tableView.reloadData()
         
     }
     
-    // MARK: - Table view data source
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return alimentTypeArray?.count ?? 0
-               
-    }
+}
+    
+//MARK: - TableView Data Source Methods
+extension AlimentTypesViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.alimentsCellIdentifier, for: indexPath) as! AlimentsCell
+    
+        let item = itemArray[indexPath.row]
         
-        if let alimentType = alimentTypeArray?[indexPath.row] {
-            
-            cell.titleLabel.text = alimentType.name
-            
-        }
-                
+        cell.titleLabel.text = item.name
+
         return cell
-        
+                
     }
+    
 }
+    

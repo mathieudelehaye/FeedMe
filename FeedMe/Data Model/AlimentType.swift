@@ -9,11 +9,21 @@
 import Foundation
 import RealmSwift
 
-class AlimentType: Object {
-    @objc dynamic var name: String = ""
+class AlimentType: AppItem {
+    
     @objc dynamic var quantity: Int = 0
+    
     @objc dynamic var proteinSpecific: Int = 0
+    
     @objc dynamic var carbsSpecific: Int = 0
+    
     @objc dynamic var fatSpecific: Int = 0
+    
     @objc dynamic var energySpecific: Int = 0
+    
+    override func getOrder() -> Int {
+                
+        return 0
+        
+    }
 }

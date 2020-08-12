@@ -106,9 +106,8 @@
 		9144BCC024BCC64C00B4AC69 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				9164C00A24E1DED700D2D80A /* Home */,
+				9164C00A24E1DED700D2D80A /* Table views */,
 				913D69A224D47C2700CEAC16 /* Item */,
-				9164C00D24E1DF0700D2D80A /* Aliment Types */,
 				9164C00F24E2600100D2D80A /* Extensions.swift */,
 			);
 			path = Controllers;
@@ -135,8 +134,11 @@
 		914D2E1524C5938F006C4B61 /* Data Model */ = {
 			isa = PBXGroup;
 			children = (
-				9164C01124E2AE9300D2D80A /* Home */,
-				9164C01424E2AEDB00D2D80A /* Aliment Types */,
+				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
+				914D2E1324C59387006C4B61 /* Day.swift */,
+				914D2E1624C593D6006C4B61 /* Meal.swift */,
+				9164BFFE24E109F500D2D80A /* Aliment.swift */,
+				9164C01224E2AEA800D2D80A /* AlimentType.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -161,42 +163,16 @@
 			path = "Aliment Types";
 			sourceTree = "<group>";
 		};
-		9164C00A24E1DED700D2D80A /* Home */ = {
+		9164C00A24E1DED700D2D80A /* Table views */ = {
 			isa = PBXGroup;
 			children = (
 				914C902424D91FFC00BB33AC /* ListViewController.swift */,
 				9167BD3124B4398900B3FD1F /* DayViewController.swift */,
 				914DCF4C24C43A74006BA902 /* MealViewController.swift */,
 				914F50E824E03E2500F994AD /* AlimentViewController.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		9164C00D24E1DF0700D2D80A /* Aliment Types */ = {
-			isa = PBXGroup;
-			children = (
 				9164C00B24E1DF0200D2D80A /* AlimentTypesViewController.swift */,
 			);
-			path = "Aliment Types";
-			sourceTree = "<group>";
-		};
-		9164C01124E2AE9300D2D80A /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
-				914D2E1324C59387006C4B61 /* Day.swift */,
-				914D2E1624C593D6006C4B61 /* Meal.swift */,
-				9164BFFE24E109F500D2D80A /* Aliment.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		9164C01424E2AEDB00D2D80A /* Aliment Types */ = {
-			isa = PBXGroup;
-			children = (
-				9164C01224E2AEA800D2D80A /* AlimentType.swift */,
-			);
-			path = "Aliment Types";
+			path = "Table views";
 			sourceTree = "<group>";
 		};
 		9167BD2124B4398900B3FD1F = {
