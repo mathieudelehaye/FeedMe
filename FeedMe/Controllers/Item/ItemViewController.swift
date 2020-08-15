@@ -9,17 +9,17 @@
 import UIKit
 import RealmSwift
 
-protocol CallbackViewManagement {
+protocol CallingViewManagement {
     
-    func manageCBView(withObjectName objectName: String)
+    func manageViewObject(withName objectName: String)
     
-    func updateCBView()
+    func updateView()
     
 }
 
-extension CallbackViewManagement {
+extension CallingViewManagement {
     
-    func updateCBView() {
+    func updateView() {
         
         // provide default implementation for protocol method 
     
@@ -29,19 +29,40 @@ extension CallbackViewManagement {
 
 class ItemViewController: UIViewController {
     
-    var selectedItem : AppItem?
+    var selectedItem : AppItem? // selected item associated with view
     
-    var itemNames: [String] = []
+    var itemNames: [String] = []    // values to replace selected item name
     
-    var callbackViewDelegate: CallbackViewManagement?
+    var modalRatio: Float = 0   // ratio of the modal where view is displayed
     
-    var isCancelled: Bool = false   // true if view controller has been cancelled 
+    var callingView: CallingViewManagement?   // calling view
+    
+    var isCancelled: Bool = false   // true if view has been cancelled
 
     let realm = try! Realm()
 
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-
+        
     }
+}
 
+//MARK: - ViewController Transitioning Delegate Methods
+extension EditViewController: UIViewControllerTransitioningDelegate {
+        
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        
+        if presented is ItemViewController == false {
+            fatalError("View Controller type is not derived from ItemViewController.")
+        }
+        
+        let vc = presented as! ItemViewController
+        
+        let modalRatio = vc.modalRatio
+        
+        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: modalRatio)
+        
+    }
+    
 }

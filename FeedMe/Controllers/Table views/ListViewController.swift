@@ -16,8 +16,6 @@ class ListViewController: UITableViewController {
     var itemArray : [AppItem] = []  // already created items
     
     var remainingItems: [String] = []    //  item name list for picker view
-    
-    var modalRatio: Float?  // ratio to display modal views from list view
             
     // update item list for picker view by removing already created items without the selected one
     func updateRemainingItems(keepingItem itemName: String = "", fromStartList startList: [String] = []) {
@@ -51,12 +49,16 @@ class ListViewController: UITableViewController {
         }
         
         let vc = presentedViewController as! ItemViewController
+                
+        var modalRatio: Float = 0   // ratio to present view as a modal  
         
         switch T.self {
-        case is EditViewController.Type:
-            modalRatio = Float(0.65)   // change modal ratio for edit view
+        case is EditViewController.Type: 
+            modalRatio = Float(0.65)    // change modal ratio for edit view
         case is PickerViewController.Type:
-           modalRatio = Float(0.36)   // change modal ratio for picker view
+            modalRatio = Float(0.36)    // change modal ratio for picker view
+        case is EditTypeViewController.Type:
+            modalRatio = Float(0.36)     // change modal ratio for edit type view
         default:
             fatalError("View Controller is of an unknown type derived from ItemViewController.")
         }
@@ -66,8 +68,10 @@ class ListViewController: UITableViewController {
         vc.transitioningDelegate = self
                 
         vc.itemNames = itemNames
+        
+        vc.modalRatio = modalRatio
          
-        vc.callbackViewDelegate = self
+        vc.callingView = self
 
         self.present(vc, animated: true)
                 
@@ -107,8 +111,16 @@ extension ListViewController {
 extension ListViewController: UIViewControllerTransitioningDelegate {
         
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-                
-        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: modalRatio ?? 0.5)
+               
+        if presented is ItemViewController == false {
+            fatalError("View Controller type is not derived from ItemViewController.")
+        }
+        
+        let vc = presented as! ItemViewController
+        
+        let modalRatio = vc.modalRatio
+        
+        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: modalRatio)
         
     }
     
@@ -126,15 +138,15 @@ extension ListViewController: CellEdition {
 }
 
 //MARK: - ViewController Cell Edition Delegate Methods
-extension ListViewController: CallbackViewManagement {
+extension ListViewController: CallingViewManagement {
     
-    @objc func updateCBView() {
+    @objc func updateView() {
         
         fatalError("This method must be overridden.")
         
     }
     
-    @objc func manageCBView(withObjectName objectName: String) {
+    @objc func manageViewObject(withName objectName: String) {
         
         fatalError("This method must be overridden.")
         

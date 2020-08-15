@@ -135,13 +135,13 @@ extension DayViewController {
 //MARK: - ViewController Cell Edition Delegate Methods
 extension DayViewController {
     
-    override func updateCBView() {
+    override func updateView() {
         
         loadItems()
         
     }
     
-    override func manageCBView(withObjectName objectName: String) {
+    override func manageViewObject(withName objectName: String) {
         
         let newDay = Day()
         

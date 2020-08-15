@@ -17,8 +17,7 @@ class AlimentTypesViewController: ListViewController {
         
         tableView.register(UINib(nibName: K.alimentCategoryCellNibName, bundle: nil), forCellReuseIdentifier: K.alimentsCellIdentifier)    // register custom cell to table view
         
-        loadItems()
-        
+        loadItems()        
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -95,3 +94,21 @@ extension AlimentTypesViewController {
     
 }
     
+//MARK: - TableView Delegate Methods
+extension AlimentTypesViewController {
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+                
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+        let etvc = storyboard.instantiateViewController(withIdentifier: "EditTypeViewController") as! EditTypeViewController
+
+        let selectedItem = itemArray[indexPath.row]
+
+        etvc.selectedItem = selectedItem
+
+        presentModal(itemNames: remainingItems, forViewController: etvc)
+        
+    }
+        
+}

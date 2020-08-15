@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import IQKeyboardManagerSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,10 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         print(Realm.Configuration.defaultConfiguration.fileURL)
+                
+        IQKeyboardManager.shared.enable = true                      // enable component 
+        IQKeyboardManager.shared.enableAutoToolbar = false          // keyboard auto tool bar disabled
+        IQKeyboardManager.shared.shouldResignOnTouchOutside = true  // keyboard hidden when touched outside text field
+//        IQKeyboardManager.shared.keyboardDistanceFromTextField = 146 // distance between keyboard and text field
         
         return true
     }
 
+    
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {

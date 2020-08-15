@@ -11,8 +11,6 @@ import RealmSwift
 
 class EditViewController: ItemViewController {
     
-    var modalRatio = Float(0.5)
-
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -39,10 +37,10 @@ class EditViewController: ItemViewController {
         
         pvc.selectedItem = selectedItem
 
-        pvc.callbackViewDelegate = self
-       
-        modalRatio = Float(0.36)   // change modal ratio for picker view
-
+        pvc.callingView = self
+                
+        pvc.modalRatio = Float(0.36)    // ratio to present view as a modal
+        
         self.present(pvc, animated: true)
         
     }
@@ -59,7 +57,7 @@ class EditViewController: ItemViewController {
             print("error while deleting item, \(error)")
         }
 
-        callbackViewDelegate!.updateCBView()
+        callingView!.updateView()
 
         dismiss(animated: true, completion: nil)
         
@@ -77,21 +75,10 @@ class EditViewController: ItemViewController {
     
 }
 
-//MARK: - ViewController Transitioning Delegate Methods
-extension EditViewController: UIViewControllerTransitioningDelegate {
-        
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-                
-        return PartialSizePresentController(presentedViewController: presented, presenting: presenting, withRatio: modalRatio)
-        
-    }
-    
-}
-
 //MARK: - ViewController Cell Edition Delegate Methods
-extension EditViewController: CallbackViewManagement {
+extension EditViewController: CallingViewManagement {
            
-    func manageCBView(withObjectName objectName: String) {
+    func manageViewObject(withName objectName: String) {
         
         // Rename selected object
         do {
@@ -106,7 +93,7 @@ extension EditViewController: CallbackViewManagement {
             print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
         }
         
-        callbackViewDelegate!.updateCBView()    // reload presenting view with item new name 
+        callingView!.updateView()    // reload presenting view with item new name 
         
         dismiss(animated: true, completion: nil)
     }

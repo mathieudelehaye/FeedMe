@@ -92,7 +92,7 @@ extension PickerViewController: UIPickerViewDelegate {
         
         print("\(itemName) selected")
         
-        callbackViewDelegate!.manageCBView(withObjectName: itemName)
+        callingView!.manageViewObject(withName: itemName)
         
         dismiss(animated: true, completion: nil)
         
