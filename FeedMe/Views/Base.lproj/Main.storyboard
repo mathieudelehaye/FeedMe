@@ -7,10 +7,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Item-->
+        <!--Item Navigation-->
         <scene sceneID="V4c-ly-rDo">
             <objects>
-                <navigationController id="Lt4-oo-HWw" sceneMemberID="viewController">
+                <navigationController id="Lt4-oo-HWw" userLabel="Item Navigation" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="utZ-Fu-GBb"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="fLj-qy-4Z8">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -229,10 +229,10 @@
             </objects>
             <point key="canvasLocation" x="1974" y="1028"/>
         </scene>
-        <!--Aliment-->
+        <!--Aliment Navigation-->
         <scene sceneID="jne-2d-qhw">
             <objects>
-                <navigationController id="Qxj-3J-er9" sceneMemberID="viewController">
+                <navigationController id="Qxj-3J-er9" userLabel="Aliment Navigation" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Aliment" image="cart.fill" catalog="system" id="yfp-x2-On9"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="Zbb-Kw-R1V">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
