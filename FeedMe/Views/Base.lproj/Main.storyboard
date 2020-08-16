@@ -263,8 +263,8 @@
                         <color key="selectedImageTintColor" red="0.20392156859999999" green="0.46274509800000002" blue="0.56078431370000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </tabBar>
                     <connections>
-                        <segue destination="Qxj-3J-er9" kind="relationship" relationship="viewControllers" id="ErY-RS-Qh8"/>
                         <segue destination="Lt4-oo-HWw" kind="relationship" relationship="viewControllers" id="FvC-op-ygQ"/>
+                        <segue destination="Qxj-3J-er9" kind="relationship" relationship="viewControllers" id="5Kn-Bc-VVC"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pCm-Yf-9qO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
