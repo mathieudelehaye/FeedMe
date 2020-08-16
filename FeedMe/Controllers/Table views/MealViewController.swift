@@ -155,7 +155,7 @@ extension MealViewController {
     
 }
 
-//MARK: - ViewController Cell Edition Delegate Methods
+//MARK: - ViewController Calling View Management Delegate Methods
 extension MealViewController {
     
     override func updateView() {

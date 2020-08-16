@@ -50,7 +50,24 @@ extension EditTypeViewController: UITextFieldDelegate {
             
             print("entered value: \(enteredText)")
             
-            textField.resignFirstResponder()
+            // Rename selected aliment type
+            do {
+                try self.realm.write {
+
+                    self.selectedItem?.setValue(enteredText, forKey: "name")
+                    
+                    self.selectedItem?.setValue(self.selectedItem?.getOrder(), forKey: "order")
+
+                }
+            } catch {
+                print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
+            }
+            
+            callingView!.updateView()
+            
+            textField.resignFirstResponder()    // hide keyboard
+            
+            dismiss(animated: true, completion: nil)    // dismiss view
             
         }
         

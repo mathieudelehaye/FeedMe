@@ -112,3 +112,18 @@ extension AlimentTypesViewController {
     }
         
 }
+
+//MARK: - ViewController Calling View Management Delegate Methods
+extension AlimentTypesViewController {
+    
+    override func updateView() {
+
+        loadItems()
+    }
+    
+    override func manageViewObject(withName objectName: String) {
+        
+        // function not used 
+        
+    }
+}

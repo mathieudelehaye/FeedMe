@@ -132,7 +132,7 @@ extension DayViewController {
     
 }
 
-//MARK: - ViewController Cell Edition Delegate Methods
+//MARK: - ViewController Calling View Management Delegate Methods
 extension DayViewController {
     
     override func updateView() {

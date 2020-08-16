@@ -137,7 +137,7 @@ extension ListViewController: CellEdition {
     
 }
 
-//MARK: - ViewController Cell Edition Delegate Methods
+//MARK: - ViewController Calling View Management Delegate Methods
 extension ListViewController: CallingViewManagement {
     
     @objc func updateView() {
