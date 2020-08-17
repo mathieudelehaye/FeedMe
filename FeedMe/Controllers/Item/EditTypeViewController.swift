@@ -12,6 +12,10 @@ import IQKeyboardManagerSwift
 
 class EditTypeViewController: ItemViewController {
 
+    @IBOutlet weak var cancelButton: UIButton!
+    
+    @IBOutlet weak var confirmButton: UIButton!
+    
     @IBOutlet var textField: UITextField!
     
     override func viewDidLoad() {
@@ -23,8 +27,23 @@ class EditTypeViewController: ItemViewController {
         textField.text = selectedItem?.name
         
         textField.delegate = self
+        
+        confirmButton.layer.cornerRadius = confirmButton.frame.size.height / 5.5
+        
+        cancelButton.layer.cornerRadius = confirmButton.frame.size.height / 5.5
     }
         
+    @IBAction func confirmButtonPressed(_ sender: UIButton) {
+        
+        print("confirm button pressed")
+        
+    }
+    
+    @IBAction func cancelButtonPressed(_ sender: Any) {
+        
+        print("cancel button pressed")
+        
+    }
 }
 
 //MARK: - TextField Delegate Methods
@@ -35,8 +54,10 @@ extension EditTypeViewController: UITextFieldDelegate {
         print("start editing")
         
         let viewHeight = view.bounds.height // view height with modal ratio
+        
+        let buttonAndScreenBottomDistance = viewHeight - confirmButton.frame.minY - confirmButton.frame.size.height // distance between button and screen bottoms
                 
-        let keyboardDistance = viewHeight - textField.frame.height - textField.frame.minY
+        let keyboardDistance = viewHeight - textField.frame.height - textField.frame.minY - confirmButton.frame.size.height - 2 * buttonAndScreenBottomDistance + 10 // remove text field and button heights
         
         IQKeyboardManager.shared.keyboardDistanceFromTextField = keyboardDistance // change distance between keyboard and text field
         
