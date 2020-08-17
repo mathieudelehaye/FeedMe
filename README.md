@@ -18,4 +18,5 @@ My fitness diet tracker app (Diet_Tracker_PHP) fully rewritten in Swift 5 for Xc
 
 <p float="left">
   <img src="app_screenshot_07.png" height ="628" width="350" hspace="10" />
+  <img src="app_screenshot_08.png" height ="628" width="350" hspace="10" />
 </p>
