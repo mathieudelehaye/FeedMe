@@ -12,11 +12,21 @@ import IQKeyboardManagerSwift
 
 class EditTypeViewController: ItemViewController {
 
+    @IBOutlet weak var proValue: UILabel!
+        
+    @IBOutlet weak var carValue: UILabel!
+        
+    @IBOutlet weak var fatValue: UILabel!
+        
+    @IBOutlet weak var calValue: UILabel!
+    
     @IBOutlet weak var cancelButton: UIButton!
     
     @IBOutlet weak var confirmButton: UIButton!
     
     @IBOutlet var textField: UITextField!
+    
+    var newTypeName: String?
     
     override func viewDidLoad() {
         
@@ -31,17 +41,64 @@ class EditTypeViewController: ItemViewController {
         confirmButton.layer.cornerRadius = confirmButton.frame.size.height / 5.5
         
         cancelButton.layer.cornerRadius = confirmButton.frame.size.height / 5.5
+        
+        newTypeName = ""    // reset new type name when view loaded
     }
         
     @IBAction func confirmButtonPressed(_ sender: UIButton) {
+                
+        // If new type name not empty, rename the selected item
+        if newTypeName! != "" {
+            // new type name can be forced unwrapping, as it has been intialized to ""
+         
+            do {
+                try self.realm.write {
+
+                    self.selectedItem?.setValue(newTypeName, forKey: "name")
+                    
+                    self.selectedItem?.setValue(self.selectedItem?.getOrder(), forKey: "order")
+
+                }
+            } catch {
+                print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
+            }
+            
+            callingView!.updateView()
+            
+        }
         
-        print("confirm button pressed")
+        dismiss(animated: true, completion: nil)    // dismiss view
+    }
+    
+    @IBAction func proSliderChanged(_ sender: UISlider) {
+                                
+        proValue.text = "Pro. g: " + String(Float(floor(10*sender.value)/10))
+        
+    }
+    
+    @IBAction func carSliderChanged(_ sender: UISlider) {
+        
+        carValue.text = "Car. g: " + String(Float(floor(10*sender.value)/10))
+        
+    }
+            
+    @IBAction func fatSliderChanged(_ sender: UISlider) {
+    
+        fatValue.text = "Fat g: " + String(Float(floor(10*sender.value)/10))
+        
+    }
+        
+    @IBAction func calSliderChanged(_ sender: UISlider) {
+    
+        calValue.text = "KCa.: " + String(Int(sender.value))
         
     }
     
     @IBAction func cancelButtonPressed(_ sender: Any) {
         
         print("cancel button pressed")
+        
+        dismiss(animated: true, completion: nil)    // dismiss view
         
     }
 }
@@ -71,25 +128,11 @@ extension EditTypeViewController: UITextFieldDelegate {
             
             print("entered value: \(enteredText)")
             
-            // Rename selected aliment type
-            do {
-                try self.realm.write {
-
-                    self.selectedItem?.setValue(enteredText, forKey: "name")
-                    
-                    self.selectedItem?.setValue(self.selectedItem?.getOrder(), forKey: "order")
-
-                }
-            } catch {
-                print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
-            }
-            
-            callingView!.updateView()
+            // Register new type name
+            newTypeName = enteredText
             
             textField.resignFirstResponder()    // hide keyboard
-            
-            dismiss(animated: true, completion: nil)    // dismiss view
-            
+                        
         }
         
         return false

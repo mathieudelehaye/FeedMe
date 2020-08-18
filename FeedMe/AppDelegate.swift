@@ -22,7 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared.enable = true                      // enable component 
         IQKeyboardManager.shared.enableAutoToolbar = false          // keyboard auto tool bar disabled
         IQKeyboardManager.shared.shouldResignOnTouchOutside = true  // keyboard hidden when touched outside text field
-//        IQKeyboardManager.shared.keyboardDistanceFromTextField = 146 // distance between keyboard and text field
         
         return true
     }
