@@ -12,12 +12,16 @@ import IQKeyboardManagerSwift
 
 class EditTypeViewController: ItemViewController {
 
+    @IBOutlet weak var proSlider: UISlider!
     @IBOutlet weak var proValue: UILabel!
-        
+    
+    @IBOutlet weak var carSlider: UISlider!
     @IBOutlet weak var carValue: UILabel!
-        
+    
+    @IBOutlet weak var fatSlider: UISlider!
     @IBOutlet weak var fatValue: UILabel!
-        
+       
+    @IBOutlet weak var calSlider: UISlider!
     @IBOutlet weak var calValue: UILabel!
     
     @IBOutlet weak var cancelButton: UIButton!
@@ -26,7 +30,17 @@ class EditTypeViewController: ItemViewController {
     
     @IBOutlet var textField: UITextField!
     
+    // new aliment type name for renaming 
     var newTypeName: String?
+    
+    // variables to store aliment type macros
+    var proMacro = Macro(type: .protein)
+    
+    var carMacro = Macro(type: .carbohydrate)
+    
+    var fatMacro = Macro(type: .fat)
+    
+    var calMacro = Macro(type: .energy)
     
     override func viewDidLoad() {
         
@@ -34,63 +48,82 @@ class EditTypeViewController: ItemViewController {
         
         print("view loaded with EditTypeViewController for item \(selectedItem!.name)")
         
+        // set up text field
         textField.text = selectedItem?.name
         
         textField.delegate = self
         
+        // round button corners
         confirmButton.layer.cornerRadius = confirmButton.frame.size.height / 5.5
         
         cancelButton.layer.cornerRadius = confirmButton.frame.size.height / 5.5
         
-        newTypeName = ""    // reset new type name when view loaded
-    }
+        // reset new type name
+        newTypeName = ""
         
-    @IBAction func confirmButtonPressed(_ sender: UIButton) {
-                
-        // If new type name not empty, rename the selected item
-        if newTypeName! != "" {
-            // new type name can be forced unwrapping, as it has been intialized to ""
-         
-            do {
-                try self.realm.write {
-
-                    self.selectedItem?.setValue(newTypeName, forKey: "name")
-                    
-                    self.selectedItem?.setValue(self.selectedItem?.getOrder(), forKey: "order")
-
-                }
-            } catch {
-                print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
-            }
-            
-            callingView!.updateView()
-            
-        }
+        // set macro variables, sliders and labels according to selected item
+        guard let item = selectedItem as? AlimentType else { fatalError("Selected item not of type AlimentType.") }
         
-        dismiss(animated: true, completion: nil)    // dismiss view
+        proMacro.value = item.proSpecific
+        proSlider.value = proMacro.value
+        updateLabel(forMacro: .protein)
+        
+        carMacro.value = item.carSpecific
+        carSlider.value = carMacro.value
+        updateLabel(forMacro: .carbohydrate)
+        
+        fatMacro.value = item.fatSpecific
+        fatSlider.value = fatMacro.value
+        updateLabel(forMacro: .fat)
+        
+        calMacro.value = item.calSpecific
+        calSlider.value = calMacro.value
+        updateLabel(forMacro: .energy)
+        
     }
     
+    func updateLabel(forMacro macro: MacroType) {
+        
+        switch macro {
+        case .protein:
+            proValue.text = "Pro. g: " + String(proMacro.value)
+        case .carbohydrate:
+            carValue.text = "Car. g: " + String(carMacro.value)
+        case .fat:
+            fatValue.text = "Fat g: " + String(fatMacro.value)
+        case .energy:
+            calValue.text = "KCa.: " + String(calMacro.getValueInt())
+        default:
+            print("default not handled")
+        }
+        
+    }
+        
     @IBAction func proSliderChanged(_ sender: UISlider) {
-                                
-        proValue.text = "Pro. g: " + String(Float(floor(10*sender.value)/10))
+              
+        proMacro.value = sender.value
+        updateLabel(forMacro: .protein)
         
     }
     
     @IBAction func carSliderChanged(_ sender: UISlider) {
         
-        carValue.text = "Car. g: " + String(Float(floor(10*sender.value)/10))
+        carMacro.value = sender.value
+        updateLabel(forMacro: .carbohydrate)
         
     }
             
     @IBAction func fatSliderChanged(_ sender: UISlider) {
     
-        fatValue.text = "Fat g: " + String(Float(floor(10*sender.value)/10))
+        fatMacro.value = sender.value
+        updateLabel(forMacro: .fat)
         
     }
         
     @IBAction func calSliderChanged(_ sender: UISlider) {
     
-        calValue.text = "KCa.: " + String(Int(sender.value))
+        calMacro.value = sender.value
+        updateLabel(forMacro: .energy)
         
     }
     
@@ -100,6 +133,37 @@ class EditTypeViewController: ItemViewController {
         
         dismiss(animated: true, completion: nil)    // dismiss view
         
+    }
+    
+    @IBAction func confirmButtonPressed(_ sender: UIButton) {
+        
+        do {
+            try self.realm.write {
+                
+                guard let item = selectedItem as? AlimentType else { fatalError("Selected item not of type AlimentType.") }
+                
+                // If new type name not empty, rename the selected item
+                if newTypeName! != "" {
+                    // new type name can be forced unwrapping, as it has been intialized to ""
+                    item.setValue(newTypeName, forKey: "name")
+                }
+                
+                item.setValue(proMacro.value, forKey: "proSpecific")
+                
+                item.setValue(carMacro.value, forKey: "carSpecific")
+                
+                item.setValue(fatMacro.value, forKey: "fatSpecific")
+                
+                item.setValue(calMacro.value, forKey: "calSpecific")
+                
+            }
+        } catch {
+            print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
+        }
+        
+        callingView!.updateView()
+        
+        dismiss(animated: true, completion: nil)    // dismiss view
     }
 }
 

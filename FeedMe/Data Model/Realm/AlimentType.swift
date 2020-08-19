@@ -13,14 +13,14 @@ class AlimentType: AppItem {
     
     @objc dynamic var quantity: Int = 0
     
-    @objc dynamic var proteinSpecific: Int = 0
+    @objc dynamic var proSpecific: Float = 0
     
-    @objc dynamic var carbsSpecific: Int = 0
+    @objc dynamic var carSpecific: Float = 0
     
-    @objc dynamic var fatSpecific: Int = 0
+    @objc dynamic var fatSpecific: Float = 0
     
-    @objc dynamic var energySpecific: Int = 0
-    
+    @objc dynamic var calSpecific: Float = 0
+        
     override func getOrder() -> Int {
                 
         return 0

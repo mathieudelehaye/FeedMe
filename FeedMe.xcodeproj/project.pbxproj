@@ -36,6 +36,7 @@
 		9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3824B4398B00B3FD1F /* LaunchScreen.storyboard */; };
 		91D4599524BC776900469B05 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4599324BC776900469B05 /* CustomCell.swift */; };
 		91D4599624BC776900469B05 /* DayCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D4599424BC776900469B05 /* DayCell.xib */; };
+		91F9BC9024ECE9F400E43F45 /* Macro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F9BC8F24ECE9F400E43F45 /* Macro.swift */; };
 		B2180350FFAC47EE981F12D3 /* Pods_FeedMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,7 @@
 		9167BD3B24B4398B00B3FD1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91D4599324BC776900469B05 /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		91D4599424BC776900469B05 /* DayCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DayCell.xib; sourceTree = "<group>"; };
+		91F9BC8F24ECE9F400E43F45 /* Macro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Macro.swift; sourceTree = "<group>"; };
 		D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.debug.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -139,11 +141,8 @@
 		914D2E1524C5938F006C4B61 /* Data Model */ = {
 			isa = PBXGroup;
 			children = (
-				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
-				914D2E1324C59387006C4B61 /* Day.swift */,
-				914D2E1624C593D6006C4B61 /* Meal.swift */,
-				9164BFFE24E109F500D2D80A /* Aliment.swift */,
-				9164C01224E2AEA800D2D80A /* AlimentType.swift */,
+				91F9BC8E24ECE9DD00E43F45 /* Realm */,
+				91F9BC8F24ECE9F400E43F45 /* Macro.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -220,6 +219,18 @@
 				914C902324D91B9000BB33AC /* NIB */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		91F9BC8E24ECE9DD00E43F45 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				914C9FD524CA0D7E0088D162 /* AppItem.swift */,
+				914D2E1324C59387006C4B61 /* Day.swift */,
+				914D2E1624C593D6006C4B61 /* Meal.swift */,
+				9164BFFE24E109F500D2D80A /* Aliment.swift */,
+				9164C01224E2AEA800D2D80A /* AlimentType.swift */,
+			);
+			path = Realm;
 			sourceTree = "<group>";
 		};
 		E137EA3944176BDA30A7BCA0 /* Pods */ = {
@@ -370,6 +381,7 @@
 				9164C00824E1D99F00D2D80A /* AlimentsCell.swift in Sources */,
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
+				91F9BC9024ECE9F400E43F45 /* Macro.swift in Sources */,
 				914D2E1724C593D6006C4B61 /* Meal.swift in Sources */,
 				91D4599524BC776900469B05 /* CustomCell.swift in Sources */,
 				9164C01324E2AEA800D2D80A /* AlimentType.swift in Sources */,

@@ -212,7 +212,7 @@
                                 </connections>
                             </button>
                             <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="31" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="WHl-iZ-bNA">
-                                <rect key="frame" x="14" y="85" width="246" height="30"/>
+                                <rect key="frame" x="14" y="115" width="246" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="minimumTrackTintColor" red="0.92306619879999996" green="0.32529532909999997" blue="0.49804323909999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <connections>
@@ -220,7 +220,7 @@
                                 </connections>
                             </slider>
                             <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="8PQ-Ht-SAk">
-                                <rect key="frame" x="14" y="160" width="246" height="30"/>
+                                <rect key="frame" x="14" y="175" width="246" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="minimumTrackTintColor" red="0.92306619879999996" green="0.32529532909999997" blue="0.49804323909999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <connections>
@@ -228,7 +228,7 @@
                                 </connections>
                             </slider>
                             <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="3.6000000000000001" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="xB0-nD-e70">
-                                <rect key="frame" x="14" y="233" width="246" height="30"/>
+                                <rect key="frame" x="14" y="235" width="246" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="minimumTrackTintColor" red="0.92306619879999996" green="0.32529532909999997" blue="0.49804323909999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <connections>
@@ -236,7 +236,7 @@
                                 </connections>
                             </slider>
                             <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="165" minValue="0.0" maxValue="900" translatesAutoresizingMaskIntoConstraints="NO" id="ATj-1U-jdH">
-                                <rect key="frame" x="14" y="308" width="246" height="30"/>
+                                <rect key="frame" x="14" y="295" width="246" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="minimumTrackTintColor" red="0.92306619879999996" green="0.32529532909999997" blue="0.49804323909999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <connections>
@@ -244,28 +244,35 @@
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Pro. g: 31" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zzx-ng-0Bp">
-                                <rect key="frame" x="270" y="88" width="96" height="22"/>
+                                <rect key="frame" x="270" y="115" width="96" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="For 100 g:" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oj5-6p-8Jm">
+                                <rect key="frame" x="271" y="77" width="96" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Car. g: 0" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bMp-0Z-tiW">
-                                <rect key="frame" x="267" y="164" width="102" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="KCa.: 165" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I2D-XM-s6D">
-                                <rect key="frame" x="278" y="312" width="79" height="21"/>
+                                <rect key="frame" x="267" y="175" width="102" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Fat g: 3.6" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FB4-Nf-VaT">
-                                <rect key="frame" x="273" y="237" width="91" height="21"/>
+                                <rect key="frame" x="273" y="235" width="91" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="KCa.: 165" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I2D-XM-s6D">
+                                <rect key="frame" x="266" y="299" width="103" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -276,11 +283,15 @@
                         <viewLayoutGuide key="safeArea" id="gIv-rh-8OX"/>
                     </view>
                     <connections>
+                        <outlet property="calSlider" destination="ATj-1U-jdH" id="YHv-Al-KZk"/>
                         <outlet property="calValue" destination="I2D-XM-s6D" id="mvh-sr-q2I"/>
                         <outlet property="cancelButton" destination="Wow-Dw-4Md" id="zEE-1d-sxx"/>
+                        <outlet property="carSlider" destination="8PQ-Ht-SAk" id="u5q-dl-Coc"/>
                         <outlet property="carValue" destination="bMp-0Z-tiW" id="Gif-8P-haO"/>
                         <outlet property="confirmButton" destination="gmF-Bj-icJ" id="5Qx-A5-Sy1"/>
+                        <outlet property="fatSlider" destination="xB0-nD-e70" id="Fgi-ss-pMe"/>
                         <outlet property="fatValue" destination="FB4-Nf-VaT" id="bpV-t3-mTu"/>
+                        <outlet property="proSlider" destination="WHl-iZ-bNA" id="fo5-Mx-XXX"/>
                         <outlet property="proValue" destination="Zzx-ng-0Bp" id="cCQ-ZN-VNd"/>
                         <outlet property="textField" destination="MMe-0q-dnG" id="s5a-JT-bU5"/>
                     </connections>
