@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ProfileViewController: UIViewController {
 
@@ -14,18 +15,34 @@ class ProfileViewController: UIViewController {
         
     @IBOutlet weak var weightLabel: UILabel!
 
-    var userWeight: Float = 0
+    let realm = try! Realm()
+    
+    var userWeight: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         
+        // load user weight, update slider and label with it
+        let users = realm.objects(User.self)
+        
+        userWeight = users[0].weight
+        
+        weightSlider.value = Float(userWeight)
+        
+        updateLabel()
+    }
+    
+    func updateLabel() {
+        
+        weightLabel.text = "Kg: " + String(userWeight)
         
     }
 
     @IBAction func weightChanged(_ sender: UISlider) {
-     
-        weightLabel.text = "Kg: " + String(Int(floor(userWeight)))
+             
+        userWeight = Int(floor(sender.value))
+        
+        updateLabel()
         
     }
 

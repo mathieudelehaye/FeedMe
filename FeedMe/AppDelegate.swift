@@ -18,8 +18,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         print(Realm.Configuration.defaultConfiguration.fileURL)
+        
+        // create user data if it does not exist
+        let realm = try! Realm()
+        
+        let users = realm.objects(User.self)
                 
-        IQKeyboardManager.shared.enable = true                      // enable component 
+        if users.count == 0 {
+            
+            let newUser = User()
+            
+            newUser.weight = 65
+            
+            do {
+                try realm.write {
+                    
+                    realm.add(newUser)
+                    
+                    print("new user created")
+                }
+            } catch {
+                print("Error saving context \(error)")
+            }
+        }
+        
+        // activate IQKeyboardManager
+        IQKeyboardManager.shared.enable = true                      // enable component
         IQKeyboardManager.shared.enableAutoToolbar = false          // keyboard auto tool bar disabled
         IQKeyboardManager.shared.shouldResignOnTouchOutside = true  // keyboard hidden when touched outside text field
         
