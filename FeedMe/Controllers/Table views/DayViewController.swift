@@ -20,6 +20,7 @@ class DayViewController: ListViewController {
         tableView.register(UINib(nibName: K.dayCellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)    // register custom cell to table view 
         
         loadItems()  // read days from realm DB and load table view
+          
     }
                    
     @IBAction func addDayPressed(_ sender: UIBarButtonItem) {

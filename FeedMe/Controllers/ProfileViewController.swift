@@ -19,17 +19,22 @@ class ProfileViewController: UIViewController {
     
     var userWeight: Int = 0
     
+    var dataUpdated: Bool = false    // true is user data has been updated
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // load user weight, update slider and label with it
-        let users = realm.objects(User.self)
-        
-        userWeight = users[0].weight
+        let user = realm.objects(User.self)[0]
+                
+        userWeight = user.weight
         
         weightSlider.value = Float(userWeight)
         
         updateLabel()
+        
+        // class is tab bar controller delegate
+        tabBarController?.delegate = self
     }
     
     func updateLabel() {
@@ -44,6 +49,39 @@ class ProfileViewController: UIViewController {
         
         updateLabel()
         
+        dataUpdated = true  // user data updated
     }
 
+}
+
+//MARK: - Tab bar controller delegate Methods
+extension ProfileViewController: UITabBarControllerDelegate {
+    
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        
+        if let VCTitle = viewController.title {
+
+//            print(VCTitle)
+            if VCTitle != "ProfileNavigation" && dataUpdated {
+                
+                // Save user data when leaving Profile view
+                
+                let user = realm.objects(User.self)[0]
+                
+                do {
+                    try self.realm.write {
+                        
+                        user.setValue(userWeight, forKey: "weight")
+                        
+                    }
+                } catch {
+                    print("failed to update user data in realm: \(error.localizedDescription)")
+                }
+                
+                print("user data saved")
+
+            }
+        }        
+    }
+    
 }

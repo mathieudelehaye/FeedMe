@@ -10,7 +10,7 @@
         <!--Home Navigation-->
         <scene sceneID="V4c-ly-rDo">
             <objects>
-                <navigationController id="Lt4-oo-HWw" userLabel="Home Navigation" sceneMemberID="viewController">
+                <navigationController title="HomeNavigation" id="Lt4-oo-HWw" userLabel="Home Navigation" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="utZ-Fu-GBb"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="fLj-qy-4Z8">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -333,7 +333,7 @@
         <!--Profile Navigation-->
         <scene sceneID="GVp-1c-0Qx">
             <objects>
-                <navigationController id="PE0-Ud-Wv7" userLabel="Profile Navigation" sceneMemberID="viewController">
+                <navigationController title="ProfileNavigation" id="PE0-Ud-Wv7" userLabel="Profile Navigation" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="W5s-0j-iwH"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Eqw-Fk-9yL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -354,7 +354,7 @@
         <!--Profile-->
         <scene sceneID="x6f-sQ-eEg">
             <objects>
-                <viewController id="KoK-cJ-IV8" userLabel="Profile" customClass="ProfileViewController" customModule="FeedMe" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Profile" id="KoK-cJ-IV8" userLabel="Profile" customClass="ProfileViewController" customModule="FeedMe" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fn3-im-XGL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -393,7 +393,7 @@
         <!--AlimentTypes Navigation-->
         <scene sceneID="jne-2d-qhw">
             <objects>
-                <navigationController id="Qxj-3J-er9" userLabel="AlimentTypes Navigation" sceneMemberID="viewController">
+                <navigationController title="AlimentsNavigation" id="Qxj-3J-er9" userLabel="AlimentTypes Navigation" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Aliment" image="cart.fill" catalog="system" id="yfp-x2-On9"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="Zbb-Kw-R1V">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
