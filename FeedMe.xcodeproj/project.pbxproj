@@ -11,6 +11,7 @@
 		913DFD9224D46E2F00DAB556 /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913DFD9124D46E2F00DAB556 /* PickerViewController.swift */; };
 		9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9144BCC224BCC9FF00B4AC69 /* Constants.swift */; };
 		9145505524D828A3006541BF /* MealCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9145505324D828A3006541BF /* MealCell.xib */; };
+		9146873A24F0F03C00B740B1 /* QuantityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146873924F0F03C00B740B1 /* QuantityViewController.swift */; };
 		9148BC9F24EE39EC00F1D33F /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9148BC9E24EE39EC00F1D33F /* ProfileViewController.swift */; };
 		9148BCA124EF84F000F1D33F /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9148BCA024EF84F000F1D33F /* User.swift */; };
 		914C902524D91FFC00BB33AC /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914C902424D91FFC00BB33AC /* ListViewController.swift */; };
@@ -49,6 +50,7 @@
 		913DFD9124D46E2F00DAB556 /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
 		9144BCC224BCC9FF00B4AC69 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9145505324D828A3006541BF /* MealCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MealCell.xib; sourceTree = "<group>"; };
+		9146873924F0F03C00B740B1 /* QuantityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantityViewController.swift; sourceTree = "<group>"; };
 		9148BC9E24EE39EC00F1D33F /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		9148BCA024EF84F000F1D33F /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		914C902424D91FFC00BB33AC /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				915F1FE224C706EA005C88C2 /* EditViewController.swift */,
 				913DFD9124D46E2F00DAB556 /* PickerViewController.swift */,
 				9164C01524E5011100D2D80A /* EditTypeViewController.swift */,
+				9146873924F0F03C00B740B1 /* QuantityViewController.swift */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -375,6 +378,7 @@
 			files = (
 				915F1FE324C706EA005C88C2 /* EditViewController.swift in Sources */,
 				914D2E1424C59387006C4B61 /* Day.swift in Sources */,
+				9146873A24F0F03C00B740B1 /* QuantityViewController.swift in Sources */,
 				9164BFFF24E109F500D2D80A /* Aliment.swift in Sources */,
 				9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */,
 				913D69A124D47BCB00CEAC16 /* ItemViewController.swift in Sources */,

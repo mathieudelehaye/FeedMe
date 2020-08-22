@@ -113,28 +113,21 @@ extension AlimentViewController {
 extension AlimentViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-//        performSegue(withIdentifier: K.MealToAlimentSegueIdentifier, sender: self)
-        
+                
         tableView.deselectRow(at: indexPath, animated: true)
         
-        print("Aliment selected")
+//        print("Aliment selected")
+                 
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+        let qvc = storyboard.instantiateViewController(withIdentifier: "QuantityViewController") as! QuantityViewController
+
+        let selectedCellItem = itemArray[indexPath.row]
+
+        qvc.selectedItem = selectedCellItem
+
+        presentModal(itemNames: remainingItems, forViewController: qvc)
         
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-//        let destinationVC = segue.destination as! AlimentViewController
-//        
-//        if let indexPath =  tableView.indexPathForSelectedRow {
-//            
-//            tableView.deselectRow(at: indexPath, animated: true)
-//
-//            guard let selectedMeal = itemArray[indexPath.row] as? Meal else { fatalError("Error while retrieving selected item") }
-//                
-//            destinationVC.selectedMeal = selectedMeal
-//            
-//        }
     }
         
 }

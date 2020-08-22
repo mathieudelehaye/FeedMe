@@ -11,8 +11,6 @@ import RealmSwift
 
 class AlimentType: AppItem {
     
-    @objc dynamic var quantity: Int = 0
-    
     @objc dynamic var proSpecific: Float = 0
     
     @objc dynamic var carSpecific: Float = 0

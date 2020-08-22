@@ -54,11 +54,13 @@ class ListViewController: UITableViewController {
         
         switch T.self {
         case is EditViewController.Type: 
-            modalRatio = Float(0.65)    // change modal ratio for edit view
+            modalRatio = Float(0.64)    // change modal ratio for edit view controller
         case is PickerViewController.Type:
-            modalRatio = Float(0.36)    // change modal ratio for picker view
+            modalRatio = Float(0.36)    // change modal ratio for picker view controller
         case is EditTypeViewController.Type:
-            modalRatio = Float(0.64)     // change modal ratio for edit type view
+            modalRatio = Float(0.64)     // change modal ratio for edit type view controller
+        case is QuantityViewController.Type:
+            modalRatio = Float(0.36)    // change modal ratio for quanity view controller
         default:
             fatalError("View Controller is of an unknown type derived from ItemViewController.")
         }

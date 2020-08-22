@@ -13,6 +13,8 @@ class Aliment: AppItem {
     
     var parentCategory = LinkingObjects(fromType: Meal.self, property: "aliments")
         
+    @objc dynamic var quantity: Int = 0
+    
     @objc dynamic var type: AlimentType? = nil
     
     override func getOrder() -> Int {
