@@ -98,9 +98,9 @@ extension AlimentViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! CustomCell
     
-        let item = itemArray[indexPath.row]
+        guard let aliment = itemArray[indexPath.row] as? Aliment else { fatalError("Item not of type Aliment") }
 
-        cell.nameLabel.text = item.name
+        cell.nameLabel.text = aliment.name + " (\(aliment.quantity) g)"
         cell.editor = self
         cell.row = indexPath.row
 
@@ -115,9 +115,7 @@ extension AlimentViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
                 
         tableView.deselectRow(at: indexPath, animated: true)
-        
-//        print("Aliment selected")
-                 
+                         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
         let qvc = storyboard.instantiateViewController(withIdentifier: "QuantityViewController") as! QuantityViewController

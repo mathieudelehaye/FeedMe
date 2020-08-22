@@ -19,7 +19,7 @@ class ProfileViewController: UIViewController {
     
     var userWeight: Int = 0
     
-    var dataUpdated: Bool = false    // true is user data has been updated
+    var dataUpdated: Bool = false    // true if user weight data has been updated
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +49,7 @@ class ProfileViewController: UIViewController {
         
         updateLabel()
         
-        dataUpdated = true  // user data updated
+        dataUpdated = true  // weight data updated
     }
 
 }
@@ -64,7 +64,7 @@ extension ProfileViewController: UITabBarControllerDelegate {
 //            print(VCTitle)
             if VCTitle != "ProfileNavigation" && dataUpdated {
                 
-                // Save user data when leaving Profile view
+                // Save user data when leaving Profile view if data has been updated
                 
                 let user = realm.objects(User.self)[0]
                 

@@ -471,7 +471,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="minimumTrackTintColor" red="0.92306619879999996" green="0.32529532909999997" blue="0.49804323909999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <connections>
-                                    <action selector="quantityChanged:" destination="NG2-Vl-BS8" eventType="valueChanged" id="135-A0-UrJ"/>
+                                    <action selector="sliderUsed:forEvent:" destination="NG2-Vl-BS8" eventType="valueChanged" id="jqu-aC-7et"/>
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="g: 160" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KHf-2a-6Eh">
@@ -494,7 +494,7 @@
                     </view>
                     <connections>
                         <outlet property="quantityLabel" destination="KHf-2a-6Eh" id="GIt-Gp-QhW"/>
-                        <outlet property="quantitySlide" destination="YQd-zP-KLy" id="hS7-wj-sWf"/>
+                        <outlet property="quantitySlider" destination="YQd-zP-KLy" id="hS7-wj-sWf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mlT-0H-dyi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
