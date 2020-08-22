@@ -97,7 +97,16 @@ extension EditViewController: CallingViewManagement {
                 self.selectedItem?.setValue(objectName, forKey: "name")
                 
                 self.selectedItem?.setValue(self.selectedItem?.getOrder(), forKey: "order")
-
+                
+                // For Aliment item edition, picked AlimentType must be associated
+                if self.selectedItem is Aliment {
+                    
+                    let selectedAliment = self.selectedItem as! Aliment
+                    
+                    let pickedAlimentType = realm.objects(AlimentType.self).filter("name CONTAINS [cd] %@", objectName)[0]
+                    
+                    selectedAliment.type = pickedAlimentType
+                }
             }
         } catch {
             print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")

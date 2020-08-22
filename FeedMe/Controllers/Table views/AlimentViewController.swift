@@ -23,7 +23,7 @@ class AlimentViewController: ListViewController {
     
     var selectedMeal : Meal?
     
-    let fullAlimentList = ["Eggs", "Oat", "Orange", "Almond milk", "Chicken"]
+    var fullAlimentList: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,13 +39,24 @@ class AlimentViewController: ListViewController {
         let backBarButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
         
-        loadItems()  // read meals from realm DB and load table view
+        // Set view title
+        title = selectedMeal!.name
+        
+        // Read meals from realm DB and load table view
+        loadItems()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
-        title = selectedMeal!.name
+        // Reload full aliment type list when view will appear
+        let alimentTypeArray = realm.objects(AlimentType.self).sorted(byKeyPath: "name", ascending: true)
         
+        fullAlimentList = []
+        for alimentType in alimentTypeArray {
+            fullAlimentList.append(alimentType.name)
+        }
+        
+//        print(fullAlimentList)
     }
     
     @IBAction func addAlimentPressed(_ sender: UIBarButtonItem) {
@@ -55,7 +66,7 @@ class AlimentViewController: ListViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
         let pvc = storyboard.instantiateViewController(withIdentifier: "PickerViewController") as! PickerViewController
-
+        
         updateRemainingItems(keepingItem: "", fromStartList: fullAlimentList)
 
         presentModal(itemNames: remainingItems, forViewController: pvc)
@@ -154,7 +165,7 @@ extension AlimentViewController {
         evc.selectedItem = selectedCellItem
 
         updateRemainingItems(keepingItem: selectedCellItem.name, fromStartList: fullAlimentList)
-
+        
         presentModal(itemNames: remainingItems, forViewController: evc)
         
     }
@@ -170,12 +181,18 @@ extension AlimentViewController {
     }
     
     override func manageViewObject(withName objectName: String) {
-        
+                
         let newAliment = Aliment()
         
-        newAliment.name = objectName
+        let pickedAlimentType = realm.objects(AlimentType.self).filter("name CONTAINS [cd] %@", objectName)[0]
+        
+        newAliment.name = pickedAlimentType.name
         
         newAliment.order = newAliment.getOrder()    // always equal to 0
+        
+        newAliment.quantity = 100 
+        
+        newAliment.type = pickedAlimentType
         
         save(item: newAliment)
         
