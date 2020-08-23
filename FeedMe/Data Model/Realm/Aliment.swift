@@ -33,7 +33,7 @@ class Aliment: AppItem {
             
             guard let alimentTypePro = type?.proSpecific else { fatalError("aliment type protein not available") }
                                    
-            return Int(floor(alimentTypePro * Float(quantity)))
+            return Int(floor(alimentTypePro * Float(quantity) / 100))
             
         }
     }
@@ -44,7 +44,7 @@ class Aliment: AppItem {
             
             guard let alimentTypeCarbs = type?.carSpecific else { fatalError("aliment type carbs not available") }
                                    
-            return Int(floor(alimentTypeCarbs * Float(quantity)))
+            return Int(floor(alimentTypeCarbs * Float(quantity) / 100))
             
         }
     }
@@ -55,7 +55,7 @@ class Aliment: AppItem {
             
             guard let alimentTypeFats = type?.fatSpecific else { fatalError("aliment type fats not available") }
                                    
-            return Int(floor(alimentTypeFats * Float(quantity)))
+            return Int(floor(alimentTypeFats * Float(quantity) / 100))
             
         }
     }
@@ -64,9 +64,9 @@ class Aliment: AppItem {
         
         get {
             
-            guard let alimentTypeKCal = type?.proSpecific else { fatalError("aliment type calories not available") }
+            guard let alimentTypeKCal = type?.calSpecific else { fatalError("aliment type calories not available") }
                                    
-            return Int(floor(alimentTypeKCal * Float(quantity)))
+            return Int(floor(alimentTypeKCal * Float(quantity) / 100))
             
         }
     }

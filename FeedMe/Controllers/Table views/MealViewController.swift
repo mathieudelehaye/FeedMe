@@ -46,6 +46,8 @@ class MealViewController: ListViewController {
         
         title = selectedDay!.name
         
+        tableView.reloadData()  // reload table view when appearing to update computed values
+        
     }
     
     @IBAction func addMealPressed(_ sender: UIBarButtonItem) {
@@ -116,7 +118,7 @@ extension MealViewController {
         // Change cell total label
         guard let meal = item as? Meal else { fatalError("Item is not of type Meal") }
                 
-        cell.totalLabel.text = "Meal: \(meal.proAmount) kCal"
+        cell.totalLabel.text = "Meal: \(meal.calAmount) kCal"
         
         // Change cell macro label
         cell.macroLabel.text = "Protein g: \(meal.proAmount), Fat g: \(meal.fatAmount)"

@@ -57,6 +57,8 @@ class AlimentViewController: ListViewController {
         }
         
 //        print(fullAlimentList)
+        
+        tableView.reloadData()  // reload table view when appearing to update computed values
     }
     
     @IBAction func addAlimentPressed(_ sender: UIBarButtonItem) {
@@ -125,10 +127,10 @@ extension AlimentViewController {
         cell.nameLabel.text = aliment.name + " (\(aliment.quantity) g)"
                         
         // Change cell total label
-        cell.totalLabel.text = "Aliment: \(aliment.proAmount) kCal"
+        cell.totalLabel.text = "Aliment: \(aliment.calAmount) kCal"
         
         // Change cell macro label
-        cell.macroLabel.text = "Protein g: \(aliment.proAmount), Carbs g: \(aliment.fatAmount), Fat g: \(aliment.fatAmount)"
+        cell.macroLabel.text = "Protein g: \(aliment.proAmount), Carbs g: \(aliment.carAmount), Fat g: \(aliment.fatAmount)"
                 
         cell.editor = self
         cell.row = indexPath.row

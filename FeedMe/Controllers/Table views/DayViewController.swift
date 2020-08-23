@@ -38,6 +38,12 @@ class DayViewController: ListViewController {
         // Read days from realm DB and load table view
         loadItems()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        tableView.reloadData()  // reload table view when appearing to update computed values
+        
+    }
                    
     @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
                 
@@ -106,11 +112,11 @@ extension DayViewController {
                 
         guard let user = selectedUser else { fatalError("The user is not defined") }
                 
-        cell.totalLabel.text = "Day: \(day.proAmount) kCal"
+        cell.totalLabel.text = "Day: \(day.calAmount) kCal"
                 
-        let proSpecific = Float(floor(10*(Float(day.proAmount)/Float(user.weight))/10))
+        let proSpecific = Float(floor(10*(Float(day.proAmount)/Float(user.weight)))/10)
         
-        let fatSpecific = Float(floor(10*(Float(day.fatAmount)/Float(user.weight))/10))
+        let fatSpecific = Float(floor(10*(Float(day.fatAmount)/Float(user.weight)))/10)
         
         // Change cell macro label
         cell.macroLabel.text = "Protein g/kg: \(proSpecific), Fat g/kg: \(fatSpecific)"
