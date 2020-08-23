@@ -27,6 +27,50 @@ class Aliment: AppItem {
     
     @objc dynamic var type: AlimentType? = nil
     
+    var proAmount: Int {
+        
+        get {
+            
+            guard let alimentTypePro = type?.proSpecific else { fatalError("aliment type protein not available") }
+                                   
+            return Int(floor(alimentTypePro * Float(quantity)))
+            
+        }
+    }
+    
+    var carAmount: Int {
+        
+        get {
+            
+            guard let alimentTypeCarbs = type?.carSpecific else { fatalError("aliment type carbs not available") }
+                                   
+            return Int(floor(alimentTypeCarbs * Float(quantity)))
+            
+        }
+    }
+    
+    var fatAmount: Int {
+        
+        get {
+            
+            guard let alimentTypeFats = type?.fatSpecific else { fatalError("aliment type fats not available") }
+                                   
+            return Int(floor(alimentTypeFats * Float(quantity)))
+            
+        }
+    }
+    
+    var calAmount: Int {
+        
+        get {
+            
+            guard let alimentTypeKCal = type?.proSpecific else { fatalError("aliment type calories not available") }
+                                   
+            return Int(floor(alimentTypeKCal * Float(quantity)))
+            
+        }
+    }
+    
     override func getOrder() -> Int {
                 
         return 0 

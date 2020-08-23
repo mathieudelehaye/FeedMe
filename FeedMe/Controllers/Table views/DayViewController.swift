@@ -21,16 +21,22 @@ import RealmSwift
 
 class DayViewController: ListViewController {
     
-    let fullDayList = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Everyday" ]
+    var selectedUser : User?
+    
+    let fullDayList = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ]
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        tableView.register(UINib(nibName: K.dayCellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)    // register custom cell to table view 
+        // Assign user to days view controller
+        selectedUser = realm.objects(User.self)[0]
         
-        loadItems()  // read days from realm DB and load table view
-          
+        // Register custom cell to table view
+        tableView.register(UINib(nibName: K.dayCellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+                
+        // Read days from realm DB and load table view
+        loadItems()
     }
                    
     @IBAction func addDayPressed(_ sender: UIBarButtonItem) {
@@ -52,6 +58,10 @@ class DayViewController: ListViewController {
             try realm.write {
                 
                 if let dayToSave = item as? Day {
+                    
+                    guard let currentUser = selectedUser else { fatalError("Selected user not available") }
+                                       
+                    currentUser.days.append(dayToSave)
                     
                     realm.add(dayToSave)
                     
@@ -88,7 +98,23 @@ extension DayViewController {
     
         let item = itemArray[indexPath.row]
         
+        // Change cell name label
         cell.nameLabel.text = item.name
+        
+        // Change cell total label
+        guard let day = item as? Day else { fatalError("Item is not of type Day") }
+                
+        guard let user = selectedUser else { fatalError("The user is not defined") }
+                
+        cell.totalLabel.text = "Day: \(day.proAmount) kCal"
+                
+        let proSpecific = Float(floor(10*(Float(day.proAmount)/Float(user.weight))/10))
+        
+        let fatSpecific = Float(floor(10*(Float(day.fatAmount)/Float(user.weight))/10))
+        
+        // Change cell macro label
+        cell.macroLabel.text = "Protein g/kg: \(proSpecific), Fat g/kg: \(fatSpecific)"
+        
         cell.editor = self
         cell.row = indexPath.row
 

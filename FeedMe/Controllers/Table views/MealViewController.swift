@@ -110,7 +110,17 @@ extension MealViewController {
     
         let item = itemArray[indexPath.row]
         
+        // Change cell name label
         cell.nameLabel.text = item.name
+        
+        // Change cell total label
+        guard let meal = item as? Meal else { fatalError("Item is not of type Meal") }
+                
+        cell.totalLabel.text = "Meal: \(meal.proAmount) kCal"
+        
+        // Change cell macro label
+        cell.macroLabel.text = "Protein g: \(meal.proAmount), Fat g: \(meal.fatAmount)"
+        
         cell.editor = self
         cell.row = indexPath.row
 

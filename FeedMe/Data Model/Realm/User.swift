@@ -22,5 +22,6 @@ import RealmSwift
 class User: Object {
     
     @objc dynamic var weight: Int = 0
-   
+       
+    let days = List<Day>()
 }

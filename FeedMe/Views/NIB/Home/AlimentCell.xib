@@ -38,7 +38,7 @@
                                 <size key="shadowOffset" width="0.0" height="1.5"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Protein g: 13, Carbs g: 1.1, Fat g: 11" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GJP-oX-UFn" userLabel="Aliment detail">
-                                <rect key="frame" x="60" y="60" width="235" height="17"/>
+                                <rect key="frame" x="47" y="60" width="262" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="13"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -90,7 +90,7 @@
                 <outlet property="nameLabel" destination="UoM-GK-jeE" id="D2Y-GM-t1c"/>
                 <outlet property="totalLabel" destination="0aA-a4-yRu" id="fse-kg-xu5"/>
             </connections>
-            <point key="canvasLocation" x="141" y="108"/>
+            <point key="canvasLocation" x="139.85507246376812" y="107.8125"/>
         </tableViewCell>
     </objects>
     <resources>

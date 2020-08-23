@@ -44,17 +44,17 @@ struct Macro {
         }
     }
     
-    public func getValueInt() -> Int {
-        
-        return Int(floor(_value))
-        
-    }
-    
     init(type macroType: MacroType, value macroValue: Float = 0) {
         
         type = macroType
         
         value = macroValue
+        
+    }
+    
+    public func getValueInt() -> Int {
+        
+        return Int(floor(_value))
         
     }
     

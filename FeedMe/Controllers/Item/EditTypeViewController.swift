@@ -41,7 +41,7 @@ class EditTypeViewController: ItemViewController {
     @IBOutlet var textField: UITextField!
     
     // new aliment type name for renaming 
-    var newTypeName: String?
+    var newTypeName: String = ""
     
     // variables to store aliment type macros
     var proMacro = Macro(type: .protein)
@@ -101,10 +101,8 @@ class EditTypeViewController: ItemViewController {
             carValue.text = "Car. g: " + String(carMacro.value)
         case .fat:
             fatValue.text = "Fat g: " + String(fatMacro.value)
-        case .energy:
-            calValue.text = "KCa.: " + String(calMacro.getValueInt())
         default:
-            print("default not handled")
+            calValue.text = "KCa.: " + String(calMacro.getValueInt())
         }
         
     }
@@ -153,7 +151,7 @@ class EditTypeViewController: ItemViewController {
                 guard let item = selectedItem as? AlimentType else { fatalError("Selected item not of type AlimentType.") }
                 
                 // If new type name not empty, rename the selected item
-                if newTypeName! != "" {
+                if newTypeName != "" {
                     // new type name can be forced unwrapping, as it has been intialized to ""
                     item.setValue(newTypeName, forKey: "name")
                 }

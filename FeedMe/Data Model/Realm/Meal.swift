@@ -25,6 +25,57 @@ class Meal: AppItem {
     
     let aliments = List<Aliment>()
         
+    var proAmount: Int {
+        
+        get {
+            
+            var amount: Int = 0
+            
+            for aliment in aliments {
+                
+                amount += aliment.proAmount
+                
+            }
+            
+            return amount
+                       
+        }
+    }
+    
+    var fatAmount: Int {
+        
+        get {
+            
+            var amount: Int = 0
+            
+            for aliment in aliments {
+                
+                amount += aliment.fatAmount
+                
+            }
+            
+            return amount
+                       
+        }
+    }
+    
+    var calAmount: Int {
+        
+        get {
+            
+            var amount: Int = 0
+            
+            for aliment in aliments {
+                
+                amount += aliment.calAmount
+                
+            }
+            
+            return amount
+                       
+        }
+    }
+    
     override func getOrder() -> Int {
         
         var order = 0;

@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        // activate IQKeyboardManager
+        // activate IQKeyboardManager library 
         IQKeyboardManager.shared.enable = true                      // enable component
         IQKeyboardManager.shared.enableAutoToolbar = false          // keyboard auto tool bar disabled
         IQKeyboardManager.shared.shouldResignOnTouchOutside = true  // keyboard hidden when touched outside text field

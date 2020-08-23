@@ -22,6 +22,57 @@ import RealmSwift
 class Day: AppItem {
     
     let meals = List<Meal>()
+    
+    var proAmount: Int {
+        
+        get {
+            
+            var amount: Int = 0
+            
+            for meal in meals {
+                
+                amount += meal.proAmount
+                
+            }
+            
+            return amount
+                       
+        }
+    }
+    
+    var fatAmount: Int {
+        
+        get {
+            
+            var amount: Int = 0
+            
+            for meal in meals {
+                
+                amount += meal.fatAmount
+                
+            }
+            
+            return amount
+                       
+        }
+    }
+    
+    var calAmount: Int {
+        
+        get {
+            
+            var amount: Int = 0
+            
+            for meal in meals {
+                
+                amount += meal.calAmount
+                
+            }
+            
+            return amount
+                       
+        }
+    }
        
     override func getOrder() -> Int {
         

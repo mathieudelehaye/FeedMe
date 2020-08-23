@@ -119,9 +119,17 @@ extension AlimentViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! CustomCell
     
+        // Change cell name label
         guard let aliment = itemArray[indexPath.row] as? Aliment else { fatalError("Item not of type Aliment") }
 
         cell.nameLabel.text = aliment.name + " (\(aliment.quantity) g)"
+                        
+        // Change cell total label
+        cell.totalLabel.text = "Aliment: \(aliment.proAmount) kCal"
+        
+        // Change cell macro label
+        cell.macroLabel.text = "Protein g: \(aliment.proAmount), Carbs g: \(aliment.fatAmount), Fat g: \(aliment.fatAmount)"
+                
         cell.editor = self
         cell.row = indexPath.row
 
