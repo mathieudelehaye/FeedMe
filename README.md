@@ -1,5 +1,7 @@
 # FeedMe
-My fitness diet tracker app (Diet_Tracker_PHP) fully rewritten in Swift 5 for Xcode 11.  
+An iPhone application to track diet calories for an athletes. 
+
+It is based on the previous diet tracker app ([Diet Tracker](https://github.com/mathieudelehaye/Diet_Tracker_PHP)), fully rewritten in Swift 5 for Xcode 11.  
 
 <p float="left">
   <img src="app_screenshot_01.png" height ="628" width="350" hspace="10" />
