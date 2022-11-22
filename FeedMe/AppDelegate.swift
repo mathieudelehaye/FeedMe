@@ -27,6 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        sleep(2) // temporary to keep the launch screen longer
+      
         print(Realm.Configuration.defaultConfiguration.fileURL)
         
         // create user data if it does not exist
