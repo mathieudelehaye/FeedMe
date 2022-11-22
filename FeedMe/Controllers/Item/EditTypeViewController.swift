@@ -151,7 +151,7 @@ class EditTypeViewController: ItemViewController {
                 guard let item = selectedItem as? AlimentType else { fatalError("Selected item not of type AlimentType.") }
                 
                 // If new type name not empty, rename the selected item
-                if newTypeName != "" {
+                /*if newTypeName != "" {
                     // new type name can be forced unwrapping, as it has been intialized to ""
                     item.setValue(newTypeName, forKey: "name")
                 }
@@ -162,8 +162,11 @@ class EditTypeViewController: ItemViewController {
                 
                 item.setValue(fatMacro.value, forKey: "fatSpecific")
                 
-                item.setValue(calMacro.value, forKey: "calSpecific")
-                
+                item.setValue(calMacro.value, forKey: "calSpecific")*/
+              
+                // Uncomment to delete the confirmed aliment
+                // TODO: add a proper delete button
+                //self.realm.delete(selectedItem!)
             }
         } catch {
             print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")
