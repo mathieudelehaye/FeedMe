@@ -51,6 +51,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, nullable) RLMProperty *primaryKeyProperty;
 
+/**
+ Whether this object type is embedded.
+ */
+@property (nonatomic, readonly) BOOL isEmbedded;
+
+/**
+ Whether this object is asymmetric.
+ */
+@property (nonatomic, readonly) BOOL isAsymmetric;
+
 #pragma mark - Methods
 
 /**

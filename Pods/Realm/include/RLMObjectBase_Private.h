@@ -24,7 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 // RLMObjectBase private
 @interface RLMObjectBase ()
+@property (nonatomic, nullable) NSMutableArray *lastAccessedNames;
+
 + (void)initializeLinkedObjectSchemas;
++ (bool)isEmbedded;
++ (bool)isAsymmetric;
+
 @end
 
 NS_ASSUME_NONNULL_END

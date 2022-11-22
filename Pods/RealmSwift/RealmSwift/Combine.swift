@@ -16,16 +16,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#if canImport(Combine)
+#if !(os(iOS) && (arch(i386) || arch(arm)))
 import Combine
+import Realm
 import Realm.Private
 
 // MARK: - Identifiable
 
 /// A protocol which defines a default identity for Realm Objects
 ///
-/// Declaraing your Object subclass as conforming to this protocol will supply
-/// a default implemention for `Identifiable`'s `id` which works for Realm
+/// Declaring your Object subclass as conforming to this protocol will supply
+/// a default implementation for `Identifiable`'s `id` which works for Realm
 /// Objects:
 ///
 ///     // Automatically conforms to `Identifiable`
@@ -35,16 +36,19 @@ import Realm.Private
 ///
 /// You can also manually conform to `Identifiable` if you wish, but note that
 /// using the object's memory address does *not* work for managed objects.
-public protocol ObjectKeyIdentifiable: Identifiable, Object {
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol ObjectKeyIdentifiable: Identifiable {
     /// The stable identity of the entity associated with `self`.
     var id: UInt64 { get }
 }
 
 /// :nodoc:
 @available(*, deprecated, renamed: "ObjectKeyIdentifiable")
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public typealias ObjectKeyIdentifable = ObjectKeyIdentifiable
 
-extension ObjectKeyIdentifiable {
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension ObjectKeyIdentifiable where Self: ObjectBase {
     /// A stable identifier for this object. For managed Realm objects, this
     /// value will be the same for all object instances which refer to the same
     /// object (i.e. for which `Object.isSameObject(as:)` returns true).
@@ -53,19 +57,26 @@ extension ObjectKeyIdentifiable {
     }
 }
 
+/// :nodoc:
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension ObjectKeyIdentifiable where Self: ProjectionObservable {
+    /// A stable identifier for this projection.
+    public var id: UInt64 {
+        RLMObjectBaseGetCombineId(rootObject)
+    }
+}
+
 // MARK: - Combine
 
 /// A type which can be passed to `valuePublisher()` or `changesetPublisher()`.
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
 public protocol RealmSubscribable {
-    // swiftlint:disable identifier_name
     /// :nodoc:
-    func _observe<S>(on queue: DispatchQueue?, _ subscriber: S)
-        -> NotificationToken where S: Subscriber, S.Input == Self, S.Failure == Error
+    func _observe<S>(_ keyPaths: [String]?, on queue: DispatchQueue?, _ subscriber: S)
+        -> NotificationToken where S: Subscriber, S.Input == Self
     /// :nodoc:
-    func _observe<S>(_ subscriber: S)
-        -> NotificationToken where S: Subscriber, S.Input == Void, S.Failure == Never
-    // swiftlint:enable identifier_name
+    func _observe<S>(_ keyPaths: [String]?, _ subscriber: S)
+        -> NotificationToken where S: Subscriber, S.Input == Void
 }
 
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
@@ -89,7 +100,7 @@ extension Publisher {
     /// ```
     ///
     /// - returns: A publisher that publishes frozen copies of the objects which the upstream publisher publishes.
-    public func freeze<T>() -> Combine.Publishers.Map<Self, T> where Output: ThreadConfined, T == Output {
+    public func freeze<T>() -> Publishers.Map<Self, T> where Output: ThreadConfined, T == Output {
         return map { $0.freeze() }
     }
 
@@ -99,7 +110,7 @@ extension Publisher {
     /// no longer live-update when writes are made to the Realm and makes it
     /// safe to pass freely between threads without using
     /// `.threadSafeReference()`. It also guarantees that the frozen object
-    /// contained in the changset will always match the property changes, which
+    /// contained in the changeset will always match the property changes, which
     /// is not always the case when using thread-safe references.
     ///
     /// ```
@@ -116,7 +127,7 @@ extension Publisher {
     ///
     /// - returns: A publisher that publishes frozen copies of the changesets
     ///            which the upstream publisher publishes.
-    public func freeze<T: Object>() -> Combine.Publishers.Map<Self, ObjectChange<T>> where Output == ObjectChange<T> {
+    public func freeze<T: Object>() -> Publishers.Map<Self, ObjectChange<T>> where Output == ObjectChange<T> {
         return map {
             if case .change(let object, let properties) = $0 {
                 return .change(object.freeze(), properties)
@@ -131,7 +142,7 @@ extension Publisher {
     /// reference no longer live-update when writes are made to the Realm and
     /// makes it safe to pass freely between threads without using
     /// `.threadSafeReference()`. It also guarantees that the frozen collection
-    /// contained in the changset will always match the change information,
+    /// contained in the changeset will always match the change information,
     /// which is not always the case when using thread-safe references.
     ///
     /// ```
@@ -149,7 +160,7 @@ extension Publisher {
     /// - returns: A publisher that publishes frozen copies of the changesets
     ///            which the upstream publisher publishes.
     public func freeze<T: RealmCollection>()
-        -> Combine.Publishers.Map<Self, RealmCollectionChange<T>> where Output == RealmCollectionChange<T> {
+        -> Publishers.Map<Self, RealmCollectionChange<T>> where Output == RealmCollectionChange<T> {
             return map {
                 switch $0 {
                 case .initial(let collection):
@@ -160,6 +171,113 @@ extension Publisher {
                     return .error(error)
                 }
             }
+    }
+
+    /// Freezes all Realm sectioned results changesets from the upstream publisher.
+    ///
+    /// Freezing a Realm sectioned results changeset makes the included  sectioned results
+    /// reference no longer live-update when writes are made to the Realm and
+    /// makes it safe to pass freely between threads without using
+    /// `.threadSafeReference()`. It also guarantees that the frozen sectioned results
+    /// contained in the changeset will always match the change information,
+    /// which is not always the case when using thread-safe references.
+    ///
+    /// ```
+    /// // Get a changeset publisher for the sectioned results
+    /// let cancellable = mySectionedResults.changesetPublisher
+    ///    // Convert to frozen changesets
+    ///    .freeze()
+    ///    // Unlike live objects, frozen objects can be sent to a concurrent queue
+    ///    .receive(on: DispatchQueue.global())
+    ///    .sink { changeset in
+    ///        // Do something with the frozen changeset
+    ///    }
+    /// ```
+    ///
+    /// - returns: A publisher that publishes frozen copies of the changesets
+    ///            which the upstream publisher publishes.
+    public func freeze<T: RealmSectionedResult>()
+        -> Publishers.Map<Self, RealmSectionedResultsChange<T>> where Output == RealmSectionedResultsChange<T> {
+            return map {
+                switch $0 {
+                case .initial(let collection):
+                    return .initial(collection.freeze())
+                case .update(let collection, deletions: let deletions, insertions: let insertions, modifications: let modifications,
+                             sectionsToInsert: let sectionsToInsert, sectionsToDelete: let sectionsToDelete):
+                    return .update(collection.freeze(), deletions: deletions, insertions: insertions, modifications: modifications,
+                                   sectionsToInsert: sectionsToInsert, sectionsToDelete: sectionsToDelete)
+                }
+            }
+    }
+
+    /// Freezes all Realm collection changesets from the upstream publisher.
+    ///
+    /// Freezing a Realm collection changeset makes the included collection
+    /// reference no longer live-update when writes are made to the Realm and
+    /// makes it safe to pass freely between threads without using
+    /// `.threadSafeReference()`. It also guarantees that the frozen collection
+    /// contained in the changeset will always match the change information,
+    /// which is not always the case when using thread-safe references.
+    ///
+    /// ```
+    /// // Get a changeset publisher for a collection
+    /// let cancellable = myMap.changesetPublisher
+    ///    // Convert to frozen changesets
+    ///    .freeze()
+    ///    // Unlike live objects, frozen objects can be sent to a concurrent queue
+    ///    .receive(on: DispatchQueue.global())
+    ///    .sink { changeset in
+    ///        // Do something with the frozen changeset
+    ///    }
+    /// ```
+    ///
+    /// - returns: A publisher that publishes frozen copies of the changesets
+    ///            which the upstream publisher publishes.
+    public func freeze<T: RealmKeyedCollection>()
+        -> Publishers.Map<Self, RealmMapChange<T>> where Output == RealmMapChange<T> {
+            return map {
+                switch $0 {
+                case .initial(let collection):
+                    return .initial(collection.freeze())
+                case .update(let collection, deletions: let deletions, insertions: let insertions, modifications: let modifications):
+                    return .update(collection.freeze(), deletions: deletions, insertions: insertions, modifications: modifications)
+                case .error(let error):
+                    return .error(error)
+                }
+            }
+    }
+
+    /// Freezes all Realm projection changesets emitted by the upstream publisher.
+    ///
+    /// Freezing a Realm projection changeset makes the included projection reference
+    /// no longer live-update when writes are made to the Realm and makes it
+    /// safe to pass freely between threads without using
+    /// `.threadSafeReference()`. It also guarantees that the frozen projection
+    /// contained in the changeset will always match the property changes, which
+    /// is not always the case when using thread-safe references.
+    ///
+    /// ```
+    /// // Get a changeset publisher for an projection
+    /// let cancellable = changesetPublisher(projection)
+    ///    // Convert to frozen changesets
+    ///    .freeze()
+    ///    // Unlike live projections, frozen projections can be sent to a concurrent queue
+    ///    .receive(on: DispatchQueue.global())
+    ///    .sink { changeset in
+    ///        // Do something with the frozen changeset
+    ///    }
+    /// ```
+    ///
+    /// - returns: A publisher that publishes frozen copies of the changesets
+    ///            which the upstream publisher publishes.
+    public func freeze<T: ProjectionObservable>()
+    -> Publishers.Map<Self, ObjectChange<T>> where Output == ObjectChange<T>, T: ThreadConfined {
+        return map {
+            if case .change(let projection, let properties) = $0 {
+                return .change(projection.freeze(), properties)
+            }
+            return $0
+        }
     }
 }
 
@@ -190,8 +308,8 @@ extension Publisher where Output: ThreadConfined {
     /// objects is unneccesary but is allowed.
     ///
     /// - returns: A publisher that supports `receive(on:)` for thread-confined objects.
-    public func threadSafeReference() -> Publishers.MakeThreadSafe<Self> {
-        Publishers.MakeThreadSafe(self)
+    public func threadSafeReference() -> RealmPublishers.MakeThreadSafe<Self> {
+        RealmPublishers.MakeThreadSafe(self)
     }
 }
 
@@ -220,9 +338,37 @@ extension Publisher {
     ///
     /// - returns: A publisher that supports `receive(on:)` for thread-confined objects.
     public func threadSafeReference<T: Object>()
-        -> Publishers.MakeThreadSafeObjectChangeset<Self, T> where Output == ObjectChange<T> {
-            Publishers.MakeThreadSafeObjectChangeset(self)
+        -> RealmPublishers.MakeThreadSafeObjectChangeset<Self, T> where Output == ObjectChange<T> {
+        RealmPublishers.MakeThreadSafeObjectChangeset(self)
     }
+
+    /// Enables passing projection changesets to a different dispatch queue.
+    ///
+    /// Each call to `receive(on:)` on a publisher which emits Realm
+    /// thread-confined projection must be proceeded by a call to
+    /// `.threadSafeReference()`. The returned publisher handles the required
+    /// logic to pass the thread-confined projection to the new queue. Only serial
+    /// dispatch queues are supported and using other schedulers will result in
+    /// a fatal error.
+    ///
+    /// For example, to subscribe on a background thread, do some work there,
+    /// then pass the projection changeset to the main thread you can do:
+    ///
+    ///     let cancellable = changesetPublisher(myProjection)
+    ///         .subscribe(on: DispatchQueue(label: "background queue")
+    ///         .print()
+    ///         .threadSafeReference()
+    ///         .receive(on: DispatchQueue.main)
+    ///         .sink { projectionChange in
+    ///             // Do things with the projection on the main thread
+    ///         }
+    ///
+    /// - returns: A publisher that supports `receive(on:)` for thread-confined objects.
+    public func threadSafeReference<T: ProjectionObservable>()
+    -> RealmPublishers.MakeThreadSafeProjectionChangeset<Self, T> where Output == ObjectChange<T>, T: ThreadConfined {
+        RealmPublishers.MakeThreadSafeProjectionChangeset(self)
+    }
+
     /// Enables passing Realm collection changesets to a different dispatch queue.
     ///
     /// Each call to `receive(on:)` on a publisher which emits Realm
@@ -246,8 +392,62 @@ extension Publisher {
     ///
     /// - returns: A publisher that supports `receive(on:)` for thread-confined objects.
     public func threadSafeReference<T: RealmCollection>()
-        -> Publishers.MakeThreadSafeCollectionChangeset<Self, T> where Output == RealmCollectionChange<T> {
-            Publishers.MakeThreadSafeCollectionChangeset(self)
+        -> RealmPublishers.MakeThreadSafeCollectionChangeset<Self, T> where Output == RealmCollectionChange<T> {
+        RealmPublishers.MakeThreadSafeCollectionChangeset(self)
+    }
+
+    /// Enables passing Realm collection changesets to a different dispatch queue.
+    ///
+    /// Each call to `receive(on:)` on a publisher which emits Realm
+    /// thread-confined objects must be proceeded by a call to
+    /// `.threadSafeReference()`. The returned publisher handles the required
+    /// logic to pass the thread-confined object to the new queue. Only serial
+    /// dispatch queues are supported and using other schedulers will result in
+    /// a fatal error.
+    ///
+    /// For example, to subscribe on a background thread, do some work there,
+    /// then pass the collection changeset to the main thread you can do:
+    ///
+    ///     let cancellable = myCollection.changesetPublisher
+    ///         .subscribe(on: DispatchQueue(label: "background queue")
+    ///         .print()
+    ///         .threadSafeReference()
+    ///         .receive(on: DispatchQueue.main)
+    ///         .sink { collectionChange in
+    ///             // Do things with the collection on the main thread
+    ///         }
+    ///
+    /// - returns: A publisher that supports `receive(on:)` for thread-confined objects.
+    public func threadSafeReference<T: RealmKeyedCollection>()
+        -> RealmPublishers.MakeThreadSafeKeyedCollectionChangeset<Self, T> where Output == RealmMapChange<T> {
+        RealmPublishers.MakeThreadSafeKeyedCollectionChangeset(self)
+    }
+
+    /// Enables passing Realm sectioned results changesets to a different dispatch queue.
+    ///
+    /// Each call to `receive(on:)` on a publisher which emits Realm
+    /// thread-confined objects must be proceeded by a call to
+    /// `.threadSafeReference()`. The returned publisher handles the required
+    /// logic to pass the thread-confined object to the new queue. Only serial
+    /// dispatch queues are supported and using other schedulers will result in
+    /// a fatal error.
+    ///
+    /// For example, to subscribe on a background thread, do some work there,
+    /// then pass the collection changeset to the main thread you can do:
+    ///
+    ///     let cancellable = mySectionedResults.changesetPublisher
+    ///         .subscribe(on: DispatchQueue(label: "background queue")
+    ///         .print()
+    ///         .threadSafeReference()
+    ///         .receive(on: DispatchQueue.main)
+    ///         .sink { sectionedResultsChange in
+    ///             // Do things with the sectioned results on the main thread
+    ///         }
+    ///
+    /// - returns: A publisher that supports `receive(on:)` for thread-confined objects.
+    public func threadSafeReference<T: RealmSectionedResult>()
+        -> RealmPublishers.MakeThreadSafeSectionedResultsChangeset<Self, T> where Output == RealmSectionedResultsChange<T> {
+        RealmPublishers.MakeThreadSafeSectionedResultsChangeset(self)
     }
 }
 
@@ -256,24 +456,70 @@ extension RealmCollection where Self: RealmSubscribable {
     /// A publisher that emits Void each time the collection changes.
     ///
     /// Despite the name, this actually emits *after* the collection has changed.
-    public var objectWillChange: Publishers.WillChange<Self> {
-        Publishers.WillChange(self)
+    public var objectWillChange: RealmPublishers.WillChange<Self> {
+        RealmPublishers.WillChange(self)
     }
 
     /// :nodoc:
     @available(*, deprecated, renamed: "collectionPublisher")
-    public var publisher: Publishers.Value<Self> {
-        Publishers.Value(self)
+    public var publisher: RealmPublishers.Value<Self> {
+        RealmPublishers.Value(self)
     }
 
     /// A publisher that emits the collection each time the collection changes.
-    public var collectionPublisher: Publishers.Value<Self> {
-        Publishers.Value(self)
+    public var collectionPublisher: RealmPublishers.Value<Self> {
+        RealmPublishers.Value(self)
+    }
+
+    /// A publisher that emits the collection each time the collection changes on the given property keyPaths.
+    public func collectionPublisher(keyPaths: [String]?) -> RealmPublishers.Value<Self> {
+        return RealmPublishers.Value(self, keyPaths: keyPaths)
     }
 
     /// A publisher that emits a collection changeset each time the collection changes.
-    public var changesetPublisher: Publishers.CollectionChangeset<Self> {
-        Publishers.CollectionChangeset(self)
+    public var changesetPublisher: RealmPublishers.CollectionChangeset<Self> {
+        RealmPublishers.CollectionChangeset(self)
+    }
+
+    /// A publisher that emits a collection changeset each time the collection changes on the given property keyPaths.
+    public func changesetPublisher(keyPaths: [String]?) -> RealmPublishers.CollectionChangeset<Self> {
+        return RealmPublishers.CollectionChangeset(self, keyPaths: keyPaths)
+    }
+}
+
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+extension RealmKeyedCollection where Self: RealmSubscribable {
+    /// A publisher that emits Void each time the collection changes.
+    ///
+    /// Despite the name, this actually emits *after* the collection has changed.
+    public var objectWillChange: RealmPublishers.WillChange<Self> {
+        RealmPublishers.WillChange(self)
+    }
+
+    /// :nodoc:
+    @available(*, deprecated, renamed: "collectionPublisher")
+    public var publisher: RealmPublishers.Value<Self> {
+        RealmPublishers.Value(self)
+    }
+
+    /// A publisher that emits the collection each time the collection changes.
+    public var collectionPublisher: RealmPublishers.Value<Self> {
+        RealmPublishers.Value(self)
+    }
+
+    /// A publisher that emits the collection each time the collection changes on the given property keyPaths.
+    public func collectionPublisher(keyPaths: [String]?) -> RealmPublishers.Value<Self> {
+        return RealmPublishers.Value(self, keyPaths: keyPaths)
+    }
+
+    /// A publisher that emits a collection changeset each time the collection changes.
+    public var changesetPublisher: RealmPublishers.MapChangeset<Self> {
+        RealmPublishers.MapChangeset(self)
+    }
+
+    /// A publisher that emits a collection changeset each time the collection changes on the given property keyPaths.
+    public func changesetPublisher(keyPaths: [String]?) -> RealmPublishers.MapChangeset<Self> {
+        return RealmPublishers.MapChangeset(self, keyPaths: keyPaths)
     }
 }
 
@@ -281,40 +527,67 @@ extension RealmCollection where Self: RealmSubscribable {
 ///
 /// - precondition: The object must be a managed object which has not been invalidated.
 /// - parameter object: A managed object to observe.
+/// - parameter keyPaths: The publisher emits changes on these property keyPaths. If `nil` the publisher emits changes for every property.
 /// - returns: A publisher that emits the object each time it changes.
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-public func valuePublisher<T: Object>(_ object: T) -> Publishers.Value<T> {
-    Publishers.Value<T>(object)
+public func valuePublisher<T: Object>(_ object: T, keyPaths: [String]? = nil) -> RealmPublishers.Value<T> {
+    RealmPublishers.Value<T>(object, keyPaths: keyPaths)
 }
 
 /// Creates a publisher that emits the collection each time the collection changes.
 ///
 /// - precondition: The collection must be a managed collection which has not been invalidated.
 /// - parameter object: A managed collection to observe.
+/// - parameter keyPaths: The publisher emits changes on these property keyPaths. If `nil` the publisher emits changes for every property.
 /// - returns: A publisher that emits the collection each time it changes.
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-public func valuePublisher<T: RealmCollection>(_ collection: T) -> Publishers.Value<T> {
-    Publishers.Value<T>(collection)
+public func valuePublisher<T: RealmCollection>(_ collection: T, keyPaths: [String]? = nil) -> RealmPublishers.Value<T> {
+    RealmPublishers.Value<T>(collection, keyPaths: keyPaths)
+}
+
+/// Creates a publisher that emits the object each time the object changes.
+///
+/// - precondition: The object must be a managed object which has not been invalidated.
+/// - parameter object: A managed object to observe.
+/// - parameter keyPaths: The publisher emits changes on these property keyPaths. If `nil` the publisher emits changes for every property.
+/// - returns: A publisher that emits the object each time it changes.
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+public func valuePublisher<T: ProjectionObservable>(_ projection: T, keyPaths: [String]? = nil) -> RealmPublishers.Value<T> {
+    RealmPublishers.Value<T>(projection, keyPaths: keyPaths)
 }
 
 /// Creates a publisher that emits an object changeset each time the object changes.
 ///
 /// - precondition: The object must be a managed object which has not been invalidated.
 /// - parameter object: A managed object to observe.
+/// - parameter keyPaths: The publisher emits changes on these property keyPaths. If `nil` the publisher emits changes for every property.
 /// - returns: A publisher that emits an object changeset each time the object changes.
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-public func changesetPublisher<T: Object>(_ object: T) -> Publishers.ObjectChangeset<T> {
-    Publishers.ObjectChangeset<T>(object)
+public func changesetPublisher<T: Object>(_ object: T, keyPaths: [String]? = nil) -> RealmPublishers.ObjectChangeset<T> {
+    RealmPublishers.ObjectChangeset<T>(object, keyPaths: keyPaths)
+}
+
+
+/// Creates a publisher that emits an object changeset each time the object changes.
+///
+/// - precondition: The object must be a projection.
+/// - parameter projection: A projection of Realm Object to observe.
+/// - parameter keyPaths: The publisher emits changes on these property keyPaths. If `nil` the publisher emits changes for every property.
+/// - returns: A publisher that emits an object changeset each time the projection changes.
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+public func changesetPublisher<T: ProjectionObservable>(_ projection: T, keyPaths: [String]? = nil) -> RealmPublishers.ProjectionChangeset<T> {
+    RealmPublishers.ProjectionChangeset<T>(projection, keyPaths: keyPaths)
 }
 
 /// Creates a publisher that emits a collection changeset each time the collection changes.
 ///
 /// - precondition: The collection must be a managed collection which has not been invalidated.
 /// - parameter object: A managed collection to observe.
+/// - parameter keyPaths: The publisher emits changes on these property keyPaths. If `nil` the publisher emits changes for every property.
 /// - returns: A publisher that emits a collection changeset each time the collection changes.
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-public func changesetPublisher<T: RealmCollection>(_ collection: T) -> Publishers.CollectionChangeset<T> {
-    Publishers.CollectionChangeset<T>(collection)
+public func changesetPublisher<T: RealmCollection>(_ collection: T, keyPaths: [String]? = nil) -> RealmPublishers.CollectionChangeset<T> {
+    RealmPublishers.CollectionChangeset<T>(collection, keyPaths: keyPaths)
 }
 
 // MARK: - Realm
@@ -324,44 +597,50 @@ extension Realm {
     /// A publisher that emits Void each time the object changes.
     ///
     /// Despite the name, this actually emits *after* the collection has changed.
-    public var objectWillChange: Publishers.RealmWillChange {
-        return Publishers.RealmWillChange(self)
+    public var objectWillChange: RealmPublishers.RealmWillChange {
+        return RealmPublishers.RealmWillChange(self)
     }
 }
 
 // MARK: - Object
 
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-extension Object: Combine.ObservableObject {
+extension Object: ObservableObject {
     /// A publisher that emits Void each time the object changes.
     ///
-    /// Despite the name, this actually emits *after* the collection has changed.
-    public var objectWillChange: Publishers.WillChange<Object> {
-        return Publishers.WillChange(self)
+    /// Despite the name, this actually emits *after* the object has changed.
+    public var objectWillChange: RealmPublishers.WillChange<Object> {
+        return RealmPublishers.WillChange(self)
     }
 }
-
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-extension Object: RealmSubscribable {
-    /// :nodoc:
-    // swiftlint:disable:next identifier_name
-    public func _observe<S: Subscriber>(on queue: DispatchQueue?, _ subscriber: S)
-        -> NotificationToken where S.Input: Object, S.Failure == Error {
-            return observe(on: queue) { (change: ObjectChange<S.Input>) in
-                switch change {
-                case .change(let object, _):
-                    _ = subscriber.receive(object)
-                case .deleted:
-                    subscriber.receive(completion: .finished)
-                case .error(let error):
-                    subscriber.receive(completion: .failure(error))
-                }
-            }
+extension EmbeddedObject: ObservableObject {
+    /// A publisher that emits Void each time the object changes.
+    ///
+    /// Despite the name, this actually emits *after* the embedded object has changed.
+    public var objectWillChange: RealmPublishers.WillChange<EmbeddedObject> {
+        return RealmPublishers.WillChange(self)
     }
-
+}
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+extension ObjectBase: RealmSubscribable {
     /// :nodoc:
-    public func _observe<S: Subscriber>(_ subscriber: S) -> NotificationToken where S.Input == Void, S.Failure == Never {
-        return observe { _ in _ = subscriber.receive() }
+    public func _observe<S>(_ keyPaths: [String]?, on queue: DispatchQueue?, _ subscriber: S) -> NotificationToken
+        where S.Input: ObjectBase, S: Subscriber {
+        return _observe(keyPaths: keyPaths, on: queue) { (change: ObjectChange<S.Input>) in
+            switch change {
+            case .change(let object, _):
+                _ = subscriber.receive(object)
+            case .deleted:
+                subscriber.receive(completion: .finished)
+            case .error(let error):
+                fatalError("Unexpected error \(error)")
+            }
+        }
+    }
+    /// :nodoc:
+    public func _observe<S>(_ keyPaths: [String]?, _ subscriber: S) -> NotificationToken where S: Subscriber, S.Input == Void {
+        return _observe(keyPaths: keyPaths, { _ in _ = subscriber.receive()})
     }
 }
 
@@ -372,8 +651,32 @@ extension List: ObservableObject, RealmSubscribable {
     /// A publisher that emits Void each time the collection changes.
     ///
     /// Despite the name, this actually emits *after* the collection has changed.
-    public var objectWillChange: Publishers.WillChange<List> {
-        Publishers.WillChange(self)
+    public var objectWillChange: RealmPublishers.WillChange<List> {
+        RealmPublishers.WillChange(self)
+    }
+}
+
+// MARK: - MutableSet
+
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+extension MutableSet: ObservableObject, RealmSubscribable {
+    /// A publisher that emits Void each time the collection changes.
+    ///
+    /// Despite the name, this actually emits *after* the collection has changed.
+    public var objectWillChange: RealmPublishers.WillChange<MutableSet> {
+        RealmPublishers.WillChange(self)
+    }
+}
+
+// MARK: - Map
+
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+extension Map: ObservableObject, RealmSubscribable {
+    /// A publisher that emits Void each time the collection changes.
+    ///
+    /// Despite the name, this actually emits *after* the collection has changed.
+    public var objectWillChange: RealmPublishers.WillChange<Map> {
+        RealmPublishers.WillChange(self)
     }
 }
 
@@ -384,8 +687,8 @@ extension LinkingObjects: RealmSubscribable {
     /// A publisher that emits Void each time the collection changes.
     ///
     /// Despite the name, this actually emits *after* the collection has changed.
-    public var objectWillChange: Publishers.WillChange<LinkingObjects> {
-        Publishers.WillChange(self)
+    public var objectWillChange: RealmPublishers.WillChange<LinkingObjects> {
+        RealmPublishers.WillChange(self)
     }
 }
 
@@ -396,8 +699,106 @@ extension Results: RealmSubscribable {
     /// A publisher that emits Void each time the collection changes.
     ///
     /// Despite the name, this actually emits *after* the collection has changed.
-    public var objectWillChange: Publishers.WillChange<Results> {
-        Publishers.WillChange(self)
+    public var objectWillChange: RealmPublishers.WillChange<Results> {
+        RealmPublishers.WillChange(self)
+    }
+}
+
+// MARK: - Sectioned Results
+
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+extension SectionedResults: RealmSubscribable {
+    /// :nodoc:
+    public func _observe<S>(_ keyPaths: [String]? = nil, on queue: DispatchQueue? = nil, _ subscriber: S)
+        -> NotificationToken where S: Subscriber, S.Input == Self {
+        return observe(keyPaths: keyPaths, on: queue) { change in
+                switch change {
+                case .initial(let collection):
+                    _ = subscriber.receive(collection)
+                case .update(let collection, deletions: _, insertions: _, modifications: _, sectionsToInsert: _, sectionsToDelete: _):
+                    _ = subscriber.receive(collection)
+                }
+            }
+    }
+
+    /// :nodoc:
+    public func _observe<S: Subscriber>(_ keyPaths: [String]? = nil, _ subscriber: S) -> NotificationToken where S.Input == Void {
+        return observe(keyPaths: keyPaths, on: nil) { _ in _ = subscriber.receive() }
+    }
+
+    /// A publisher that emits Void each time the sectioned results collection changes.
+    ///
+    /// Despite the name, this actually emits *after* the sectioned results collection has changed.
+    public var objectWillChange: RealmPublishers.WillChange<SectionedResults> {
+        RealmPublishers.WillChange(self)
+    }
+
+    /// A publisher that emits the sectioned results collection each time the sectioned results collection changes.
+    public var collectionPublisher: RealmPublishers.Value<Self> {
+        RealmPublishers.Value(self)
+    }
+
+    /// A publisher that emits the sectioned results collection each time the sectioned results collection changes on the given property keyPaths.
+    public func collectionPublisher(keyPaths: [String]?) -> RealmPublishers.Value<Self> {
+        return RealmPublishers.Value(self, keyPaths: keyPaths)
+    }
+
+    /// A publisher that emits a sectioned results collection changeset each time the sectioned results collection changes.
+    public var changesetPublisher: RealmPublishers.SectionedResultsChangeset<Self> {
+        RealmPublishers.SectionedResultsChangeset(self)
+    }
+
+    /// A publisher that emits a sectioned results collection changeset each time the sectioned results collection changes on the given property keyPaths.
+    public func changesetPublisher(keyPaths: [String]?) -> RealmPublishers.SectionedResultsChangeset<Self> {
+        return RealmPublishers.SectionedResultsChangeset(self, keyPaths: keyPaths)
+    }
+}
+
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+extension ResultsSection: RealmSubscribable {
+    /// :nodoc:
+    public func _observe<S>(_ keyPaths: [String]? = nil, on queue: DispatchQueue? = nil, _ subscriber: S)
+    -> NotificationToken where S: Subscriber, S.Input == Self {
+        return observe(keyPaths: keyPaths, on: queue) { change in
+            switch change {
+            case .initial(let collection):
+                _ = subscriber.receive(collection)
+            case .update(let collection, deletions: _, insertions: _, modifications: _, sectionsToInsert: _, sectionsToDelete: _):
+                _ = subscriber.receive(collection)
+            }
+        }
+    }
+
+    /// :nodoc:
+    public func _observe<S: Subscriber>(_ keyPaths: [String]? = nil, _ subscriber: S) -> NotificationToken where S.Input == Void {
+        return observe(keyPaths: keyPaths, on: nil) { _ in _ = subscriber.receive() }
+    }
+
+    /// A publisher that emits Void each time the results section collection changes.
+    ///
+    /// Despite the name, this actually emits *after* the results section collection has changed.
+    public var objectWillChange: RealmPublishers.WillChange<ResultsSection> {
+        RealmPublishers.WillChange(self)
+    }
+
+    /// A publisher that emits the results section collection each time the results section collection changes.
+    public var collectionPublisher: RealmPublishers.Value<Self> {
+        RealmPublishers.Value(self)
+    }
+
+    /// A publisher that emits the results section collection each time the results section collection changes on the given property keyPaths.
+    public func collectionPublisher(keyPaths: [String]?) -> RealmPublishers.Value<Self> {
+        return RealmPublishers.Value(self, keyPaths: keyPaths)
+    }
+
+    /// A publisher that emits a results section collection changeset each time the results section collection changes.
+    public var changesetPublisher: RealmPublishers.SectionChangeset<Self> {
+        RealmPublishers.SectionChangeset(self)
+    }
+
+    /// A publisher that emits a results section collection changeset each time the results section collection changes on the given property keyPaths.
+    public func changesetPublisher(keyPaths: [String]?) -> RealmPublishers.SectionChangeset<Self> {
+        return RealmPublishers.SectionChangeset(self, keyPaths: keyPaths)
     }
 }
 
@@ -406,37 +807,64 @@ extension Results: RealmSubscribable {
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
 extension RealmCollection {
     /// :nodoc:
-    // swiftlint:disable:next identifier_name
-    public func _observe<S>(on queue: DispatchQueue? = nil, _ subscriber: S)
-        -> NotificationToken where S: Subscriber, S.Input == Self, S.Failure == Error {
+    public func _observe<S>(_ keyPaths: [String]? = nil, on queue: DispatchQueue? = nil, _ subscriber: S)
+        -> NotificationToken where S: Subscriber, S.Input == Self {
             // FIXME: we could skip some pointless work in converting the changeset to the Swift type here
-            return observe(on: queue) { change in
+        return observe(keyPaths: keyPaths, on: queue) { change in
                 switch change {
                 case .initial(let collection):
                     _ = subscriber.receive(collection)
                 case .update(let collection, deletions: _, insertions: _, modifications: _):
                     _ = subscriber.receive(collection)
                 case .error(let error):
-                    subscriber.receive(completion: .failure(error))
+                    fatalError("Unexpected error \(error)")
                 }
             }
     }
 
     /// :nodoc:
-    public func _observe<S: Subscriber>(_ subscriber: S) -> NotificationToken where S.Input == Void, S.Failure == Never {
-        return observe(on: nil) { _ in _ = subscriber.receive() }
+    public func _observe<S: Subscriber>(_ keyPaths: [String]? = nil, _ subscriber: S) -> NotificationToken where S.Input == Void {
+        return observe(keyPaths: keyPaths, on: nil) { _ in _ = subscriber.receive() }
     }
 }
 
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-extension AnyRealmCollection: RealmSubscribable {
+extension AnyRealmCollection: RealmSubscribable {}
+
+// MARK: RealmKeyedCollection
+
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+extension RealmKeyedCollection {
+    /// :nodoc:
+    public func _observe<S>(_ keyPaths: [String]?, on queue: DispatchQueue? = nil, _ subscriber: S)
+        -> NotificationToken where S: Subscriber, S.Input == Self {
+            // FIXME: we could skip some pointless work in converting the changeset to the Swift type here
+            return observe(keyPaths: keyPaths, on: queue) { change in
+                switch change {
+                case .initial(let collection):
+                    _ = subscriber.receive(collection)
+                case .update(let collection, deletions: _, insertions: _, modifications: _):
+                    _ = subscriber.receive(collection)
+                case .error(let error):
+                    fatalError("Unexpected error \(error)")
+                }
+            }
+    }
+    /// :nodoc:
+    public func _observe<S: Subscriber>(_ subscriber: S) -> NotificationToken where S.Input == Void {
+        return observe(keyPaths: nil, on: nil) { _ in _ = subscriber.receive() }
+    }
+    /// :nodoc:
+    public func _observe<S: Subscriber>(_ keyPaths: [String]? = nil, _ subscriber: S) -> NotificationToken where S.Input == Void {
+        return observe(keyPaths: keyPaths, on: nil) { _ in _ = subscriber.receive() }
+    }
 }
 
 // MARK: Subscriptions
 
 /// A subscription which wraps a Realm notification.
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-public struct ObservationSubscription: Subscription {
+@frozen public struct ObservationSubscription: Subscription {
     private var token: NotificationToken
     internal init(token: NotificationToken) {
         self.token = token
@@ -459,6 +887,37 @@ public struct ObservationSubscription: Subscription {
     }
 }
 
+/// A subscription which wraps a Realm AsyncOpenTask.
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+@frozen public struct AsyncOpenSubscription: Subscription {
+    private let task: Realm.AsyncOpenTask
+
+    internal init(task: Realm.AsyncOpenTask,
+                  callbackQueue: DispatchQueue,
+                  onProgressNotificationCallback: ((SyncSession.Progress) -> Void)?) {
+        self.task = task
+        if let onProgressNotificationCallback = onProgressNotificationCallback {
+            self.task.addProgressNotification(queue: callbackQueue, block: onProgressNotificationCallback)
+        }
+    }
+
+    /// A unique identifier for identifying publisher streams.
+    public var combineIdentifier: CombineIdentifier {
+        return CombineIdentifier(task.rlmTask)
+    }
+
+    /// This function is not implemented.
+    ///
+    /// Realm publishers do not support backpressure and so this function does nothing.
+    public func request(_ demand: Subscribers.Demand) {
+    }
+
+    /// Stop emitting values on this subscription.
+    public func cancel() {
+        task.cancel()
+    }
+}
+
 // MARK: Publishers
 
 /// Combine publishers for Realm types.
@@ -466,23 +925,99 @@ public struct ObservationSubscription: Subscription {
 /// You normally should not create any of these types directly, and should
 /// instead use the extension methods which create them.
 @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
-public enum Publishers {
+public enum RealmPublishers {
     static private func realm<S: Scheduler>(_ config: RLMRealmConfiguration, _ scheduler: S) -> Realm? {
         try? Realm(RLMRealm(configuration: config, queue: scheduler as? DispatchQueue))
+    }
+    static private func realm<S: Scheduler>(_ sourceRealm: Realm, _ scheduler: S) -> Realm? {
+        return realm(sourceRealm.rlmRealm.configuration, scheduler)
+    }
+
+    /// A publisher which emits an asynchronously opened Realm.
+    @frozen public struct AsyncOpenPublisher: Publisher {
+        /// This publisher can fail if there is an error opening the Realm.
+        public typealias Failure = Error
+        /// This publisher emits an opened Realm.
+        public typealias Output = Realm
+
+        private let configuration: Realm.Configuration
+        private let callbackQueue: DispatchQueue
+        private let onProgressNotificationCallback: ((SyncSession.Progress) -> Void)?
+
+        internal init(configuration: Realm.Configuration,
+                      callbackQueue: DispatchQueue = .main,
+                      onProgressNotificationCallback: ((SyncSession.Progress) -> Void)? = nil) {
+            self.configuration = configuration
+            self.callbackQueue = callbackQueue
+            self.onProgressNotificationCallback = onProgressNotificationCallback
+        }
+
+        /// Triggers an event when there is a notification on the async open progress.
+        ///
+        /// This should be called directly after invoking the publisher.
+        ///
+        /// - Parameter onProgressNotificationCallback: Callback which will be invoked when there is an update on progress.
+        /// - Returns: A publisher that emits an asynchronously opened Realm.
+        public func onProgressNotification(_ onProgressNotificationCallback: @escaping ((SyncSession.Progress) -> Void)) -> Self {
+            Self(configuration: configuration,
+                 callbackQueue: callbackQueue,
+                 onProgressNotificationCallback: onProgressNotificationCallback)
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Failure, Output == S.Input {
+            subscriber.receive(subscription: AsyncOpenSubscription(task: Realm.AsyncOpenTask(rlmTask: RLMRealm.asyncOpen(with: configuration.rlmConfiguration, callbackQueue: callbackQueue, callback: { rlmRealm, error in
+                if let realm = rlmRealm.flatMap(Realm.init) {
+                    _ = subscriber.receive(realm)
+                    subscriber.receive(completion: .finished)
+                } else {
+                    subscriber.receive(completion: .failure(error ?? Realm.Error.callFailed))
+                }
+            })), callbackQueue: callbackQueue, onProgressNotificationCallback: onProgressNotificationCallback))
+        }
+
+        /// Specifies the scheduler on which to perform the async open task.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> Self {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+
+            return Self(configuration: configuration,
+                        callbackQueue: queue,
+                        onProgressNotificationCallback: onProgressNotificationCallback)
+        }
     }
 
     /// A publisher which emits Void each time the Realm is refreshed.
     ///
     /// Despite the name, this actually emits *after* the Realm is refreshed.
-    public struct RealmWillChange: Publisher {
+    @frozen public struct RealmWillChange: Publisher {
         /// This publisher cannot fail.
         public typealias Failure = Never
         /// This publisher emits Void.
         public typealias Output = Void
 
         private let realm: Realm
+
         internal init(_ realm: Realm) {
             self.realm = realm
+        }
+
+        /// Captures the `NotificationToken` produced by observing a Realm Collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `RealmWillChangeWithToken` Publisher.
+        public func saveToken<T>(on object: T, for keyPath: WritableKeyPath<T, NotificationToken?>) -> RealmWillChangeWithToken<T> {
+              return RealmWillChangeWithToken<T>(realm, object, keyPath)
         }
 
         /// :nodoc:
@@ -494,45 +1029,139 @@ public enum Publishers {
         }
     }
 
-    /// A publisher which emits Void each time the object is mutated.
-    ///
-    /// Despite the name, this actually emits *after* the collection has changed.
-    public struct WillChange<Collection: RealmSubscribable>: Publisher where Collection: ThreadConfined {
+    /// :nodoc:
+    public class RealmWillChangeWithToken<T>: Publisher {
         /// This publisher cannot fail.
         public typealias Failure = Never
         /// This publisher emits Void.
         public typealias Output = Void
 
-        private let object: Collection
-        internal init(_ object: Collection) {
-            self.object = object
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private let realm: Realm
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        internal init(_ realm: Realm,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            self.realm = realm
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
         }
 
         /// :nodoc:
         public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
-            subscriber.receive(subscription: ObservationSubscription(token: self.object._observe(subscriber)))
+            let token = self.realm.observe { _, _ in
+                _ = subscriber.receive()
+            }
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+    }
+    /// A publisher which emits Void each time the object is mutated.
+    ///
+    /// Despite the name, this actually emits *after* the collection has changed.
+    @frozen public struct WillChange<Collection: RealmSubscribable>: Publisher where Collection: ThreadConfined {
+        /// This publisher cannot fail.
+        public typealias Failure = Never
+        /// This publisher emits Void.
+        public typealias Output = Void
+
+        private let collection: Collection
+
+        internal init(_ collection: Collection) {
+            self.collection = collection
+        }
+
+        /// Captures the `NotificationToken` produced by observing a Realm Collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `WillChangeWithToken` Publisher.
+        public func saveToken<T>(on object: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> WillChangeWithToken<Collection, T> {
+              return WillChangeWithToken<Collection, T>(collection, object, keyPath)
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token =  self.collection._observe(nil, subscriber)
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+    }
+
+    /// A publisher which emits Void each time the object is mutated.
+    ///
+    /// Despite the name, this actually emits *after* the collection has changed.
+    public class WillChangeWithToken<Collection: RealmSubscribable, T>: Publisher where Collection: ThreadConfined {
+        /// This publisher cannot fail.
+        public typealias Failure = Never
+        /// This publisher emits Void.
+        public typealias Output = Void
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private let object: Collection
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        internal init(_ object: Collection,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            self.object = object
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token =  self.object._observe(nil, subscriber)
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
         }
     }
 
     /// A publisher which emits an object or collection each time that object is mutated.
-    public struct Value<Subscribable: RealmSubscribable>: Publisher where Subscribable: ThreadConfined {
-        /// This publisher can only fail due to resource exhaustion when
-        /// creating the worker thread used for change notifications.
+    @frozen public struct Value<Subscribable: RealmSubscribable>: Publisher where Subscribable: ThreadConfined {
+        /// This publisher cannot actually fail and will change to Never in the future.
         public typealias Failure = Error
         /// This publisher emits the object or collection which it is publishing.
         public typealias Output = Subscribable
 
-        private let object: Subscribable
+        private let subscribable: Subscribable
+        private let keyPaths: [String]?
         private let queue: DispatchQueue?
-        internal init(_ object: Subscribable, queue: DispatchQueue? = nil) {
-            precondition(object.realm != nil, "Only managed objects can be published")
-            self.object = object
+        internal init(_ subscribable: Subscribable, keyPaths: [String]? = nil, queue: DispatchQueue? = nil) {
+            precondition(subscribable.realm != nil, "Only managed objects can be published")
+            self.subscribable = subscribable
+            self.keyPaths = keyPaths
             self.queue = queue
+        }
+
+        /// Captures the `NotificationToken` produced by observing a Realm Collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `ValueWithToken` Publisher.
+        public func saveToken<T>(on object: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> ValueWithToken<Subscribable, T> {
+              return ValueWithToken<Subscribable, T>(subscribable, queue, object, keyPath)
         }
 
         /// :nodoc:
         public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Failure, Output == S.Input {
-            subscriber.receive(subscription: ObservationSubscription(token: self.object._observe(on: queue, subscriber)))
+            subscriber.receive(subscription: ObservationSubscription(token: self.subscribable._observe(keyPaths, on: queue, subscriber)))
         }
 
         /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
@@ -550,7 +1179,7 @@ public enum Publishers {
             guard let queue = scheduler as? DispatchQueue else {
                 fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
             }
-            return Value(object, queue: queue)
+            return Value(subscribable, keyPaths: keyPaths, queue: queue)
         }
 
         /// Specifies the scheduler on which to perform downstream operations.
@@ -568,13 +1197,84 @@ public enum Publishers {
         ///
         /// - parameter scheduler: The serial dispatch queue to receive values on.
         /// - returns: A publisher which delivers values to the given scheduler.
-        public func receive<S: Scheduler>(on scheduler: S) -> Publishers.Handover<Self, S> {
-            return Publishers.Handover(self, scheduler, self.object.realm!)
+        public func receive<S: Scheduler>(on scheduler: S) -> RealmPublishers.Handover<Self, S> {
+            return Handover(self, scheduler, self.subscribable.realm!)
+        }
+    }
+
+    /// A publisher which emits an object or collection each time that object is mutated.
+    public class ValueWithToken<Subscribable: RealmSubscribable, T>: Publisher where Subscribable: ThreadConfined {
+        /// This publisher cannot actually fail and will change to Never in the future.
+        public typealias Failure = Error
+        /// This publisher emits the object or collection which it is publishing.
+        public typealias Output = Subscribable
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private let object: Subscribable
+        private let queue: DispatchQueue?
+
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        internal init(_ object: Subscribable,
+                      _ queue: DispatchQueue? = nil,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            precondition(object.realm != nil, "Only managed objects can be published")
+            self.object = object
+            self.queue = queue
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Failure, Output == S.Input {
+            let token = self.object._observe(nil, on: queue, subscriber)
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> ValueWithToken<Subscribable, T> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return ValueWithToken(object, queue, tokenParent, tokenKeyPath)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> Handover<ValueWithToken, S> {
+            return Handover(self, scheduler, self.object.realm!)
         }
     }
 
     /// A helper publisher used to support `receive(on:)` on Realm publishers.
-    public struct Handover<Upstream: Publisher, S: Scheduler>: Publisher where Upstream.Output: ThreadConfined {
+    @frozen public struct Handover<Upstream: Publisher, S: Scheduler>: Publisher where Upstream.Output: ThreadConfined {
         /// :nodoc:
         public typealias Failure = Upstream.Failure
         /// :nodoc:
@@ -605,7 +1305,7 @@ public enum Publishers {
     /// A publisher which makes `receive(on:)` work for streams of thread-confined objects
     ///
     /// Create using .threadSafeReference()
-    public struct MakeThreadSafe<Upstream: Publisher>: Publisher where Upstream.Output: ThreadConfined {
+    @frozen public struct MakeThreadSafe<Upstream: Publisher>: Publisher where Upstream.Output: ThreadConfined {
         /// :nodoc:
         public typealias Failure = Upstream.Failure
         /// :nodoc:
@@ -638,7 +1338,7 @@ public enum Publishers {
     ///
     /// Create using `.threadSafeReference().receive(on: queue)` on a publisher
     /// that emits thread-confined objects.
-    public struct DeferredHandover<Upstream: Publisher, S: Scheduler>: Publisher where Upstream.Output: ThreadConfined {
+    @frozen public struct DeferredHandover<Upstream: Publisher, S: Scheduler>: Publisher where Upstream.Output: ThreadConfined {
         /// :nodoc:
         public typealias Failure = Upstream.Failure
         /// :nodoc:
@@ -685,30 +1385,46 @@ public enum Publishers {
     /// should always be the first operation in the pipeline.
     ///
     /// Create this publisher using the `objectChangeset()` function.
-    public struct ObjectChangeset<T: Object>: Publisher {
+    @frozen public struct ObjectChangeset<O: Object>: Publisher {
         /// This publisher emits a ObjectChange<T> indicating which object and
         /// which properties of that object have changed each time a Realm is
         /// refreshed after a write transaction which modifies the observed
         /// object.
-        public typealias Output = ObjectChange<T>
+        public typealias Output = ObjectChange<O>
         /// This publisher reports error via the `.error` case of ObjectChange.
         public typealias Failure = Never
 
-        private let object: T
+        private let object: O
+        private let keyPaths: [String]?
         private let queue: DispatchQueue?
-        internal init(_ object: T, queue: DispatchQueue? = nil) {
+        internal init(_ object: O, keyPaths: [String]? = nil, queue: DispatchQueue? = nil) {
             precondition(object.realm != nil, "Only managed objects can be published")
             precondition(!object.isInvalidated, "Object is invalidated or deleted")
             self.object = object
+            self.keyPaths = keyPaths
             self.queue = queue
+        }
+
+        /// Captures the `NotificationToken` produced by observing a Realm Collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `ObjectChangesetWithToken` Publisher.
+        public func saveToken<T>(on tokenParent: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> ObjectChangesetWithToken<O, T> {
+              return ObjectChangesetWithToken<O, T>(object, queue, tokenParent, keyPath)
         }
 
         /// :nodoc:
         public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
-            let token = self.object.observe(on: self.queue) { change in
+            let token = self.object.observe(keyPaths: self.keyPaths, on: self.queue) { change in
                 switch change {
                 case .change(let o, let properties):
-                    _ = subscriber.receive(.change(o as! T, properties))
+                    _ = subscriber.receive(.change(o as! O, properties))
                 case .error(let error):
                     _ = subscriber.receive(.error(error))
                 case .deleted:
@@ -729,11 +1445,11 @@ public enum Publishers {
         ///
         /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
         /// - returns: A publisher which subscribes on the given scheduler.
-        public func subscribe<S: Scheduler>(on scheduler: S) -> ObjectChangeset<T> {
+        public func subscribe<S: Scheduler>(on scheduler: S) -> ObjectChangeset<O> {
             guard let queue = scheduler as? DispatchQueue else {
                 fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
             }
-            return ObjectChangeset(object, queue: queue)
+            return ObjectChangeset(object, keyPaths: self.keyPaths, queue: queue)
         }
 
         /// Specifies the scheduler on which to perform downstream operations.
@@ -751,13 +1467,104 @@ public enum Publishers {
         ///
         /// - parameter scheduler: The serial dispatch queue to receive values on.
         /// - returns: A publisher which delivers values to the given scheduler.
-        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverObjectChangeset<Self, T, S> {
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverObjectChangeset<Self, O, S> {
+            DeferredHandoverObjectChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which emits ObjectChange<T> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `objectChangeset()` function.
+    public class ObjectChangesetWithToken<O: Object, T>: Publisher {
+        /// This publisher emits a ObjectChange<T> indicating which object and
+        /// which properties of that object have changed each time a Realm is
+        /// refreshed after a write transaction which modifies the observed
+        /// object.
+        public typealias Output = ObjectChange<O>
+        /// This publisher reports error via the `.error` case of ObjectChange.
+        public typealias Failure = Never
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        private let object: O
+        private let queue: DispatchQueue?
+        internal init(_ object: O,
+                      _ queue: DispatchQueue? = nil,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            precondition(object.realm != nil, "Only managed objects can be published")
+            precondition(!object.isInvalidated, "Object is invalidated or deleted")
+            self.object = object
+            self.queue = queue
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.object.observe(on: self.queue) { change in
+                switch change {
+                case .change(let o, let properties):
+                    _ = subscriber.receive(.change(o as! O, properties))
+                case .error(let error):
+                    _ = subscriber.receive(.error(error))
+                case .deleted:
+                    subscriber.receive(completion: .finished)
+                }
+            }
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> ObjectChangesetWithToken<O, T> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return ObjectChangesetWithToken(object, queue, tokenParent, tokenKeyPath)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverObjectChangeset<ObjectChangesetWithToken, T, S> {
             DeferredHandoverObjectChangeset(self, scheduler)
         }
     }
 
     /// A helper publisher created by calling `.threadSafeReference()` on a publisher which emits thread-confined values.
-    public struct MakeThreadSafeObjectChangeset<Upstream: Publisher, T: Object>: Publisher where Upstream.Output == ObjectChange<T> {
+    @frozen public struct MakeThreadSafeObjectChangeset<Upstream: Publisher, T: Object>: Publisher where Upstream.Output == ObjectChange<T> {
         /// :nodoc:
         public typealias Failure = Upstream.Failure
         /// :nodoc:
@@ -797,7 +1604,7 @@ public enum Publishers {
     ///
     /// Create using `.threadSafeReference().receive(on: queue)` on a publisher
     /// that emits `ObjectChange`.
-    public struct DeferredHandoverObjectChangeset<Upstream: Publisher, T: Object, S: Scheduler>: Publisher where Upstream.Output == ObjectChange<T> {
+    @frozen public struct DeferredHandoverObjectChangeset<Upstream: Publisher, T: Object, S: Scheduler>: Publisher where Upstream.Output == ObjectChange<T> {
         /// :nodoc:
         public typealias Failure = Upstream.Failure
         /// :nodoc:
@@ -812,8 +1619,15 @@ public enum Publishers {
         }
 
         private enum Handover {
+            // .error and .change containing a frozen object can be delivered
+            // without any handover
             case passthrough(_ change: ObjectChange<T>)
-            case tsr(_ tsr: ThreadSafeReference<T>, _ properties: [PropertyChange], config: RLMRealmConfiguration)
+            // .change containing a live object need to be wrapped in a TSR.
+            // We also hold a reference to a frozen Realm to ensure that the
+            // source version remains pinned and we can deliver the object at
+            // the same version as the change information.
+            case tsr(_ realm: Realm, _ tsr: ThreadSafeReference<T>,
+                     _ properties: [PropertyChange])
         }
 
         /// :nodoc:
@@ -823,15 +1637,15 @@ public enum Publishers {
                 .map { (change: Output) -> Handover in
                     guard case .change(let obj, let properties) = change else { return .passthrough(change) }
                     guard let realm = obj.realm, !realm.isFrozen else { return .passthrough(change) }
-                    return .tsr(ThreadSafeReference(to: obj), properties, config: realm.rlmRealm.configuration)
+                    return .tsr(realm.freeze(), ThreadSafeReference(to: obj), properties)
                 }
                 .receive(on: scheduler)
                 .compactMap { (handover: Handover) -> Output? in
                     switch handover {
                     case .passthrough(let change):
                         return change
-                    case .tsr(let tsr, let properties, let config):
-                        if let resolved = realm(config, scheduler)?.resolve(tsr) {
+                    case .tsr(let frozenRealm, let tsr, let properties):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
                             return .change(resolved, properties)
                         }
                         return nil
@@ -848,23 +1662,39 @@ public enum Publishers {
     /// there is an intermediate transform. If `subscribe(on:)` is used, it
     /// should always be the first operation in the pipeline.
     ///
-    /// Create this publisher using the `changesetPublisher` property on RealmCollection..
-    public struct CollectionChangeset<Collection: RealmCollection>: Publisher {
+    /// Create this publisher using the `changesetPublisher` property on RealmCollection.
+    @frozen public struct CollectionChangeset<Collection: RealmCollection>: Publisher {
         public typealias Output = RealmCollectionChange<Collection>
-        /// This publisher reports error via the `.error` case of RealmCollectionChange..
+        /// This publisher reports error via the `.error` case of RealmCollectionChange.
         public typealias Failure = Never
 
         private let collection: Collection
+        private let keyPaths: [String]?
         private let queue: DispatchQueue?
-        internal init(_ collection: Collection, queue: DispatchQueue? = nil) {
+        internal init(_ collection: Collection, keyPaths: [String]? = nil, queue: DispatchQueue? = nil) {
             precondition(collection.realm != nil, "Only managed collections can be published")
             self.collection = collection
+            self.keyPaths = keyPaths
             self.queue = queue
+        }
+
+        /// Captures the `NotificationToken` produced by observing a Realm Collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `CollectionChangesetWithToken` Publisher.
+        public func saveToken<T>(on object: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> CollectionChangesetWithToken<Collection, T> {
+              return CollectionChangesetWithToken<Collection, T>(collection, queue, object, keyPath)
         }
 
         /// :nodoc:
         public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
-            let token = self.collection.observe(on: self.queue) { change in
+            let token = self.collection.observe(keyPaths: self.keyPaths, on: self.queue) { change in
                 _ = subscriber.receive(change)
             }
             subscriber.receive(subscription: ObservationSubscription(token: token))
@@ -885,7 +1715,7 @@ public enum Publishers {
             guard let queue = scheduler as? DispatchQueue else {
                 fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
             }
-            return CollectionChangeset(collection, queue: queue)
+            return CollectionChangeset(collection, keyPaths: self.keyPaths, queue: queue)
         }
 
         /// Specifies the scheduler on which to perform downstream operations.
@@ -908,9 +1738,575 @@ public enum Publishers {
         }
     }
 
+    /// A publisher which emits RealmMapChange<Key, Value> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher` property on RealmCollection.
+    @frozen public struct MapChangeset<Collection: RealmKeyedCollection>: Publisher {
+        public typealias Output = RealmMapChange<Collection>
+        /// This publisher reports error via the `.error` case of RealmMapChange.
+        public typealias Failure = Never
+
+        private let collection: Collection
+        private let keyPaths: [String]?
+        private let queue: DispatchQueue?
+        internal init(_ collection: Collection, keyPaths: [String]? = nil, queue: DispatchQueue? = nil) {
+            precondition(collection.realm != nil, "Only managed collections can be published")
+            self.collection = collection
+            self.keyPaths = keyPaths
+            self.queue = queue
+        }
+
+        /// Captures the `NotificationToken` produced by observing a Realm Collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `CollectionChangesetWithToken` Publisher.
+        public func saveToken<T>(on object: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> MapChangesetWithToken<Collection, T> {
+              return MapChangesetWithToken<Collection, T>(collection, queue, object, keyPath)
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.collection.observe(keyPaths: self.keyPaths, on: self.queue) { change in
+                _ = subscriber.receive(change)
+            }
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> MapChangeset<Collection> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return MapChangeset(collection, keyPaths: self.keyPaths, queue: queue)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverKeyedCollectionChangeset<Self, Collection, S> {
+            DeferredHandoverKeyedCollectionChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which emits RealmSectionedResultsChange<Collection> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher` property on RealmSectionedResult.
+    @frozen public struct SectionedResultsChangeset<Collection: RealmSectionedResult>: Publisher {
+        public typealias Output = RealmSectionedResultsChange<Collection>
+        /// This publisher reports error via the `.error` case of RealmSectionedResultsChange.
+        public typealias Failure = Never
+
+        private let collection: Collection
+        private let keyPaths: [String]?
+        private let queue: DispatchQueue?
+        internal init(_ collection: Collection, keyPaths: [String]? = nil, queue: DispatchQueue? = nil) {
+            precondition(collection.realm != nil, "Only managed collections can be published")
+            self.collection = collection
+            self.keyPaths = keyPaths
+            self.queue = queue
+        }
+
+        /// Captures the `NotificationToken` produced by observing the collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `SectionedResultsChangesetWithToken` Publisher.
+        public func saveToken<T>(on object: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> SectionedResultsChangesetWithToken<Collection, T> {
+              return SectionedResultsChangesetWithToken<Collection, T>(collection, queue, object, keyPath)
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.collection.observe(keyPaths: self.keyPaths, on: self.queue) { change in
+                _ = subscriber.receive(change)
+            }
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> SectionedResultsChangeset<Collection> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return SectionedResultsChangeset(collection, keyPaths: self.keyPaths, queue: queue)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverSectionedResultsChangeset<Self, Collection, S> {
+            DeferredHandoverSectionedResultsChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which emits RealmSectionedResultsChange<Collection> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher` property on RealmSectionedResult.
+    @frozen public struct SectionChangeset<Collection: RealmSectionedResult>: Publisher {
+        public typealias Output = RealmSectionedResultsChange<Collection>
+        /// This publisher reports error via the `.error` case of RealmSectionedResultsChange.
+        public typealias Failure = Never
+
+        private let collection: Collection
+        private let keyPaths: [String]?
+        private let queue: DispatchQueue?
+        internal init(_ collection: Collection, keyPaths: [String]? = nil, queue: DispatchQueue? = nil) {
+            precondition(collection.realm != nil, "Only managed collections can be published")
+            self.collection = collection
+            self.keyPaths = keyPaths
+            self.queue = queue
+        }
+
+        /// Captures the `NotificationToken` produced by observing a the collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - object: The object which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `SectionedResultsChangesetWithToken` Publisher.
+        public func saveToken<T>(on object: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> SectionedResultsChangesetWithToken<Collection, T> {
+              return SectionedResultsChangesetWithToken<Collection, T>(collection, queue, object, keyPath)
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.collection.observe(keyPaths: self.keyPaths, on: self.queue) { change in
+                _ = subscriber.receive(change)
+            }
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> SectionedResultsChangeset<Collection> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return SectionedResultsChangeset(collection, keyPaths: self.keyPaths, queue: queue)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverSectionedResultsChangeset<Self, Collection, S> {
+            DeferredHandoverSectionedResultsChangeset(self, scheduler)
+        }
+    }
+
+
+    /// A publisher which emits RealmCollectionChange<T> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher` property on RealmCollection.
+    public class CollectionChangesetWithToken<Collection: RealmCollection, T>: Publisher {
+        public typealias Output = RealmCollectionChange<Collection>
+        /// This publisher reports error via the `.error` case of RealmCollectionChange.
+        public typealias Failure = Never
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        private let collection: Collection
+        private let queue: DispatchQueue?
+        internal init(_ collection: Collection,
+                      _ queue: DispatchQueue? = nil,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            precondition(collection.realm != nil, "Only managed collections can be published")
+            self.collection = collection
+            self.queue = queue
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.collection.observe(on: self.queue) { change in
+                _ = subscriber.receive(change)
+            }
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> CollectionChangesetWithToken<Collection, T> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return CollectionChangesetWithToken(collection, queue, tokenParent, tokenKeyPath)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverCollectionChangeset<CollectionChangesetWithToken, Collection, S> {
+            DeferredHandoverCollectionChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which emits RealmSectionedResultsChange<T> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher` property on RealmSectionedResult.
+    public class SectionedResultsChangesetWithToken<Collection: RealmSectionedResult, T>: Publisher {
+        public typealias Output = RealmSectionedResultsChange<Collection>
+        /// This publisher reports error via the `.error` case of RealmCollectionChange.
+        public typealias Failure = Never
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        private let collection: Collection
+        private let queue: DispatchQueue?
+        internal init(_ collection: Collection,
+                      _ queue: DispatchQueue? = nil,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            precondition(collection.realm != nil, "Only managed collections can be published")
+            self.collection = collection
+            self.queue = queue
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.collection.observe(on: self.queue) { change in
+                _ = subscriber.receive(change)
+            }
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> SectionedResultsChangesetWithToken<Collection, T> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return SectionedResultsChangesetWithToken(collection, queue, tokenParent, tokenKeyPath)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverSectionedResultsChangeset<SectionedResultsChangesetWithToken, Collection, S> {
+            DeferredHandoverSectionedResultsChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which emits RealmSectionedResultsChange<T> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher` property on RealmSectionedResult.
+    public class SectionChangesetWithToken<Collection: RealmSectionedResult, T>: Publisher {
+        public typealias Output = RealmSectionedResultsChange<Collection>
+        /// This publisher reports error via the `.error` case of RealmCollectionChange.
+        public typealias Failure = Never
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        private let collection: Collection
+        private let queue: DispatchQueue?
+        internal init(_ collection: Collection,
+                      _ queue: DispatchQueue? = nil,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            precondition(collection.realm != nil, "Only managed collections can be published")
+            self.collection = collection
+            self.queue = queue
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.collection.observe(on: self.queue) { change in
+                _ = subscriber.receive(change)
+            }
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> SectionedResultsChangesetWithToken<Collection, T> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return SectionedResultsChangesetWithToken(collection, queue, tokenParent, tokenKeyPath)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverSectionChangeset<SectionChangesetWithToken, Collection, S> {
+            DeferredHandoverSectionChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which emits RealmMapChange<T> each time the observed object is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher` property on RealmCollection.
+    public class MapChangesetWithToken<Collection: RealmKeyedCollection, T>: Publisher {
+        public typealias Output = RealmMapChange<Collection>
+        /// This publisher reports error via the `.error` case of RealmCollectionChange.
+        public typealias Failure = Never
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        private let collection: Collection
+        private let queue: DispatchQueue?
+        internal init(_ collection: Collection,
+                      _ queue: DispatchQueue? = nil,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            precondition(collection.realm != nil, "Only managed collections can be published")
+            self.collection = collection
+            self.queue = queue
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.collection.observe(on: self.queue) { change in
+                _ = subscriber.receive(change)
+            }
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> MapChangesetWithToken<Collection, T> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return MapChangesetWithToken(collection, queue, tokenParent, tokenKeyPath)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverKeyedCollectionChangeset<MapChangesetWithToken, Collection, S> {
+            DeferredHandoverKeyedCollectionChangeset(self, scheduler)
+        }
+    }
+
     /// A helper publisher created by calling `.threadSafeReference()` on a
     /// publisher which emits `RealmCollectionChange`.
-    public struct MakeThreadSafeCollectionChangeset<Upstream: Publisher, T: RealmCollection>: Publisher where Upstream.Output == RealmCollectionChange<T> {
+    @frozen public struct MakeThreadSafeCollectionChangeset<Upstream: Publisher, T: RealmCollection>: Publisher where Upstream.Output == RealmCollectionChange<T> {
         /// :nodoc:
         public typealias Failure = Upstream.Failure
         /// :nodoc:
@@ -939,12 +2335,74 @@ public enum Publishers {
         }
     }
 
+    /// A helper publisher created by calling `.threadSafeReference()` on a
+    /// publisher which emits `RealmMapChange`.
+    @frozen public struct MakeThreadSafeKeyedCollectionChangeset<Upstream: Publisher, T: RealmKeyedCollection>: Publisher where Upstream.Output == RealmMapChange<T> {
+        /// :nodoc:
+        public typealias Failure = Upstream.Failure
+        /// :nodoc:
+        public typealias Output = Upstream.Output
+
+        private let upstream: Upstream
+        internal init(_ upstream: Upstream) {
+            self.upstream = upstream
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Failure, Output == S.Input {
+            self.upstream.receive(subscriber: subscriber)
+        }
+
+        /// Specifies the scheduler on which to receive elements from the publisher.
+        ///
+        /// This publisher converts each value emitted by the upstream
+        /// publisher to a `ThreadSafeReference`, passes it to the target
+        /// scheduler, and then converts back to the original type.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverKeyedCollectionChangeset<Upstream, T, S> {
+            DeferredHandoverKeyedCollectionChangeset(self.upstream, scheduler)
+        }
+    }
+
+    /// A helper publisher created by calling `.threadSafeReference()` on a
+    /// publisher which emits `RealmSectionedResultsChange`.
+    @frozen public struct MakeThreadSafeSectionedResultsChangeset<Upstream: Publisher, T: RealmSectionedResult>: Publisher where Upstream.Output == RealmSectionedResultsChange<T> {
+        /// :nodoc:
+        public typealias Failure = Upstream.Failure
+        /// :nodoc:
+        public typealias Output = Upstream.Output
+
+        private let upstream: Upstream
+        internal init(_ upstream: Upstream) {
+            self.upstream = upstream
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Failure, Output == S.Input {
+            self.upstream.receive(subscriber: subscriber)
+        }
+
+        /// Specifies the scheduler on which to receive elements from the publisher.
+        ///
+        /// This publisher converts each value emitted by the upstream
+        /// publisher to a `ThreadSafeReference`, passes it to the target
+        /// scheduler, and then converts back to the original type.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverSectionedResultsChangeset<Upstream, T, S> {
+            DeferredHandoverSectionedResultsChangeset(self.upstream, scheduler)
+        }
+    }
+
     /// A publisher which delivers thread-confined collection changesets to a
     /// serial dispatch queue.
     ///
     /// Create using `.threadSafeReference().receive(on: queue)` on a publisher
     /// that emits `RealmCollectionChange`.
-    public struct DeferredHandoverCollectionChangeset<Upstream: Publisher, T: RealmCollection, S: Scheduler>: Publisher where Upstream.Output == RealmCollectionChange<T> {
+    @frozen public struct DeferredHandoverCollectionChangeset<Upstream: Publisher, T: RealmCollection, S: Scheduler>: Publisher where Upstream.Output == RealmCollectionChange<T> {
         /// :nodoc:
         public typealias Failure = Upstream.Failure
         /// :nodoc:
@@ -958,9 +2416,16 @@ public enum Publishers {
         }
 
         private enum Handover {
+            // A collection change which does not contain a live object and so
+            // can be delivered directly
             case passthrough(_ change: RealmCollectionChange<T>)
-            case initial(_ tsr: ThreadSafeReference<T>, config: RLMRealmConfiguration)
-            case update(_ tsr: ThreadSafeReference<T>, deletions: [Int], insertions: [Int], modifications: [Int], config: RLMRealmConfiguration)
+            // The initial and update notifications for live collections need
+            // to wrap the collection in a thread-safe reference and hold onto
+            // a frozen Realm to ensure that the version which the change
+            // information is for stays pinned until it's delivered.
+            case initial(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>)
+            case update(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>, deletions: [Int],
+                        insertions: [Int], modifications: [Int])
         }
 
         /// :nodoc:
@@ -971,10 +2436,11 @@ public enum Publishers {
                     switch change {
                     case .initial(let collection):
                         guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
-                        return .initial(ThreadSafeReference(to: collection), config: realm.rlmRealm.configuration)
+                        return .initial(realm.freeze(), ThreadSafeReference(to: collection))
                     case .update(let collection, deletions: let deletions, insertions: let insertions, modifications: let modifications):
                         guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
-                        return .update(ThreadSafeReference(to: collection), deletions: deletions, insertions: insertions, modifications: modifications, config: realm.rlmRealm.configuration)
+                        return .update(realm.freeze(), ThreadSafeReference(to: collection),
+                                       deletions: deletions, insertions: insertions, modifications: modifications)
                     case .error:
                         return .passthrough(change)
                     }
@@ -984,19 +2450,513 @@ public enum Publishers {
                     switch handover {
                     case .passthrough(let change):
                         return change
-                    case .initial(let tsr, config: let config):
-                        if let resolved = realm(config, scheduler)?.resolve(tsr) {
+                    case .initial(let frozenRealm, let tsr):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
                             return .initial(resolved)
                         }
                         return nil
-                    case .update(let tsr, deletions: let deletions, insertions: let insertions, modifications: let modifications, config: let config):
-                        if let resolved = realm(config, scheduler)?.resolve(tsr) {
+                    case .update(let frozenRealm, let tsr, deletions: let deletions, insertions: let insertions, modifications: let modifications):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
                             return .update(resolved, deletions: deletions, insertions: insertions, modifications: modifications)
                         }
                         return nil
                     }
                 }
                 .receive(subscriber: subscriber)
+        }
+    }
+
+    /// A publisher which delivers thread-confined `Map` changesets to a
+    /// serial dispatch queue.
+    ///
+    /// Create using `.threadSafeReference().receive(on: queue)` on a publisher
+    /// that emits `RealmMapChange`.
+    @frozen public struct DeferredHandoverKeyedCollectionChangeset<Upstream: Publisher, T: RealmKeyedCollection, S: Scheduler>: Publisher where Upstream.Output == RealmMapChange<T> {
+        /// :nodoc:
+        public typealias Failure = Upstream.Failure
+        /// :nodoc:
+        public typealias Output = Upstream.Output
+
+        private let upstream: Upstream
+        private let scheduler: S
+        internal init(_ upstream: Upstream, _ scheduler: S) {
+            self.upstream = upstream
+            self.scheduler = scheduler
+        }
+
+        private enum Handover {
+            // A collection change which does not contain a live object and so
+            // can be delivered directly
+            case passthrough(_ change: RealmMapChange<T>)
+            // The initial and update notifications for live collections need
+            // to wrap the collection in a thread-safe reference and hold onto
+            // a frozen Realm to ensure that the version which the change
+            // information is for stays pinned until it's delivered.
+            case initial(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>)
+            case update(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>,
+                        deletions: [T.Key], insertions: [T.Key], modifications: [T.Key])
+        }
+
+        /// :nodoc:
+        public func receive<Sub>(subscriber: Sub) where Sub: Subscriber, Sub.Failure == Failure, Output == Sub.Input {
+            let scheduler = self.scheduler
+            self.upstream
+                .map { (change: Output) -> Handover in
+                    switch change {
+                    case .initial(let collection):
+                        guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
+                        return .initial(realm.freeze(), ThreadSafeReference(to: collection))
+                    case .update(let collection, deletions: let deletions, insertions: let insertions, modifications: let modifications):
+                        guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
+                        return .update(realm.freeze(), ThreadSafeReference(to: collection),
+                                       deletions: deletions, insertions: insertions, modifications: modifications)
+                    case .error:
+                        return .passthrough(change)
+                    }
+                }
+                .receive(on: scheduler)
+                .compactMap { (handover: Handover) -> Output? in
+                    switch handover {
+                    case .passthrough(let change):
+                        return change
+                    case .initial(let frozenRealm, let tsr):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
+                            return .initial(resolved)
+                        }
+                        return nil
+                    case .update(let frozenRealm, let tsr, deletions: let deletions,
+                                 insertions: let insertions, modifications: let modifications):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
+                            return .update(resolved, deletions: deletions, insertions: insertions,
+                                           modifications: modifications)
+                        }
+                        return nil
+                    }
+                }
+                .receive(subscriber: subscriber)
+        }
+    }
+
+    /// A publisher which delivers thread-confined collection changesets to a
+    /// serial dispatch queue.
+    ///
+    /// Create using `.threadSafeReference().receive(on: queue)` on a publisher
+    /// that emits `RealmCollectionChange`.
+    // swiftlint:disable:next type_name
+    @frozen public struct DeferredHandoverSectionedResultsChangeset<Upstream: Publisher, T: RealmSectionedResult, S: Scheduler>: Publisher where Upstream.Output == RealmSectionedResultsChange<T> {
+        /// :nodoc:
+        public typealias Failure = Upstream.Failure
+        /// :nodoc:
+        public typealias Output = Upstream.Output
+
+        private let upstream: Upstream
+        private let scheduler: S
+        internal init(_ upstream: Upstream, _ scheduler: S) {
+            self.upstream = upstream
+            self.scheduler = scheduler
+        }
+
+        private enum Handover {
+            // A collection change which does not contain a live object and so
+            // can be delivered directly
+            case passthrough(_ change: RealmSectionedResultsChange<T>)
+            // The initial and update notifications for live collections need
+            // to wrap the collection in a thread-safe reference and hold onto
+            // a frozen Realm to ensure that the version which the change
+            // information is for stays pinned until it's delivered.
+            case initial(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>)
+            case update(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>,
+                        deletions: [IndexPath], insertions: [IndexPath], modifications: [IndexPath],
+                        sectionsToInsert: IndexSet, sectionsToDelete: IndexSet)
+        }
+
+        /// :nodoc:
+        public func receive<Sub>(subscriber: Sub) where Sub: Subscriber, Sub.Failure == Failure, Output == Sub.Input {
+            let scheduler = self.scheduler
+            self.upstream
+                .map { (change: Output) -> Handover in
+                    switch change {
+                    case .initial(let collection):
+                        guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
+                        return .initial(realm.freeze(), ThreadSafeReference(to: collection))
+                    case .update(let collection, deletions: let deletions, insertions: let insertions, modifications: let modifications,
+                                 sectionsToInsert: let sectionsToInsert, sectionsToDelete: let sectionsToDelete):
+
+                        guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
+                        return .update(realm.freeze(), ThreadSafeReference(to: collection),
+                                       deletions: deletions, insertions: insertions, modifications: modifications,
+                                       sectionsToInsert: sectionsToInsert, sectionsToDelete: sectionsToDelete)
+                    }
+                }
+                .receive(on: scheduler)
+                .compactMap { (handover: Handover) -> Output? in
+                    switch handover {
+                    case .passthrough(let change):
+                        return change
+                    case .initial(let frozenRealm, let tsr):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
+                            return .initial(resolved)
+                        }
+                        return nil
+                    case .update(let frozenRealm, let tsr, deletions: let deletions, insertions: let insertions, modifications: let modifications,
+                                 sectionsToInsert: let sectionsToInsert, sectionsToDelete: let sectionsToDelete):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
+                            return .update(resolved, deletions: deletions, insertions: insertions, modifications: modifications,
+                                           sectionsToInsert: sectionsToInsert, sectionsToDelete: sectionsToDelete)
+                        }
+                        return nil
+                    }
+                }
+                .receive(subscriber: subscriber)
+        }
+    }
+
+    /// A publisher which delivers thread-confined collection changesets to a
+    /// serial dispatch queue.
+    ///
+    /// Create using `.threadSafeReference().receive(on: queue)` on a publisher
+    /// that emits `RealmSectionedResultsChange`.
+    @frozen public struct DeferredHandoverSectionChangeset<Upstream: Publisher, T: RealmSectionedResult, S: Scheduler>: Publisher where Upstream.Output == RealmSectionedResultsChange<T> {
+        /// :nodoc:
+        public typealias Failure = Upstream.Failure
+        /// :nodoc:
+        public typealias Output = Upstream.Output
+
+        private let upstream: Upstream
+        private let scheduler: S
+        internal init(_ upstream: Upstream, _ scheduler: S) {
+            self.upstream = upstream
+            self.scheduler = scheduler
+        }
+
+        private enum Handover {
+            // A collection change which does not contain a live object and so
+            // can be delivered directly
+            case passthrough(_ change: RealmSectionedResultsChange<T>)
+            // The initial and update notifications for live collections need
+            // to wrap the collection in a thread-safe reference and hold onto
+            // a frozen Realm to ensure that the version which the change
+            // information is for stays pinned until it's delivered.
+            case initial(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>)
+            case update(_ frozenRealm: Realm, _ tsr: ThreadSafeReference<T>,
+                        deletions: [IndexPath], insertions: [IndexPath], modifications: [IndexPath],
+                        sectionsToInsert: IndexSet, sectionsToDelete: IndexSet)
+        }
+
+        /// :nodoc:
+        public func receive<Sub>(subscriber: Sub) where Sub: Subscriber, Sub.Failure == Failure, Output == Sub.Input {
+            let scheduler = self.scheduler
+            self.upstream
+                .map { (change: Output) -> Handover in
+                    switch change {
+                    case .initial(let collection):
+                        guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
+                        return .initial(realm.freeze(), ThreadSafeReference(to: collection))
+                    case .update(let collection, deletions: let deletions, insertions: let insertions, modifications: let modifications,
+                                 sectionsToInsert: let sectionsToInsert, sectionsToDelete: let sectionsToDelete):
+
+                        guard let realm = collection.realm, !realm.isFrozen else { return .passthrough(change) }
+                        return .update(realm.freeze(), ThreadSafeReference(to: collection),
+                                       deletions: deletions, insertions: insertions, modifications: modifications,
+                                       sectionsToInsert: sectionsToInsert, sectionsToDelete: sectionsToDelete)
+                    }
+                }
+                .receive(on: scheduler)
+                .compactMap { (handover: Handover) -> Output? in
+                    switch handover {
+                    case .passthrough(let change):
+                        return change
+                    case .initial(let frozenRealm, let tsr):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
+                            return .initial(resolved)
+                        }
+                        return nil
+                    case .update(let frozenRealm, let tsr, deletions: let deletions, insertions: let insertions, modifications: let modifications,
+                                 sectionsToInsert: let sectionsToInsert, sectionsToDelete: let sectionsToDelete):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
+                            return .update(resolved, deletions: deletions, insertions: insertions, modifications: modifications,
+                                           sectionsToInsert: sectionsToInsert, sectionsToDelete: sectionsToDelete)
+                        }
+                        return nil
+                    }
+                }
+                .receive(subscriber: subscriber)
+        }
+    }
+
+    /// A publisher which emits ObjectChange<T> each time the observed projection is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `changesetPublisher()` function.
+    @frozen public struct ProjectionChangeset<P: ProjectionObservable>: Publisher where P: ThreadConfined {
+        /// This publisher emits a ProjectionChange<P> indicating which projection and
+        /// which properties of that projection have changed each time a Realm is
+        /// refreshed after a write transaction which modifies the observed
+        /// projection.
+        public typealias Output = ObjectChange<P>
+        /// This publisher reports error via the `.error` case of ProjectionChange.
+        public typealias Failure = Never
+
+        private let projection: P
+        private let keyPaths: [String]?
+        private let queue: DispatchQueue?
+        internal init(_ projection: P, keyPaths: [String]? = nil, queue: DispatchQueue? = nil) {
+            precondition(!projection.isInvalidated, "Projection's object is invalidated or deleted")
+            self.projection = projection
+            self.keyPaths = keyPaths
+            self.queue = queue
+        }
+
+        /// Captures the `NotificationToken` produced by observing a Realm Collection.
+        ///
+        /// This allows you to do notification skipping when performing a `Realm.write(withoutNotifying:)`. You should use this call if you
+        /// require to write to the Realm database and ignore this specific observation chain.
+        /// The `NotificationToken` will be saved on the specified `KeyPath`from the observation block set up in `receive(subscriber:)`.
+        ///
+        /// - Parameters:
+        ///   - projection: The projection which the `NotificationToken` is written to.
+        ///   - keyPath: The KeyPath which the `NotificationToken` is written to.
+        /// - Returns: A `ProjectionChangesetWithToken` Publisher.
+        public func saveToken<T>(on tokenParent: T, at keyPath: WritableKeyPath<T, NotificationToken?>) -> ProjectionChangesetWithToken<T, P> {
+            return ProjectionChangesetWithToken<T, P>(projection, queue, tokenParent, keyPath)
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.projection.observe(keyPaths: self.keyPaths ?? [], on: self.queue) { (change: Output) in
+                switch change {
+                case .change(let projection, let properties):
+                    _ = subscriber.receive(.change(projection, properties))
+                case .error(let error):
+                    _ = subscriber.receive(.error(error))
+                case .deleted:
+                    subscriber.receive(completion: .finished)
+                }
+            }
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> ProjectionChangeset<P> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return ProjectionChangeset(projection, keyPaths: self.keyPaths, queue: queue)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverProjectionChangeset<Self, P, S> {
+            DeferredHandoverProjectionChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which emits ProjectionChange<P> each time the observed projection is modified
+    ///
+    /// `receive(on:)` and `subscribe(on:)` can be called directly on this
+    /// publisher, and calling `.threadSafeReference()` is only required if
+    /// there is an intermediate transform. If `subscribe(on:)` is used, it
+    /// should always be the first operation in the pipeline.
+    ///
+    /// Create this publisher using the `objectChangeset()` function.
+    public class ProjectionChangesetWithToken<T, P: ProjectionObservable>: Publisher where P: ThreadConfined {
+        /// This publisher emits a ProjectionChange<T> indicating which projection and
+        /// which properties of that projection have changed each time a Realm is
+        /// refreshed after a write transaction which modifies the observed
+        /// projection.
+        public typealias Output = ObjectChange<P>
+        /// This publisher reports error via the `.error` case of ObjectChange.
+        public typealias Failure = Never
+
+        internal typealias TokenParent = T
+        internal typealias TokenKeyPath = WritableKeyPath<T, NotificationToken?>
+
+        private var tokenParent: TokenParent
+        private var tokenKeyPath: TokenKeyPath
+
+        private let projection: P
+        private let queue: DispatchQueue?
+        internal init(_ projection: P,
+                      _ queue: DispatchQueue? = nil,
+                      _ tokenParent: TokenParent,
+                      _ tokenKeyPath: TokenKeyPath) {
+            precondition(!projection.isInvalidated, "Projection's object is invalidated or deleted")
+            self.projection = projection
+            self.queue = queue
+            self.tokenParent = tokenParent
+            self.tokenKeyPath = tokenKeyPath
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+            let token = self.projection.observe(keyPaths: [String](), on: self.queue) { (change: Output) in
+                switch change {
+                case .change(let p, let properties):
+                    _ = subscriber.receive(.change(p, properties))
+                case .error(let error):
+                    _ = subscriber.receive(.error(error))
+                case .deleted:
+                    subscriber.receive(completion: .finished)
+                }
+            }
+            tokenParent[keyPath: tokenKeyPath] = token
+            subscriber.receive(subscription: ObservationSubscription(token: token))
+        }
+
+        /// Specifies the scheduler on which to perform subscribe, cancel, and request operations.
+        ///
+        /// For Realm Publishers, this determines which queue the underlying
+        /// change notifications are sent to. If `receive(on:)` is not used
+        /// subsequently, it also will determine which queue elements received
+        /// from the publisher are evaluated on. Currently only serial dispatch
+        /// queues are supported, and the `options:` parameter is not
+        /// supported.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to perform the subscription on.
+        /// - returns: A publisher which subscribes on the given scheduler.
+        public func subscribe<S: Scheduler>(on scheduler: S) -> ProjectionChangesetWithToken<T, P> {
+            guard let queue = scheduler as? DispatchQueue else {
+                fatalError("Cannot subscribe on scheduler \(scheduler): only serial dispatch queues are currently implemented.")
+            }
+            return ProjectionChangesetWithToken(projection, queue, tokenParent, tokenKeyPath)
+        }
+
+        /// Specifies the scheduler on which to perform downstream operations.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverProjectionChangeset<ProjectionChangesetWithToken, T, S> {
+            DeferredHandoverProjectionChangeset(self, scheduler)
+        }
+    }
+
+    /// A publisher which delivers thread-confined projection changesets to a serial dispatch queue.
+    ///
+    /// Create using `.threadSafeReference().receive(on: queue)` on a publisher
+    /// that emits `ProjectionChange`.
+    @frozen public struct DeferredHandoverProjectionChangeset<Upstream: Publisher, T: ProjectionObservable, S: Scheduler>: Publisher where Upstream.Output == ObjectChange<T>, T: ThreadConfined {
+        /// :nodoc:
+        public typealias Failure = Upstream.Failure
+        /// :nodoc:
+        public typealias Output = Upstream.Output
+
+        private let upstream: Upstream
+        private let scheduler: S
+
+        internal init(_ upstream: Upstream, _ scheduler: S) {
+            self.upstream = upstream
+            self.scheduler = scheduler
+        }
+
+        private enum Handover {
+            // .error and .change containing a frozen projection can be delivered
+            // without any handover
+            case passthrough(_ change: ObjectChange<T>)
+            // .change containing a live projection need to be wrapped in a TSR.
+            // We also hold a reference to a frozen Realm to ensure that the
+            // source version remains pinned and we can deliver the projection at
+            // the same version as the change information.
+            case tsr(_ realm: Realm, _ tsr: ThreadSafeReference<T>,
+                     _ properties: [PropertyChange])
+        }
+
+        /// :nodoc:
+        public func receive<Sub>(subscriber: Sub) where Sub: Subscriber, Sub.Failure == Failure, Output == Sub.Input {
+            let scheduler = self.scheduler
+            self.upstream
+                .map { (change: Output) -> Handover in
+                    guard case .change(let p, let properties) = change else { return .passthrough(change) }
+                    guard let realm = p.realm, !realm.isFrozen else { return .passthrough(change) }
+                    return .tsr(realm.freeze(), ThreadSafeReference(to: p), properties)
+                }
+                .receive(on: scheduler)
+                .compactMap { (handover: Handover) -> Output? in
+                    switch handover {
+                    case .passthrough(let change):
+                        return change
+                    case .tsr(let frozenRealm, let tsr, let properties):
+                        if let resolved = realm(frozenRealm, scheduler)?.resolve(tsr) {
+                            return .change(resolved, properties)
+                        }
+                        return nil
+                    }
+                }
+                .receive(subscriber: subscriber)
+        }
+    }
+
+    /// A helper publisher created by calling `.threadSafeReference()` on a publisher which emits thread-confined values.
+    @frozen public struct MakeThreadSafeProjectionChangeset<Upstream: Publisher, T: ProjectionObservable>: Publisher where Upstream.Output == ObjectChange<T> {
+        /// :nodoc:
+        public typealias Failure = Upstream.Failure
+        /// :nodoc:
+        public typealias Output = Upstream.Output
+
+        private let upstream: Upstream
+        internal init(_ upstream: Upstream) {
+            self.upstream = upstream
+        }
+
+        /// :nodoc:
+        public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Failure, Output == S.Input {
+            self.upstream.receive(subscriber: subscriber)
+        }
+
+        /// Specifies the scheduler to deliver projection changesets to.
+        ///
+        /// This differs from `subscribe(on:)` in how it is integrated with the
+        /// autorefresh cycle. When using `subscribe(on:)`, the subscription is
+        /// performed on the target scheduler and the publisher will emit the
+        /// collection during the refresh. When using `receive(on:)`, the
+        /// collection is then converted to a `ThreadSafeReference` and
+        /// delivered to the target scheduler with no integration into the
+        /// autorefresh cycle, meaning it may arrive some time after the
+        /// refresh occurs.
+        ///
+        /// When in doubt, you probably want `subscribe(on:)`.
+        ///
+        /// - parameter scheduler: The serial dispatch queue to receive values on.
+        /// - returns: A publisher which delivers values to the given scheduler.
+        public func receive<S: Scheduler>(on scheduler: S) -> DeferredHandoverProjectionChangeset<Upstream, T, S> {
+            DeferredHandoverProjectionChangeset(self.upstream, scheduler)
         }
     }
 }

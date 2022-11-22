@@ -183,7 +183,16 @@
 #endif
 
 
-#if defined(__GNUC__) || defined(__HP_aCC)
+#if REALM_HAS_CPP_ATTRIBUTE(gnu::cold)
+#define REALM_COLD [[gnu::cold]]
+#else
+#define REALM_COLD
+#endif
+
+
+#if REALM_HAS_CPP_ATTRIBUTE(gnu::noinline)
+#define REALM_NOINLINE [[gnu::noinline]]
+#elif defined(__GNUC__) || defined(__HP_aCC)
 #define REALM_NOINLINE __attribute__((noinline))
 #elif defined(_MSC_VER)
 #define REALM_NOINLINE __declspec(noinline)
@@ -192,7 +201,9 @@
 #endif
 
 
-// FIXME: Change this to use [[nodiscard]] in C++17.
+#if REALM_HAS_CPP_ATTRIBUTE(nodiscard)
+#define REALM_NODISCARD [[nodiscard]]
+#else
 #if defined(__GNUC__) || defined(__HP_aCC)
 #define REALM_NODISCARD __attribute__((warn_unused_result))
 #elif defined(_MSC_VER)
@@ -200,7 +211,7 @@
 #else
 #define REALM_NODISCARD
 #endif
-
+#endif
 
 /* Thread specific data (only for POD types) */
 #if defined __clang__
@@ -237,21 +248,24 @@
 /* Apple OSX and iOS (Darwin). */
 #include <Availability.h>
 #include <TargetConditionals.h>
-#if TARGET_OS_IPHONE == 1
+#if TARGET_OS_IPHONE == 1 && TARGET_OS_IOS == 1
 /* Device (iPhone or iPad) or simulator. */
 #define REALM_IOS 1
+#define REALM_APPLE_DEVICE !TARGET_OS_SIMULATOR
 #else
 #define REALM_IOS 0
 #endif
 #if TARGET_OS_WATCH == 1
 /* Device (Apple Watch) or simulator. */
 #define REALM_WATCHOS 1
+#define REALM_APPLE_DEVICE !TARGET_OS_SIMULATOR
 #else
 #define REALM_WATCHOS 0
 #endif
 #if TARGET_OS_TV
 /* Device (Apple TV) or simulator. */
 #define REALM_TVOS 1
+#define REALM_APPLE_DEVICE !TARGET_OS_SIMULATOR
 #else
 #define REALM_TVOS 0
 #endif
@@ -260,6 +274,9 @@
 #define REALM_IOS 0
 #define REALM_WATCHOS 0
 #define REALM_TVOS 0
+#endif
+#ifndef REALM_APPLE_DEVICE
+#define REALM_APPLE_DEVICE 0
 #endif
 
 #if REALM_ANDROID || REALM_IOS || REALM_WATCHOS || REALM_TVOS || REALM_UWP
@@ -271,10 +288,6 @@
 
 #if defined(REALM_DEBUG) && !defined(REALM_COOKIE_CHECK)
 #define REALM_COOKIE_CHECK
-#endif
-
-#if !REALM_IOS && !REALM_WATCHOS && !REALM_TVOS && !defined(_WIN32) && !REALM_ANDROID
-// #define REALM_ASYNC_DAEMON FIXME Async commits not supported
 #endif
 
 // We're in i686 mode

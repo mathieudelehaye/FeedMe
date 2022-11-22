@@ -29,6 +29,9 @@
 #include <realm/data_type.hpp>
 #include <realm/string_data.hpp>
 #include <realm/timestamp.hpp>
+#include <realm/decimal128.hpp>
+#include <realm/object_id.hpp>
+#include <realm/uuid.hpp>
 #include <realm/util/assert.hpp>
 #include <realm/utilities.hpp>
 
@@ -110,12 +113,22 @@ public:
     {
     }
 
+    Mixed(realm::null) noexcept
+        : Mixed()
+    {
+    }
+
     Mixed(int i) noexcept
         : Mixed(int64_t(i))
     {
     }
+
     Mixed(int64_t) noexcept;
     Mixed(bool) noexcept;
+    explicit Mixed(std::vector<bool>::reference b) noexcept
+        : Mixed(bool(b))
+    {
+    }
     Mixed(float) noexcept;
     Mixed(double) noexcept;
     Mixed(util::Optional<int64_t>) noexcept;
@@ -125,7 +138,14 @@ public:
     Mixed(StringData) noexcept;
     Mixed(BinaryData) noexcept;
     Mixed(Timestamp) noexcept;
+    Mixed(Decimal128);
+    Mixed(ObjectId) noexcept;
+    Mixed(util::Optional<ObjectId>) noexcept;
     Mixed(ObjKey) noexcept;
+    Mixed(ObjLink) noexcept;
+    Mixed(UUID) noexcept;
+    Mixed(util::Optional<UUID>) noexcept;
+    Mixed(const Obj&) noexcept;
 
     // These are shortcuts for Mixed(StringData(c_str)), and are
     // needed to avoid unwanted implicit conversion of char* to bool.
@@ -142,9 +162,7 @@ public:
     {
     }
 
-    ~Mixed() noexcept
-    {
-    }
+    ~Mixed() noexcept {}
 
     DataType get_type() const noexcept
     {
@@ -152,8 +170,26 @@ public:
         return DataType(m_type - 1);
     }
 
+    template <class... Tail>
+    bool is_type(DataType head, Tail... tail) const noexcept
+    {
+        return _is_type(head, tail...);
+    }
+
+    template <class... Tail>
+    static bool is_numeric(DataType head, Tail... tail) noexcept
+    {
+        return _is_numeric(head, tail...);
+    }
+
+    static bool types_are_comparable(const Mixed& l, const Mixed& r);
+    static bool data_types_are_comparable(DataType l_type, DataType r_type);
+
     template <class T>
     T get() const noexcept;
+
+    template <class T>
+    T export_to_type() const noexcept;
 
     // These functions are kept to be backwards compatible
     int64_t get_int() const;
@@ -163,66 +199,190 @@ public:
     StringData get_string() const;
     BinaryData get_binary() const;
     Timestamp get_timestamp() const;
+    Decimal128 get_decimal() const;
+    ObjectId get_object_id() const;
+    UUID get_uuid() const;
+    ObjLink get_link() const;
 
     bool is_null() const;
-    int compare(const Mixed& b) const;
-    bool operator==(const Mixed& other) const
+    bool accumulate_numeric_to(Decimal128& destination) const;
+    bool is_unresolved_link() const;
+    bool is_same_type(const Mixed& b) const;
+    // Will use utf8_compare for strings
+    int compare(const Mixed& b) const noexcept;
+    // Will compare strings as arrays of signed chars
+    int compare_signed(const Mixed& b) const;
+    friend bool operator==(const Mixed& a, const Mixed& b) noexcept
     {
-        return compare(other) == 0;
+        return a.compare(b) == 0;
     }
-    bool operator!=(const Mixed& other) const
+    friend bool operator!=(const Mixed& a, const Mixed& b) noexcept
     {
-        return compare(other) != 0;
+        return a.compare(b) != 0;
+    }
+    friend bool operator<(const Mixed& a, const Mixed& b) noexcept
+    {
+        return a.compare(b) < 0;
+    }
+    friend bool operator>(const Mixed& a, const Mixed& b) noexcept
+    {
+        return a.compare(b) > 0;
+    }
+    friend bool operator<=(const Mixed& a, const Mixed& b) noexcept
+    {
+        return a.compare(b) <= 0;
+    }
+    friend bool operator>=(const Mixed& a, const Mixed& b) noexcept
+    {
+        return a.compare(b) >= 0;
     }
 
-private:
+    Mixed operator+(const Mixed&) const;
+    Mixed operator-(const Mixed&) const;
+    Mixed operator*(const Mixed&) const;
+    Mixed operator/(const Mixed&) const;
+
+    size_t hash() const;
+    StringData get_index_data(std::array<char, 16>&) const;
+    void use_buffer(std::string& buf);
+
+protected:
     friend std::ostream& operator<<(std::ostream& out, const Mixed& m);
 
     uint32_t m_type;
-    union {
-        int32_t short_val;
-        uint32_t ushort_val;
-    };
-
     union {
         int64_t int_val;
         bool bool_val;
         float float_val;
         double double_val;
-        const char* str_val;
+        StringData string_val;
+        BinaryData binary_val;
+        Timestamp date_val;
+        ObjectId id_val;
+        Decimal128 decimal_val;
+        ObjLink link_val;
+        UUID uuid_val;
     };
+
+private:
+    static bool _is_type() noexcept
+    {
+        return false;
+    }
+    bool _is_type(DataType type) const noexcept
+    {
+        return m_type == unsigned(int(type) + 1);
+    }
+    template <class... Tail>
+    bool _is_type(DataType head, Tail... tail) const noexcept
+    {
+        return _is_type(head) || _is_type(tail...);
+    }
+    static bool _is_numeric(DataType type) noexcept
+    {
+        return type == type_Int || type == type_Float || type == type_Double || type == type_Decimal ||
+               type == type_Mixed;
+    }
+    template <class... Tail>
+    static bool _is_numeric(DataType head, Tail... tail) noexcept
+    {
+        return _is_numeric(head) && _is_numeric(tail...);
+    }
+};
+
+class OwnedMixed : public Mixed {
+public:
+    explicit OwnedMixed(std::string&& str)
+        : m_owned_string(std::move(str))
+    {
+        m_type = int(type_String) + 1;
+        string_val = m_owned_string;
+    }
+
+    OwnedMixed(OwnedMixed&& m) noexcept
+        : Mixed(m)
+        , m_owned_string(std::move(m.m_owned_string))
+    {
+        if (is_type(type_String)) {
+            string_val = m_owned_string;
+        }
+    }
+
+    OwnedMixed(const OwnedMixed& m)
+        : Mixed(m)
+        , m_owned_string(m.m_owned_string)
+    {
+        if (is_type(type_String)) {
+            string_val = m_owned_string;
+        }
+    }
+
+    OwnedMixed& operator=(OwnedMixed&& m) noexcept
+    {
+        *static_cast<Mixed*>(this) = m;
+        if (is_type(type_String)) {
+            m_owned_string = std::move(m.m_owned_string);
+            string_val = m_owned_string;
+        }
+        return *this;
+    }
+
+    OwnedMixed& operator=(const OwnedMixed& m)
+    {
+        *static_cast<Mixed*>(this) = m;
+        if (is_type(type_String)) {
+            m_owned_string = m.m_owned_string;
+            string_val = m_owned_string;
+        }
+        return *this;
+    }
+
+    using Mixed::Mixed;
+
+private:
+    std::string m_owned_string;
 };
 
 // Implementation:
 
 inline Mixed::Mixed(int64_t v) noexcept
 {
-    m_type = type_Int + 1;
+    m_type = int(type_Int) + 1;
     int_val = v;
 }
 
 inline Mixed::Mixed(bool v) noexcept
 {
-    m_type = type_Bool + 1;
+    m_type = int(type_Bool) + 1;
     bool_val = v;
 }
 
 inline Mixed::Mixed(float v) noexcept
 {
-    m_type = type_Float + 1;
-    float_val = v;
+    if (null::is_null_float(v)) {
+        m_type = 0;
+    }
+    else {
+        m_type = int(type_Float) + 1;
+        float_val = v;
+    }
 }
 
 inline Mixed::Mixed(double v) noexcept
 {
-    m_type = type_Double + 1;
-    double_val = v;
+    if (null::is_null_float(v)) {
+        m_type = 0;
+    }
+    else {
+        m_type = int(type_Double) + 1;
+        double_val = v;
+    }
 }
 
 inline Mixed::Mixed(util::Optional<int64_t> v) noexcept
 {
     if (v) {
-        m_type = type_Int + 1;
+        m_type = int(type_Int) + 1;
         int_val = *v;
     }
     else {
@@ -233,7 +393,7 @@ inline Mixed::Mixed(util::Optional<int64_t> v) noexcept
 inline Mixed::Mixed(util::Optional<bool> v) noexcept
 {
     if (v) {
-        m_type = type_Bool + 1;
+        m_type = int(type_Bool) + 1;
         bool_val = *v;
     }
     else {
@@ -243,8 +403,8 @@ inline Mixed::Mixed(util::Optional<bool> v) noexcept
 
 inline Mixed::Mixed(util::Optional<float> v) noexcept
 {
-    if (v) {
-        m_type = type_Float + 1;
+    if (v && !null::is_null_float(*v)) {
+        m_type = int(type_Float) + 1;
         float_val = *v;
     }
     else {
@@ -254,9 +414,31 @@ inline Mixed::Mixed(util::Optional<float> v) noexcept
 
 inline Mixed::Mixed(util::Optional<double> v) noexcept
 {
-    if (v) {
-        m_type = type_Double + 1;
+    if (v && !null::is_null_float(*v)) {
+        m_type = int(type_Double) + 1;
         double_val = *v;
+    }
+    else {
+        m_type = 0;
+    }
+}
+
+inline Mixed::Mixed(util::Optional<ObjectId> v) noexcept
+{
+    if (v) {
+        m_type = int(type_ObjectId) + 1;
+        id_val = *v;
+    }
+    else {
+        m_type = 0;
+    }
+}
+
+inline Mixed::Mixed(util::Optional<UUID> v) noexcept
+{
+    if (v) {
+        m_type = int(type_UUID) + 1;
+        uuid_val = *v;
     }
     else {
         m_type = 0;
@@ -266,9 +448,8 @@ inline Mixed::Mixed(util::Optional<double> v) noexcept
 inline Mixed::Mixed(StringData v) noexcept
 {
     if (!v.is_null()) {
-        m_type = type_String + 1;
-        str_val = v.data();
-        ushort_val = uint32_t(v.size());
+        m_type = int(type_String) + 1;
+        string_val = v;
     }
     else {
         m_type = 0;
@@ -278,9 +459,8 @@ inline Mixed::Mixed(StringData v) noexcept
 inline Mixed::Mixed(BinaryData v) noexcept
 {
     if (!v.is_null()) {
-        m_type = type_Binary + 1;
-        str_val = v.data();
-        ushort_val = uint32_t(v.size());
+        m_type = int(type_Binary) + 1;
+        binary_val = v;
     }
     else {
         m_type = 0;
@@ -290,19 +470,41 @@ inline Mixed::Mixed(BinaryData v) noexcept
 inline Mixed::Mixed(Timestamp v) noexcept
 {
     if (!v.is_null()) {
-        m_type = type_Timestamp + 1;
-        int_val = v.get_seconds();
-        short_val = v.get_nanoseconds();
+        m_type = int(type_Timestamp) + 1;
+        date_val = v;
     }
     else {
         m_type = 0;
     }
 }
 
+inline Mixed::Mixed(Decimal128 v)
+{
+    if (!v.is_null()) {
+        m_type = int(type_Decimal) + 1;
+        decimal_val = v;
+    }
+    else {
+        m_type = 0;
+    }
+}
+
+inline Mixed::Mixed(ObjectId v) noexcept
+{
+    m_type = int(type_ObjectId) + 1;
+    id_val = v;
+}
+
+inline Mixed::Mixed(UUID v) noexcept
+{
+    m_type = int(type_UUID) + 1;
+    uuid_val = v;
+}
+
 inline Mixed::Mixed(ObjKey v) noexcept
 {
     if (v) {
-        m_type = type_Link + 1;
+        m_type = int(type_Link) + 1;
         int_val = v.value;
     }
     else {
@@ -310,11 +512,36 @@ inline Mixed::Mixed(ObjKey v) noexcept
     }
 }
 
+inline Mixed::Mixed(ObjLink v) noexcept
+{
+    if (v) {
+        m_type = int(type_TypedLink) + 1;
+        link_val = v;
+    }
+    else {
+        m_type = 0;
+    }
+}
+
+template <>
+inline null Mixed::get<null>() const noexcept
+{
+    REALM_ASSERT(m_type == 0);
+    return {};
+}
+
 template <>
 inline int64_t Mixed::get<int64_t>() const noexcept
 {
     REALM_ASSERT(get_type() == type_Int);
     return int_val;
+}
+
+template <>
+inline int Mixed::get<int>() const noexcept
+{
+    REALM_ASSERT(get_type() == type_Int);
+    return int(int_val);
 }
 
 inline int64_t Mixed::get_int() const
@@ -361,8 +588,10 @@ inline double Mixed::get_double() const
 template <>
 inline StringData Mixed::get<StringData>() const noexcept
 {
+    if (is_null())
+        return StringData();
     REALM_ASSERT(get_type() == type_String);
-    return StringData(str_val, ushort_val);
+    return string_val;
 }
 
 inline StringData Mixed::get_string() const
@@ -373,8 +602,13 @@ inline StringData Mixed::get_string() const
 template <>
 inline BinaryData Mixed::get<BinaryData>() const noexcept
 {
-    REALM_ASSERT(get_type() == type_Binary);
-    return BinaryData(str_val, ushort_val);
+    if (is_null())
+        return BinaryData();
+    if (get_type() == type_Binary) {
+        return binary_val;
+    }
+    REALM_ASSERT(get_type() == type_String);
+    return BinaryData(string_val.data(), string_val.size());
 }
 
 inline BinaryData Mixed::get_binary() const
@@ -386,7 +620,7 @@ template <>
 inline Timestamp Mixed::get<Timestamp>() const noexcept
 {
     REALM_ASSERT(get_type() == type_Timestamp);
-    return Timestamp(int_val, short_val);
+    return date_val;
 }
 
 inline Timestamp Mixed::get_timestamp() const
@@ -395,10 +629,66 @@ inline Timestamp Mixed::get_timestamp() const
 }
 
 template <>
+inline Decimal128 Mixed::get<Decimal128>() const noexcept
+{
+    REALM_ASSERT(get_type() == type_Decimal);
+    return decimal_val;
+}
+
+inline Decimal128 Mixed::get_decimal() const
+{
+    return get<Decimal128>();
+}
+
+template <>
+inline ObjectId Mixed::get<ObjectId>() const noexcept
+{
+    REALM_ASSERT(get_type() == type_ObjectId);
+    return id_val;
+}
+
+inline ObjectId Mixed::get_object_id() const
+{
+    return get<ObjectId>();
+}
+
+template <>
+inline UUID Mixed::get<UUID>() const noexcept
+{
+    REALM_ASSERT(get_type() == type_UUID);
+    return uuid_val;
+}
+
+inline UUID Mixed::get_uuid() const
+{
+    return get<UUID>();
+}
+
+template <>
 inline ObjKey Mixed::get<ObjKey>() const noexcept
 {
+    if (get_type() == type_TypedLink)
+        return link_val.get_obj_key();
     REALM_ASSERT(get_type() == type_Link);
     return ObjKey(int_val);
+}
+
+template <>
+inline ObjLink Mixed::get<ObjLink>() const noexcept
+{
+    REALM_ASSERT(get_type() == type_TypedLink);
+    return link_val;
+}
+
+template <>
+inline Mixed Mixed::get<Mixed>() const noexcept
+{
+    return *this;
+}
+
+inline ObjLink Mixed::get_link() const
+{
+    return get<ObjLink>();
 }
 
 inline bool Mixed::is_null() const
@@ -406,8 +696,38 @@ inline bool Mixed::is_null() const
     return (m_type == 0);
 }
 
+inline bool Mixed::is_same_type(const Mixed& b) const
+{
+    return (m_type == b.m_type);
+}
+
+inline bool Mixed::is_unresolved_link() const
+{
+    if (is_null()) {
+        return false;
+    }
+    else if (get_type() == type_TypedLink) {
+        return get<ObjLink>().is_unresolved();
+    }
+    else if (get_type() == type_Link) {
+        return get<ObjKey>().is_unresolved();
+    }
+    return false;
+}
+
 std::ostream& operator<<(std::ostream& out, const Mixed& m);
 
 } // namespace realm
+
+namespace std {
+template <>
+struct hash<::realm::Mixed> {
+    inline size_t operator()(const ::realm::Mixed& m) const noexcept
+    {
+        return m.hash();
+    }
+};
+} // namespace std
+
 
 #endif // REALM_MIXED_HPP

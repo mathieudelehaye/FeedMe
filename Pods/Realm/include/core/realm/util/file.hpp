@@ -21,30 +21,15 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <memory>
+#include <ctime>
 #include <functional>
+#include <memory>
 #include <stdexcept>
-#include <string>
 #include <streambuf>
-#include <iostream>
+#include <string>
 
 #ifndef _WIN32
 #include <dirent.h> // POSIX.1-2001
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER >= 1900 // compiling with at least Visual Studio 2015
-#if _MSVC_LANG >= 201703L
-#include <filesystem>
-#else
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING // switch to <filesystem> once we switch to C++17
-#include <experimental/filesystem>
-namespace std {
-    namespace filesystem = std::experimental::filesystem::v1;
-}
-#endif
-#define REALM_HAVE_STD_FILESYSTEM 1
-#else
-#define REALM_HAVE_STD_FILESYSTEM 0
 #endif
 
 #include <realm/utilities.hpp>
@@ -54,6 +39,21 @@ namespace std {
 #include <realm/util/function_ref.hpp>
 #include <realm/util/safe_int_ops.hpp>
 
+#if defined(_MSVC_LANG) && _MSVC_LANG >= 201703L // compiling with MSVC and C++ 17
+#include <filesystem>
+#define REALM_HAVE_STD_FILESYSTEM 1
+#if REALM_UWP
+// workaround for linker issue described in https://github.com/microsoft/STL/issues/322
+// remove once the Windows SDK or STL fixes this.
+#pragma comment(lib, "onecoreuap.lib")
+#endif
+#else
+#define REALM_HAVE_STD_FILESYSTEM 0
+#endif
+
+#if REALM_APPLE_DEVICE && !REALM_TVOS
+#define REALM_FILELOCK_EMULATION
+#endif
 
 namespace realm {
 namespace util {
@@ -71,8 +71,12 @@ void make_dir(const std::string& path);
 
 /// Same as make_dir() except that this one returns false, rather than throwing
 /// an exception, if the specified directory already existed. If the directory
-// did not already exist and was newly created, this returns true.
+/// did not already exist and was newly created, this returns true.
 bool try_make_dir(const std::string& path);
+
+/// Recursively create each of the directories in the given absolute path. Existing directories are ignored, and
+/// File::AccessError is thrown for any other errors that occur.
+void make_dir_recursive(std::string path);
 
 /// Remove the specified empty directory path from the file system. It is an
 /// error if the specified path is not a directory, or if it is a nonempty
@@ -155,8 +159,7 @@ public:
 
     /// Create an instance that is not initially attached to an open
     /// file.
-    File() noexcept;
-
+    File() = default;
     ~File() noexcept;
 
     File(File&&) noexcept;
@@ -264,6 +267,7 @@ public:
     /// an open file has undefined behavior.
     SizeType get_size() const;
     static SizeType get_size_static(FileDesc fd);
+    static SizeType get_size_static(const std::string& path);
 
     /// If this causes the file to grow, then the new section will
     /// have undefined contents. Setting the size with this function
@@ -324,6 +328,11 @@ public:
     /// `F_FULLFSYNC`.
     void sync();
 
+    /// Issue a write barrier which forbids ordering writes after this call
+    /// before writes performed before this call. Equivalent to `sync()` on
+    /// non-Apple platforms.
+    void barrier();
+
     /// Place an exclusive lock on this file. This blocks the caller
     /// until all other locks have been released.
     ///
@@ -369,6 +378,10 @@ public:
     /// Get the encryption key set by set_encryption_key(),
     /// null_ptr if no key set.
     const char* get_encryption_key() const;
+
+    /// Set the path used for emulating file locks. If not set explicitly,
+    /// the emulation will use the path of the file itself suffixed by ".fifo"
+    void set_fifo_path(const std::string& fifo_dir_path, const std::string& fifo_file_name);
     enum {
         /// If possible, disable opportunistic flushing of dirted
         /// pages of a memory mapped file to physical medium. On some
@@ -438,6 +451,12 @@ public:
     /// calling process has no access to, will necessarily be reported
     /// as not existing.
     static bool exists(const std::string& path);
+
+    /// Get the time of last modification made to the file
+    static time_t last_write_time(const std::string& path);
+
+    /// Get freespace (in bytes) of filesystem containing path
+    static SizeType get_free_space(const std::string& path);
 
     /// Check whether the specified path exists and refers to a directory. If
     /// the referenced file system object resides in an inaccessible directory,
@@ -600,10 +619,16 @@ public:
 
 private:
 #ifdef _WIN32
-    void* m_fd;
-    bool m_have_lock; // Only valid when m_fd is not null
+    void* m_fd = nullptr;
+    bool m_have_lock = false; // Only valid when m_fd is not null
 #else
-    int m_fd;
+    int m_fd = -1;
+#ifdef REALM_FILELOCK_EMULATION
+    int m_pipe_fd = -1; // -1 if no pipe has been allocated for emulation
+    bool m_has_exclusive_lock = false;
+    std::string m_fifo_dir_path;
+    std::string m_fifo_path;
+#endif
 #endif
     std::unique_ptr<const char[]> m_encryption_key = nullptr;
     std::string m_path;
@@ -611,11 +636,20 @@ private:
     bool lock(bool exclusive, bool non_blocking);
     void open_internal(const std::string& path, AccessMode, CreateMode, int flags, bool* success);
 
+#ifdef REALM_FILELOCK_EMULATION
+    bool has_shared_lock() const noexcept
+    {
+        return m_pipe_fd != -1;
+    }
+#endif
+
     struct MapBase {
         void* m_addr = nullptr;
         mutable size_t m_size = 0;
+        size_t m_reservation_size = 0;
         size_t m_offset = 0;
         FileDesc m_fd;
+        AccessMode m_access_mode = access_ReadOnly;
 
         MapBase() noexcept;
         ~MapBase() noexcept;
@@ -627,8 +661,20 @@ private:
 
         // Use
         void map(const File&, AccessMode, size_t size, int map_flags, size_t offset = 0);
+        // reserve address space for later mapping operations.
+        // returns false if reservation can't be done.
+        bool try_reserve(const File&, AccessMode, size_t size, size_t offset = 0);
         void remap(const File&, AccessMode, size_t size, int map_flags);
         void unmap() noexcept;
+        // fully update any process shared representation (e.g. buffer cache).
+        // other processes will be able to see changes, but a full platform crash
+        // may loose data
+        void flush();
+        // try to extend the mapping in-place. Virtual address space must have
+        // been set aside earlier by a call to reserve()
+        bool try_extend_to(size_t size) noexcept;
+        // fully synchronize any underlying storage. After completion, a full platform
+        // crash will *not* have lost data.
         void sync();
 #if REALM_ENABLE_ENCRYPTION
         mutable util::EncryptedFileMapping* m_encrypted_mapping = nullptr;
@@ -713,8 +759,6 @@ public:
     /// mapped file.
     Map() noexcept;
 
-    ~Map() noexcept;
-
     // Disable copying. Copying an opened Map will create a scenario
     // where the same memory will be mapped once but unmapped twice.
     Map(const Map&) = delete;
@@ -723,15 +767,18 @@ public:
     /// Move the mapping from another Map object to this Map object
     File::Map<T>& operator=(File::Map<T>&& other) noexcept
     {
+        REALM_ASSERT(this != &other);
         if (m_addr)
             unmap();
         m_addr = other.get_addr();
         m_size = other.m_size;
+        m_access_mode = other.m_access_mode;
+        m_reservation_size = other.m_reservation_size;
         m_offset = other.m_offset;
         m_fd = other.m_fd;
         other.m_offset = 0;
         other.m_addr = nullptr;
-        other.m_size = 0;
+        other.m_size = other.m_reservation_size = 0;
 #if REALM_ENABLE_ENCRYPTION
         m_encrypted_mapping = other.m_encrypted_mapping;
         other.m_encrypted_mapping = nullptr;
@@ -756,6 +803,8 @@ public:
     /// currently attached to a memory mapped file.
     void unmap() noexcept;
 
+    bool try_reserve(const File&, AccessMode a = access_ReadOnly, size_t size = sizeof(T), size_t offset = 0);
+
     /// See File::remap().
     ///
     /// Calling this function on a Map instance that is not currently
@@ -764,12 +813,16 @@ public:
     /// returned by get_addr().
     T* remap(const File&, AccessMode = access_ReadOnly, size_t size = sizeof(T), int map_flags = 0);
 
+    /// Try to extend the existing mapping to a given size
+    bool try_extend_to(size_t size) noexcept;
+
     /// See File::sync_map().
     ///
     /// Calling this function on an instance that is not currently
     /// attached to a memory mapped file, has undefined behavior.
     void sync();
 
+    void flush();
     /// Check whether this Map instance is currently attached to a
     /// memory mapped file.
     bool is_attached() const noexcept;
@@ -789,6 +842,11 @@ public:
     /// Map instance. The address range may then be unmapped later by
     /// a call to File::unmap().
     T* release() noexcept;
+
+    bool is_writeable() const noexcept
+    {
+        return m_access_mode == access_ReadWrite;
+    }
 
 #if REALM_ENABLE_ENCRYPTION
     /// Get the encrypted file mapping corresponding to this mapping
@@ -914,7 +972,12 @@ public:
 
     /// Return the associated file system path, or the empty string if there is
     /// no associated file system path, or if the file system path is unknown.
-    std::string get_path() const;
+    const std::string& get_path() const;
+
+    void set_path(std::string path)
+    {
+        m_path = std::move(path);
+    }
 
     const char* message() const noexcept
     {
@@ -974,27 +1037,23 @@ private:
 
 inline File::File(const std::string& path, Mode m)
 {
-#ifdef _WIN32
-    m_fd = nullptr;
-#else
-    m_fd = -1;
-#endif
-
     open(path, m);
-}
-
-inline File::File() noexcept
-{
-#ifdef _WIN32
-    m_fd = nullptr;
-#else
-    m_fd = -1;
-#endif
 }
 
 inline File::~File() noexcept
 {
     close();
+}
+
+inline void File::set_fifo_path(const std::string& fifo_dir_path, const std::string& fifo_file_name)
+{
+#ifdef REALM_FILELOCK_EMULATION
+    m_fifo_dir_path = fifo_dir_path;
+    m_fifo_path = fifo_dir_path + "/" + fifo_file_name;
+#else
+    static_cast<void>(fifo_dir_path);
+    static_cast<void>(fifo_file_name);
+#endif
 }
 
 inline File::File(File&& f) noexcept
@@ -1005,6 +1064,12 @@ inline File::File(File&& f) noexcept
     f.m_fd = nullptr;
 #else
     m_fd = f.m_fd;
+#ifdef REALM_FILELOCK_EMULATION
+    m_pipe_fd = f.m_pipe_fd;
+    m_has_exclusive_lock = f.m_has_exclusive_lock;
+    f.m_has_exclusive_lock = false;
+    f.m_pipe_fd = -1;
+#endif
     f.m_fd = -1;
 #endif
     m_encryption_key = std::move(f.m_encryption_key);
@@ -1020,6 +1085,12 @@ inline File& File::operator=(File&& f) noexcept
 #else
     m_fd = f.m_fd;
     f.m_fd = -1;
+#ifdef REALM_FILELOCK_EMULATION
+    m_pipe_fd = f.m_pipe_fd;
+    f.m_pipe_fd = -1;
+    m_has_exclusive_lock = f.m_has_exclusive_lock;
+    f.m_has_exclusive_lock = false;
+#endif
 #endif
     m_encryption_key = std::move(f.m_encryption_key);
     return *this;
@@ -1130,15 +1201,16 @@ inline File::Map<T>::Map() noexcept
 }
 
 template <class T>
-inline File::Map<T>::~Map() noexcept
-{
-}
-
-template <class T>
 inline T* File::Map<T>::map(const File& f, AccessMode a, size_t size, int map_flags, size_t offset)
 {
     MapBase::map(f, a, size, map_flags, offset);
     return static_cast<T*>(m_addr);
+}
+
+template <class T>
+inline bool File::Map<T>::try_reserve(const File& f, AccessMode a, size_t size, size_t offset)
+{
+    return MapBase::try_reserve(f, a, size, offset);
 }
 
 template <class T>
@@ -1150,7 +1222,7 @@ inline void File::Map<T>::unmap() noexcept
 template <class T>
 inline T* File::Map<T>::remap(const File& f, AccessMode a, size_t size, int map_flags)
 {
-    //MapBase::remap(f, a, size, map_flags);
+    // MapBase::remap(f, a, size, map_flags);
     // missing sync() here?
     unmap();
     map(f, a, size, map_flags);
@@ -1159,9 +1231,21 @@ inline T* File::Map<T>::remap(const File& f, AccessMode a, size_t size, int map_
 }
 
 template <class T>
+inline bool File::Map<T>::try_extend_to(size_t size) noexcept
+{
+    return MapBase::try_extend_to(sizeof(T) * size);
+}
+
+template <class T>
 inline void File::Map<T>::sync()
 {
     MapBase::sync();
+}
+
+template <class T>
+inline void File::Map<T>::flush()
+{
+    MapBase::flush();
 }
 
 template <class T>
@@ -1252,7 +1336,7 @@ inline File::AccessError::AccessError(const std::string& msg, const std::string&
 {
 }
 
-inline std::string File::AccessError::get_path() const
+inline const std::string& File::AccessError::get_path() const
 {
     return m_path;
 }

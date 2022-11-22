@@ -18,14 +18,14 @@
 
 #import "RLMResults_Private.h"
 
-#import "results.hpp"
+#import <realm/object-store/results.hpp>
 
 class RLMClassInfo;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RLMResults () {
-@protected
+@public
     realm::Results _results;
 }
 
@@ -42,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)resultsWithObjectInfo:(RLMClassInfo&)info results:(realm::Results&&)results;
 
 - (instancetype)subresultsWithResults:(realm::Results)results;
+- (RLMClassInfo *)objectInfo;
 @end
 
 NS_ASSUME_NONNULL_END
