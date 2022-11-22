@@ -36,8 +36,8 @@ class MealViewController: ListViewController {
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = backButtonBackgroundImage
         
         // Remove navigation bar back button title:
-        let backBarButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
+//        let backBarButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+//        navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
         
         loadItems()  // read meals from realm DB and load table view
     }

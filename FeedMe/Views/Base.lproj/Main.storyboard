@@ -111,7 +111,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="XXr-dU-iaI">
+                        <barButtonItem key="backBarButtonItem" title="MyBack" id="foZ-fV-f14"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="8zL-x9-0aP">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="addAlimentPressed:" destination="00a-oA-Bh3" id="oG1-m9-ZJO"/>
                             </connections>

@@ -34,10 +34,10 @@ class AlimentViewController: ListViewController {
         let backButtonBackgroundImage = UIImage(named: "back_bar_button")
         navigationController?.navigationBar.backIndicatorImage = backButtonBackgroundImage
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-        
+
         // Remove navigation bar back button title:
-        let backBarButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
+//        let backBarButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+//        navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
         
         // Set view title
         title = selectedMeal!.name
