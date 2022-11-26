@@ -16,15 +16,28 @@
 //
 //  You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-
-import UIKit
-import RealmSwift
+import Firebase
 import IQKeyboardManagerSwift
+import RealmSwift
+import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    func createUser () {
 
+      let email = "mathieu.delehaye@gmail.com"
+      let password = "Md1234,"
+      
+      Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+          if let e = error {
+              print(e.localizedDescription)
+          } else {
+              print("User registration succesful")
+          }
+      }
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         sleep(2) // temporary to keep the launch screen longer
@@ -53,7 +66,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Error saving context \(error)")
             }
         }
+      
+        // Configure Firebase
+        FirebaseApp.configure()
         
+        let db = Firestore.firestore()
+        print(db) // DB constant address
+      
+        // Uncomment to create a new user
+        //createUser()
+      
         // activate IQKeyboardManager library 
         IQKeyboardManager.shared.enable = true                      // enable component
         IQKeyboardManager.shared.enableAutoToolbar = false          // keyboard auto tool bar disabled

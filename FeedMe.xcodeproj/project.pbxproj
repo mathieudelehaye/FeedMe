@@ -37,8 +37,11 @@
 		9167BD3524B4398900B3FD1F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3324B4398900B3FD1F /* Main.storyboard */; };
 		9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3624B4398B00B3FD1F /* Assets.xcassets */; };
 		9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9167BD3824B4398B00B3FD1F /* LaunchScreen.storyboard */; };
+		91C6ABAD29328704008DE45A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 91C6ABAC29328704008DE45A /* FirebaseAuth */; };
 		91D4599524BC776900469B05 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4599324BC776900469B05 /* CustomCell.swift */; };
 		91D4599624BC776900469B05 /* DayCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D4599424BC776900469B05 /* DayCell.xib */; };
+		91F999BD29325BD8000E70FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91F999BC29325BD8000E70FE /* GoogleService-Info.plist */; };
+		91F999C029327552000E70FE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 91F999BF29327552000E70FE /* FirebaseFirestore */; };
 		91F9BC9024ECE9F400E43F45 /* Macro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F9BC8F24ECE9F400E43F45 /* Macro.swift */; };
 		B2180350FFAC47EE981F12D3 /* Pods_FeedMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E5B3D968D2059E91B9C3E20 /* Pods_FeedMe.framework */; };
 /* End PBXBuildFile section */
@@ -79,6 +82,7 @@
 		9167BD3B24B4398B00B3FD1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91D4599324BC776900469B05 /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		91D4599424BC776900469B05 /* DayCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DayCell.xib; sourceTree = "<group>"; };
+		91F999BC29325BD8000E70FE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		91F9BC8F24ECE9F400E43F45 /* Macro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Macro.swift; sourceTree = "<group>"; };
 		D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.debug.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,6 +94,8 @@
 			files = (
 				B2180350FFAC47EE981F12D3 /* Pods_FeedMe.framework in Frameworks */,
 				9164C01924E5B3A800D2D80A /* IQKeyboardManagerSwift in Frameworks */,
+				91F999C029327552000E70FE /* FirebaseFirestore in Frameworks */,
+				91C6ABAD29328704008DE45A /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +221,7 @@
 				91D4599224BC773D00469B05 /* Views */,
 				9144BCC124BCC68000B4AC69 /* Support_files */,
 				9167BD3B24B4398B00B3FD1F /* Info.plist */,
+				91F999BC29325BD8000E70FE /* GoogleService-Info.plist */,
 				9144BCC224BCC9FF00B4AC69 /* Constants.swift */,
 			);
 			path = FeedMe;
@@ -271,6 +278,8 @@
 			name = FeedMe;
 			packageProductDependencies = (
 				9164C01824E5B3A800D2D80A /* IQKeyboardManagerSwift */,
+				91F999BF29327552000E70FE /* FirebaseFirestore */,
+				91C6ABAC29328704008DE45A /* FirebaseAuth */,
 			);
 			productName = FeedMe;
 			productReference = 9167BD2A24B4398900B3FD1F /* FeedMe.app */;
@@ -302,6 +311,7 @@
 			mainGroup = 9167BD2124B4398900B3FD1F;
 			packageReferences = (
 				9164C01724E5B3A800D2D80A /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				91F999BE29327552000E70FE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 9167BD2B24B4398900B3FD1F /* Products */;
 			projectDirPath = "";
@@ -318,6 +328,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9164C00924E1D99F00D2D80A /* AlimentsCell.xib in Resources */,
+				91F999BD29325BD8000E70FE /* GoogleService-Info.plist in Resources */,
 				9167BD3A24B4398B00B3FD1F /* LaunchScreen.storyboard in Resources */,
 				9164BFFD24E1010C00D2D80A /* AlimentCell.xib in Resources */,
 				9167BD3724B4398B00B3FD1F /* Assets.xcassets in Resources */,
@@ -612,6 +623,14 @@
 				minimumVersion = 6.5.6;
 			};
 		};
+		91F999BE29327552000E70FE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -619,6 +638,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9164C01724E5B3A800D2D80A /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
 			productName = IQKeyboardManagerSwift;
+		};
+		91C6ABAC29328704008DE45A /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 91F999BE29327552000E70FE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		91F999BF29327552000E70FE /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 91F999BE29327552000E70FE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
