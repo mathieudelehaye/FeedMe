@@ -163,10 +163,7 @@ class EditTypeViewController: ItemViewController {
                 item.setValue(fatMacro.value, forKey: "fatSpecific")
 
                 item.setValue(calMacro.value, forKey: "calSpecific")
-              
-                // Uncomment to delete the confirmed aliment
-                // TODO: add a proper delete button
-//                self.realm.delete(selectedItem!)
+
             }
         } catch {
             print("failed to update \(self.selectedItem?.name ?? "(unknown)") in realm: \(error.localizedDescription)")

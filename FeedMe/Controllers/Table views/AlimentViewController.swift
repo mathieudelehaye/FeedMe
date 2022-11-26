@@ -56,8 +56,6 @@ class AlimentViewController: ListViewController {
             fullAlimentList.append(alimentType.name)
         }
         
-//        print(fullAlimentList)
-        
         tableView.reloadData()  // reload table view when appearing to update computed values
     }
     

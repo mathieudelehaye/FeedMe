@@ -37,11 +37,19 @@ class AlimentTypesViewController: ListViewController {
         let alert = UIAlertController(title: "Add New Category", message:"", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
-            
-            let newCategory = AlimentType()
-            newCategory.name = textField.text!
-            
-            self.save(item: newCategory)
+          
+          let typeName = textField.text!
+          
+          // Add only the new aliment type if it doesn't already exist in the DB
+          if self.realm.objects(AlimentType.self).filter("name == [cd] %@", typeName).count > 0 {
+            print(typeName + " aliment type already exists in the database")
+            return
+          }
+        
+          let newCategory = AlimentType()
+          newCategory.name = typeName
+        
+          self.save(item: newCategory)
         }
         
         alert.addTextField { (alertTextField) in
@@ -121,6 +129,87 @@ extension AlimentTypesViewController {
         
     }
         
+}
+
+//MARK: - TableView Swipe Actions
+
+extension AlimentTypesViewController {
+    
+  override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    
+    let deleteAction = UIContextualAction(style: .normal, title: "Delete") { (_, _, completionHandler) in
+      
+      // Set to false for debugging purpose
+      let removeData = true
+      
+      let selectedItem = self.itemArray[indexPath.row]
+      let alimentTypeName = selectedItem.name
+      print(alimentTypeName + " type selected for deletion")
+        
+      // Delete the aliment type
+      if removeData {
+        do {
+          try self.realm.write {
+            self.realm.delete(selectedItem)
+          }
+        } catch {
+          print("failed to update \(selectedItem.name) in realm: \(error.localizedDescription)")
+        }
+      }
+                      
+      // Delete all the aliments of that type, and remove them from all the meals that use them
+      for aliment in self.realm.objects(Aliment.self).filter("name == [cd] %@", alimentTypeName) {
+        
+        let alimentName = aliment.name
+
+        // Each aliment belongs to only one meal
+        let meal = aliment.parentCategory[0] as Meal
+        let mealName = meal.name
+        
+        // Each meal belongs to only one day
+        let dayName = meal.parentCategory[0].name
+        
+        print("  Aliment " + alimentName + " of type " + alimentTypeName + " found from " + mealName + " of " + dayName)
+        
+        // Delete the aliment
+        if removeData {
+          do {
+            try self.realm.write {
+              self.realm.delete(aliment)
+            }
+          } catch {
+            print("failed to update \(aliment.name) in realm: \(error.localizedDescription)")
+          }
+        }
+        
+        print("    Removing aliment from the meal list")
+                          
+        for (index, mealAliment) in meal.aliments.enumerated() {
+          let mealAlimentName = mealAliment.name
+          
+          print("    Aliment " + mealAlimentName + " found from meal " + mealName)
+          
+          if mealAlimentName == alimentTypeName {
+            print("    Aliment deleted from the meal")
+            
+            // Remove the aliment from the meal list
+            if removeData {
+              meal.aliments.remove(at: index)
+            }
+          }
+        }
+      }
+
+      self.updateView()
+     
+      completionHandler(true)
+    }
+    
+    deleteAction.image = UIImage(systemName: "trash")
+    deleteAction.backgroundColor = UIColor(rgb: 0xFC8210)
+    let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+    return configuration
+  }
 }
 
 //MARK: - ViewController Calling View Management Delegate Methods
