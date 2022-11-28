@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         sleep(2) // temporary to keep the launch screen longer
       
-        print(Realm.Configuration.defaultConfiguration.fileURL)
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
         
         // create user data if it does not exist
         let realm = try! Realm()
