@@ -1,5 +1,5 @@
 //
-//  LoginViewController.swift
+//  WelcomeViewController.swift
 //  FeedMe
 //
 //  Created by Mathieu Delehaye on 27/11/2022.
@@ -9,22 +9,22 @@
 import UIKit
 import SwiftUI
 
-class LoginViewController: UIHostingController<LoginView> {
+class WelcomeViewController: UIHostingController<ContentView> {
     
     // Class to handle the callback
-    class LoginCallbacks {
+    class WelcomeCallbacks {
         var segueCallback: ((String) -> Void)?
     }
  
     required init?(coder: NSCoder) {
         
-        let loginCallbacks = LoginCallbacks()
+        let welcomeCallbacks = WelcomeCallbacks()
         
-        let loginView = LoginView(loginCallbacks: loginCallbacks)
+        let contentView = ContentView(welcomeCallbacks: welcomeCallbacks)
         
-        super.init(coder: coder,rootView: loginView);
+        super.init(coder: coder,rootView: contentView);
         
-        loginCallbacks.segueCallback = { [weak self] segueName in
+        welcomeCallbacks.segueCallback = { [weak self] segueName in
             self?.performSegue(withIdentifier: segueName, sender: self)
         }
     }

@@ -134,7 +134,7 @@ extension DayViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        performSegue(withIdentifier: K.DayToMealSegueIdentifier, sender: self)
+        performSegue(withIdentifier: K.dayToMealSegueIdentifier, sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

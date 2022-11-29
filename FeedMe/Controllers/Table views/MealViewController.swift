@@ -136,7 +136,7 @@ extension MealViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        performSegue(withIdentifier: K.MealToAlimentSegueIdentifier, sender: self)
+        performSegue(withIdentifier: K.mealToAlimentSegueIdentifier, sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

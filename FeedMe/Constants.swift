@@ -23,7 +23,7 @@ struct K {
     static let mealCellNibName = "MealCell"
     static let alimentCellNibName = "AlimentCell"
     static let alimentCategoryCellNibName = "AlimentsCell"
-    static let LoginToDaySegueIdentifier = "goToDays"
-    static let DayToMealSegueIdentifier = "goToDayMeals"
-    static let MealToAlimentSegueIdentifier = "goToMealAliments"
+    static let welcomeToDaySegueIdentifier = "goToDays"
+    static let dayToMealSegueIdentifier = "goToDayMeals"
+    static let mealToAlimentSegueIdentifier = "goToMealAliments"
 }
