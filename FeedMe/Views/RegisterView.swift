@@ -1,20 +1,20 @@
 //
-//  Login.swift
+//  RegisterView.swift
 //  FeedMe
 //
-//  Created by Mathieu Delehaye on 29/11/2022.
+//  Created by Mathieu Delehaye on 30/11/2022.
 //  Copyright © 2022 Mathieu Delehaye. All rights reserved.
 //
 
 import SwiftUI
 
-struct LoginView: View {
+struct RegisterView: View {
         
     var welcomeCallbacks: WelcomeViewController.WelcomeCallbacks
     
     @State private var username: String = ""
     @State private var password: String = ""
-        
+    
     var body: some View {
         
         ZStack {
@@ -22,7 +22,7 @@ struct LoginView: View {
                 .ignoresSafeArea(.all, edges: .all)
             
             VStack {
-                Text("Welcome Back!")
+                Text("New User")
                     .font(.largeTitle)
                     .foregroundColor(.white)
                     .fontWeight(.semibold)
@@ -41,10 +41,10 @@ struct LoginView: View {
                     .padding(.bottom, 20)
                         
                 Button(action: {
-                    print("Login tapped")
+                    print("Create User tapped")
                     welcomeCallbacks.segueCallback?(K.welcomeToDaySegueIdentifier)
                 }) {
-                    Text("LOGIN")
+                    Text("CREATE")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
@@ -58,8 +58,8 @@ struct LoginView: View {
     }
 }
 
-struct Login_Previews: PreviewProvider {
+struct Register_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(welcomeCallbacks: WelcomeViewController.WelcomeCallbacks())
+        RegisterView(welcomeCallbacks: WelcomeViewController.WelcomeCallbacks())
     }
 }

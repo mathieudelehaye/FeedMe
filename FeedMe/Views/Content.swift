@@ -17,15 +17,52 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             
-            switch (selectedScreen)  {
-                case 1:
-                    LoginView()
+            switch (selectedScreen) {
+            case 1:
+                let _ = print("1 selected")
+                LoginView(welcomeCallbacks: welcomeCallbacks)
+            case 2:
+                let _ = print("2 selected")
+                RegisterView(welcomeCallbacks: welcomeCallbacks)
+            default:
+                WelcomeView(welcomeCallbacks: welcomeCallbacks, selectedScreen: $selectedScreen)
+            }
+        }
+    }
+}
 
-                case 2:
-                    LoginView()
-                    
-                default:
-                    WelcomeView(welcomeCallbacks: welcomeCallbacks)
+struct WelcomeView: View {
+    
+    var welcomeCallbacks: WelcomeViewController.WelcomeCallbacks
+    
+    @Binding var selectedScreen: Int8
+    
+    var body: some View {
+        
+        ZStack {
+            Color("BgOrange")
+                .ignoresSafeArea(.all, edges: .all)
+            
+            VStack(alignment: .center) {
+                // Sign in
+                Button(action: {
+                    selectedScreen = 1
+                }) {
+                    Text("Register")
+                }.font(.largeTitle)
+                    .foregroundColor(.white)
+                    .padding(.top, 300)
+                
+                Spacer()
+                
+                // Sign up
+                Button(action: {
+                    selectedScreen = 2
+                }) {
+                    Text("Login")
+                }.font(.largeTitle)
+                    .foregroundColor(.white)
+                    .padding(.bottom, 300)
             }
         }
     }

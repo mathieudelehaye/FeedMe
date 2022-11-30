@@ -20,6 +20,7 @@
 		914D2E1724C593D6006C4B61 /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2E1624C593D6006C4B61 /* Meal.swift */; };
 		914DCF4D24C43A74006BA902 /* MealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914DCF4C24C43A74006BA902 /* MealViewController.swift */; };
 		914F50E924E03E2500F994AD /* AlimentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914F50E824E03E2500F994AD /* AlimentViewController.swift */; };
+		9154D7AF293736B0005B4C37 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9154D7AE293736AF005B4C37 /* RegisterView.swift */; };
 		915F1FE324C706EA005C88C2 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE224C706EA005C88C2 /* EditViewController.swift */; };
 		915F1FE524C70D54005C88C2 /* PartialSizePresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */; };
 		9164BFFD24E1010C00D2D80A /* AlimentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9164BFFB24E1010C00D2D80A /* AlimentCell.xib */; };
@@ -43,7 +44,6 @@
 		91D4599524BC776900469B05 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4599324BC776900469B05 /* CustomCell.swift */; };
 		91D4599624BC776900469B05 /* DayCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D4599424BC776900469B05 /* DayCell.xib */; };
 		91F889CD2933D8D300AC8E92 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F889CC2933D8D300AC8E92 /* WelcomeViewController.swift */; };
-		91F889CF293481D200AC8E92 /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F889CE293481D200AC8E92 /* Welcome.swift */; };
 		91F999BD29325BD8000E70FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91F999BC29325BD8000E70FE /* GoogleService-Info.plist */; };
 		91F999C029327552000E70FE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 91F999BF29327552000E70FE /* FirebaseFirestore */; };
 		91F9BC9024ECE9F400E43F45 /* Macro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F9BC8F24ECE9F400E43F45 /* Macro.swift */; };
@@ -66,6 +66,7 @@
 		914D2E1624C593D6006C4B61 /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
 		914DCF4C24C43A74006BA902 /* MealViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealViewController.swift; sourceTree = "<group>"; };
 		914F50E824E03E2500F994AD /* AlimentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlimentViewController.swift; sourceTree = "<group>"; };
+		9154D7AE293736AF005B4C37 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		915F1FE224C706EA005C88C2 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		915F1FE424C70D54005C88C2 /* PartialSizePresentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSizePresentController.swift; sourceTree = "<group>"; };
 		9164BFFB24E1010C00D2D80A /* AlimentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlimentCell.xib; sourceTree = "<group>"; };
@@ -89,7 +90,6 @@
 		91D4599324BC776900469B05 /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		91D4599424BC776900469B05 /* DayCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DayCell.xib; sourceTree = "<group>"; };
 		91F889CC2933D8D300AC8E92 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WelcomeViewController.swift; path = FeedMe/Views/WelcomeViewController.swift; sourceTree = SOURCE_ROOT; };
-		91F889CE293481D200AC8E92 /* Welcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		91F999BC29325BD8000E70FE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		91F9BC8F24ECE9F400E43F45 /* Macro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Macro.swift; sourceTree = "<group>"; };
 		D6EEAE6C3FC2DEB825519785 /* Pods-FeedMe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedMe.debug.xcconfig"; path = "Target Support Files/Pods-FeedMe/Pods-FeedMe.debug.xcconfig"; sourceTree = "<group>"; };
@@ -240,8 +240,8 @@
 			isa = PBXGroup;
 			children = (
 				91A881E92935CC5900A5AF64 /* Content.swift */,
-				91F889CE293481D200AC8E92 /* Welcome.swift */,
 				91A881E72935C9C700A5AF64 /* LoginView.swift */,
+				9154D7AE293736AF005B4C37 /* RegisterView.swift */,
 				9167BD3324B4398900B3FD1F /* Main.storyboard */,
 				914C902324D91B9000BB33AC /* NIB */,
 			);
@@ -407,6 +407,7 @@
 				9144BCC324BCC9FF00B4AC69 /* Constants.swift in Sources */,
 				913D69A124D47BCB00CEAC16 /* ItemViewController.swift in Sources */,
 				91A881E82935C9C700A5AF64 /* LoginView.swift in Sources */,
+				9154D7AF293736B0005B4C37 /* RegisterView.swift in Sources */,
 				914C9FD624CA0D7E0088D162 /* AppItem.swift in Sources */,
 				913DFD9224D46E2F00DAB556 /* PickerViewController.swift in Sources */,
 				9164C01024E2600100D2D80A /* Extensions.swift in Sources */,
@@ -415,7 +416,6 @@
 				914C902524D91FFC00BB33AC /* ListViewController.swift in Sources */,
 				9164C00824E1D99F00D2D80A /* AlimentsCell.swift in Sources */,
 				9167BD3224B4398900B3FD1F /* DayViewController.swift in Sources */,
-				91F889CF293481D200AC8E92 /* Welcome.swift in Sources */,
 				9167BD2E24B4398900B3FD1F /* AppDelegate.swift in Sources */,
 				91A881EA2935CC5900A5AF64 /* Content.swift in Sources */,
 				91F9BC9024ECE9F400E43F45 /* Macro.swift in Sources */,
