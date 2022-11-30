@@ -48,7 +48,7 @@ struct WelcomeView: View {
                 Button(action: {
                     selectedScreen = 1
                 }) {
-                    Text("Register")
+                    Text("Login")
                 }.font(.largeTitle)
                     .foregroundColor(.white)
                     .padding(.top, 300)
@@ -59,7 +59,7 @@ struct WelcomeView: View {
                 Button(action: {
                     selectedScreen = 2
                 }) {
-                    Text("Login")
+                    Text("Register")
                 }.font(.largeTitle)
                     .foregroundColor(.white)
                     .padding(.bottom, 300)

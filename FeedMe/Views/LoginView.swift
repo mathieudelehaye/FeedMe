@@ -6,6 +6,7 @@
 //  Copyright © 2022 Mathieu Delehaye. All rights reserved.
 //
 
+import Firebase
 import SwiftUI
 
 struct LoginView: View {
@@ -42,7 +43,22 @@ struct LoginView: View {
                         
                 Button(action: {
                     print("Login tapped")
-                    welcomeCallbacks.segueCallback?(K.welcomeToDaySegueIdentifier)
+
+                    // TODO: move logic to a view controller
+                    if username != "" && password != "" {
+                        
+                        Auth.auth().signIn(withEmail: username, password: password) { authResult, error in
+                            
+                            if let e = error {
+                                print(e)
+                            } else {
+                                print("Authentication succesfull")
+                                
+                                // Navigate to the home view
+                                welcomeCallbacks.segueCallback?(K.welcomeToDaySegueIdentifier)
+                            }
+                        }
+                    }
                 }) {
                     Text("LOGIN")
                         .font(.headline)

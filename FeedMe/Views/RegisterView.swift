@@ -6,6 +6,7 @@
 //  Copyright © 2022 Mathieu Delehaye. All rights reserved.
 //
 
+import Firebase
 import SwiftUI
 
 struct RegisterView: View {
@@ -42,7 +43,22 @@ struct RegisterView: View {
                         
                 Button(action: {
                     print("Create User tapped")
-                    welcomeCallbacks.segueCallback?(K.welcomeToDaySegueIdentifier)
+                    
+                    // Create the new user
+                    // TODO: move logic to a view controller
+                    if username != "" && password != "" {
+                        
+                        Auth.auth().createUser(withEmail: username, password: password) { authResult, error in
+                            
+                            if let e = error {
+                                print(e.localizedDescription)
+                            } else {
+                                print("User registration succesful")
+                                
+                                welcomeCallbacks.segueCallback?(K.welcomeToDaySegueIdentifier)
+                            }
+                        }
+                    }
                 }) {
                     Text("CREATE")
                         .font(.headline)
