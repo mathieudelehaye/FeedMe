@@ -1,7 +1,7 @@
 # FeedMe
 An iPhone application to track diet calories for an athletes. This app has been fully written in Swift 5 with UIKit and SwiftUI. 
 
-It is based on the previous [Diet Tracker](https://github.com/mathieudelehaye/Diet_Tracker_PHP) app. 
+This is the iPhone mobile version of my previous Web application [Diet Tracker](https://github.com/mathieudelehaye/Diet_Tracker_PHP). 
 
 <p float="left">
   <img src="screenshots/app_screenshot_01.png" height ="628" width="330" hspace="10" />
