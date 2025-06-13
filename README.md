@@ -23,7 +23,3 @@ This is the iPhone mobile version of my previous Web application [Diet Tracker](
   <img src="screenshots/app_screenshot_07.png" height ="628" width="330" hspace="10" />
   <img src="screenshots/app_screenshot_08.png" height ="628" width="330" hspace="10" />
 </p>
-
-<p float="left">
-  <img src="screenshots/app_screenshot_00.png" height ="628" width="330" hspace="10" />
-</p>
